@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section equipment">
+    <div class="row">
+
+      <!-- Left side columns -->
+      <div class="col-lg-12">
+        <div class="row">
+          <!-- Reports -->
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+
+                <div class="row">
+                  <div class="input-group mb-2 mt-3 p-0">
+                    <span class="input-group-text">
+                      <i class="bi bi-arrow-left-circle mr-3"></i>
+                      <i class="bi bi-arrow-right-circle mr-3"></i>
+                      <i class="bi bi-arrow-up-circle mr-3"></i>
+                      <i class="bi bi-arrow-down-circle"></i>
+                    </span>
+                    <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="Full identifier (description)">
+                  </div>
+                </div>
+
+                <div class="tab-content pt-2">
+
+                  <!-- Start System Tab Content -->
+                  <div class="tab-pane fade show active">
+                    <!-- Main Content -->
+                    <div class="row">
+                      <!-- Left State Menu -->
+                      <div class="col-xxl-2 col-lg-2 col-md-3 p-0">
+                        <div class="card info-card left_state_menu border-gray">
+                          <ul class="sidebar-nav" id="sidebar-nav">
+                            <li class="nav-item">
+                              <a class="nav-link" href="{% url 'system' %}">
+                                <i class="bi bi-wallet"></i>
+                                <span>System</span>
+                              </a>
+                            </li><!-- End System Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed" href="{% url 'system_purchasing_overview' %}">
+                                <i class="bi bi-wallet"></i>
+                                <span>Purchasing Overview</span>
+                              </a>
+                            </li><!-- End Purchasing Overview Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed" href="{% url 'system_purchasing_detail' %}">
+                                <i class="bi bi-wallet"></i>
+                                <span>Purchasing Detail</span>
+                              </a>
+                            </li><!-- End Purchasing Detail Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed" href="{% url 'system_delivery' %}">
+                                <i class="bi bi-truck"></i>
+                                <span>Delivery</span>
+                              </a>
+                            </li><!-- End Delivery Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed" href="{% url 'system_state' %}">
+                                <i class="bi bi-display"></i>
+                                <span>State</span>
+                              </a>
+                            </li><!-- End State Nav -->
+                          </ul>
+                        </div>
+                      </div><!-- End Left State Menu -->
+
+                      <!-- Middle Object Hierarchy -->
+                      <div class="col-xxl-3 col-lg-3 col-md-9 p-0">
+                        <div class="card info-card middle_object_hierarchy border-gray">
+                          <!-- Start TreeView Content -->
+                          <div class="treeview js-treeview mt-3">
+                            <ul class="mb-0">
+                              <li>
+                                <div class="treeview__level" data-level="&#x26AC;">
+                                  <span class="level-title">Equipment Type A</span>
+                                  <div class="treeview__level-btns">
+                                    <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                    <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                    <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                    <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                  </div>
+                                </div>
+                                <ul>
+                                  <li>
+                                    <div class="treeview__level" data-level="&#x26AC;">
+                                      <span class="level-title">Equipment Type B</span>
+                                      <div class="treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Equipment Type C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                          <li>
+                                            <div class="treeview__level" data-level="&#x26AC;">
+                                              <span class="level-title">Equipment Type D</span>
+                                              <div class="treeview__level-btns">
+                                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                              </div>
+                                            </div>
+                                            <ul>
+                                            </ul>
+                                          </li>
+                                        </ul>
+                                      </li>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Equipment Type C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                        </ul>
+                                      </li>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Equipment Type C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                        </ul>
+                                      </li>
+                                    </ul>
+                                  </li>
+                                  <li>
+                                    <div class="treeview__level" data-level="&#x26AC;">
+                                      <span class="level-title">Equipment Type B</span>
+                                      <div class="treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                    </ul>
+                                  </li>
+                                </ul>
+                              </li>
+                            </ul>
+                          </div>
+                          <!-- // End TreeView Content -->
+                          <hr/>
+                          <!-- Start TreeView Content -->
+                          <div class="treeview js-treeview">
+                            <ul>
+                              <li>
+                                <div class="treeview__level" data-level="&#x26AC;">
+                                  <span class="level-title">Connection Type A</span>
+                                  <div class="treeview__level-btns">
+                                    <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                    <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                    <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                    <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                  </div>
+                                </div>
+                                <ul>
+                                  <li>
+                                    <div class="treeview__level" data-level="&#x26AC;">
+                                      <span class="level-title">Connection Type B</span>
+                                      <div class="treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection Type C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                          <li>
+                                            <div class="treeview__level" data-level="&#x26AC;">
+                                              <span class="level-title">Connection Type D</span>
+                                              <div class="treeview__level-btns">
+                                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                              </div>
+                                            </div>
+                                            <ul>
+                                            </ul>
+                                          </li>
+                                        </ul>
+                                      </li>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection Type C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                        </ul>
+                                      </li>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection Type C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                        </ul>
+                                      </li>
+                                    </ul>
+                                  </li>
+                                  <li>
+                                    <div class="treeview__level" data-level="&#x26AC;">
+                                      <span class="level-title">Connection Type B</span>
+                                      <div class="treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                    </ul>
+                                  </li>
+                                </ul>
+                              </li>
+                            </ul>
+                          </div>
+                          <!-- // End TreeView Content -->
+                        </div>
+                          
+                        <template id="levelMarkup">
+                          <li>
+                            <div class="treeview__level" data-level="&#x26AC;">
+                              <span class="level-title">Connection Type X</span>
+                              <div class="treeview__level-btns">
+                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                              </div>
+                            </div>
+                            <ul>
+                            </ul>
+                          </li>
+                        </template>
+                      </div><!-- End Middle Object Hierarchy -->
+                      
+                      <!-- Right Overview -->
+                      <div class="col-xxl-7 col-lg-7 col-md-12 p-0">
+                        <div class="card card-body right_overview border-gray">
+                          <!-- Equipment Type purchasing table -->
+                          <h5 class="card-title">Equipment Type Purchasing Details</h5>
+                          <table class="display nowrap custom_datatable">
+                            <thead>
+                              <tr>
+                                <th>Label</th>
+                                <th>Description</th>
+                                <th>Manufacturer</th>
+                                <th>Model</th>
+                                <th>Leadtime(Days)</th>
+                                <th>Total Required</th>
+                                <th>Toal Ordered</th>
+                                <th>Total to Order</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th>label1</th>
+                                <td>description1</td>
+                                <td>manufacturer1</td>
+                                <td>model1</td>
+                                <td>1 days</td>
+                                <td>10</td>
+                                <td>15</td>
+                                <td>10</td>
+                              </tr>
+                              <tr>
+                                <th>label2</th>
+                                <td>description2</td>
+                                <td>manufacturer2</td>
+                                <td>model2</td>
+                                <td>2 days</td>
+                                <td>20</td>
+                                <td>25</td>
+                                <td>20</td>
+                              </tr>
+                              <tr>
+                                <th>label3</th>
+                                <td>description3</td>
+                                <td>manufacturer3</td>
+                                <td>model3</td>
+                                <td>3 days</td>
+                                <td>30</td>
+                                <td>35</td>
+                                <td>30</td>
+                              </tr>
+                            </tbody>
+                          </table><!-- End Equipment Type purchasing table -->
+                          <!-- Connection Type purchasing table -->
+                          <h5 class="card-title">Connection Type Purchasing Details</h5>
+                          <table class="display nowrap custom_datatable">
+                            <thead>
+                              <tr>
+                                <th>Label</th>
+                                <th>Description</th>
+                                <th>Physical Description</th>
+                                <th>Leadtime(Days)</th>
+                                <th>Total Required</th>
+                                <th>Toal Ordered</th>
+                                <th>Total to Order</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th>label1</th>
+                                <td>description1</td>
+                                <td>physical description1</td>
+                                <td>1 days</td>
+                                <td>10</td>
+                                <td>15</td>
+                                <td>10</td>
+                              </tr>
+                              <tr>
+                                <th>label2</th>
+                                <td>description2</td>
+                                <td>physical description2</td>
+                                <td>2 days</td>
+                                <td>20</td>
+                                <td>25</td>
+                                <td>20</td>
+                              </tr>
+                              <tr>
+                                <th>label3</th>
+                                <td>description3</td>
+                                <td>physical description3</td>
+                                <td>3 days</td>
+                                <td>30</td>
+                                <td>35</td>
+                                <td>30</td>
+                              </tr>
+                            </tbody>
+                          </table><!-- End Connection Type purchasing table with stripped rows -->
+
+                        </div>
+                      </div><!-- End Right Overview -->
+
+                      <!-- Buttons Section -->
+                      <div class="col-xxl-12 col-lg-12 col-md-12">
+                        <div class="card">
+                          <div class="card-body buttons_section">
+                            <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
+                            <button type="button" class="btn btn-outline-primary">Commit</button>
+                          </div>
+                        </div>
+                      </div><!-- End Buttons Section -->
+                    </div><!-- End Main Content -->
+                  </div>
+                  <!-- // End System Tab Content -->
+                </div><!-- End Bordered Tabs -->
+              </div>
+            </div>
+          </div><!-- End Reports -->
+        </div>
+      </div><!-- End Left side columns -->
+    </div>
+    
+  </section>
+{% endblock %}

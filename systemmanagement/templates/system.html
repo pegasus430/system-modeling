@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section system">
+    <div class="row">
+
+      <!-- Left side columns -->
+      <div class="col-lg-12">
+        <div class="row">
+          <!-- Reports -->
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="input-group mb-2 mt-3 p-0">
+                    <span class="input-group-text">
+                      <i class="bi bi-arrow-left-circle mr-3"></i>
+                      <i class="bi bi-arrow-right-circle mr-3"></i>
+                      <i class="bi bi-arrow-up-circle mr-3"></i>
+                      <i class="bi bi-arrow-down-circle"></i>
+                    </span>
+                    <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="Full identifier (description)">
+                  </div>
+                </div>
+
+                <div class="tab-content pt-2" id="borderedTabContent">
+
+                  <!-- Start System Tab Content -->
+                  <div class="tab-pane fade show active">
+                    <!-- Main Content -->
+                    <div class="row">
+
+                      <!-- Left State Menu -->
+                      <div class="col-xxl-2 col-lg-2 col-md-3 p-0">
+                        <div class="card info-card left_state_menu border-gray">
+                          <ul class="sidebar-nav" id="sidebar-nav">
+                            <li class="nav-item">
+                              <a class="nav-link" href="{% url 'system' %}">
+                                <i class="bi bi-wallet"></i>
+                                <span>System</span>
+                              </a>
+                            </li><!-- End System Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed" href="{% url 'system_purchasing_overview' %}">
+                                <i class="bi bi-wallet"></i>
+                                <span>Purchasing Overview</span>
+                              </a>
+                            </li><!-- End Purchasing Overview Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed" href="{% url 'system_purchasing_detail' %}">
+                                <i class="bi bi-wallet"></i>
+                                <span>Purchasing Detail</span>
+                              </a>
+                            </li><!-- End Purchasing Detail Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed" href="{% url 'system_delivery' %}">
+                                <i class="bi bi-truck"></i>
+                                <span>Delivery</span>
+                              </a>
+                            </li><!-- End Delivery Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed" href="{% url 'system_state' %}">
+                                <i class="bi bi-display"></i>
+                                <span>State</span>
+                              </a>
+                            </li><!-- End State Nav -->
+                          </ul>
+                        </div>
+                      </div><!-- End Left State Menu -->
+
+                      <!-- Right Overview -->
+                      <div class="col-xxl-10 col-lg-10 col-md-9 p-0">
+                        <div class="card card-body system_overview border-gray">
+                          <!-- System Form -->
+                          <form class="row g-3">
+                            <div class="col-md-6">
+                              <h5 class="col-md-11 card-title nav-tabs-bordered">System Owner</h5>
+                              <div class="row mt-3">
+                                <label class="col-md-3 col-form-label text-secondary">Name:</label>
+                                <div class="col-md-4">
+                                  <input type="text" class="form-control" placeholder="Name" value="Anderson">
+                                </div>
+                                <div class="col-md-4">
+                                  <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                                    <img src="{% static '/img/profile-img.jpg' %}" alt="Profile" class="rounded-circle">
+                                  </a>
+                                </div>
+                              </div>
+
+                              <h5 class="col-md-11 card-title nav-tabs-bordered">System</h5>
+                              <div class="row mt-3">
+                                <label class="col-md-3 col-form-label text-secondary">Name:</label>
+                                <div class="col-md-8">
+                                  <input type="text" class="form-control" placeholder="Name" value="System name">
+                                </div>
+                              </div>  
+                              <div class="row mt-3">
+                                <label class="col-md-3 col-form-label text-secondary">Description:</label>
+                                <div class="col-md-8">
+                                  <textarea class="form-control" placeholder="Description" style="height: 100px;">System description</textarea>
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-3 col-form-label text-secondary">Contact Email:</label>
+                                <div class="col-md-8">
+                                  <input type="text" class="form-control" placeholder="Contact Email" value="contact@email.com">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-3 col-form-label text-secondary">Contact Phone Number:</label>
+                                <div class="col-md-8">
+                                  <input type="text" class="form-control" placeholder="Contact Phone Number" value="+1 234 567 9999">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-3 col-form-label text-secondary">Comment:</label>
+                                <div class="col-md-8">
+                                  <textarea class="form-control" placeholder="Comment" style="height: 100px;">System comment</textarea>
+                                </div>
+                              </div>
+
+                              <h5 class="col-md-10 card-title nav-tabs-bordered">Host Environment</h5>
+                              <div class="row mt-3">
+                                <label class="col-md-3 col-form-label text-secondary">Current Date/Time:</label>
+                                <div class="col-md-8">
+                                  <input type="text" class="form-control" placeholder="Current Date/Time" value="2023-05-25 12:00">
+                                </div>
+                              </div>
+                            </div>
+                            <!--------------------------------------------------------->
+                            <div class="col-md-6">
+                              <h5 class="col-md-11 card-title nav-tabs-bordered">Industrial System Model</h5>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">DBMS Product:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="DBMS Product" value="dbms product">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">Version:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Version" value="v1.0">
+                                </div>
+                              </div>
+                              <div class="row mt-3">                                
+                                <label class="col-md-4 col-form-label text-secondary">Access URL:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Access URL" value="https://acceess.url.com">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">Schema Name:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Schema Name" value="Schema name">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">Checksum:</label>
+                                <div class="col-md-7">
+                                  <textarea class="form-control" placeholder="Checksum" style="height: 100px;">checksum content</textarea>
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">Creation Date/Time:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Creation Date/Time" value="2023-05-25 12:00">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">Last Modified Date/Time:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Last Modified Date/Time" value="2023-05-25 12:00">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">Last Viewed Date/Time:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Last Viewed Date/Time" value="2023-05-25 12:00">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">Location for Generated Reports:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Location for Generated Reports" value="location for generated reports">
+                                </div>
+                              </div>
+                              <div class="row mt-3">
+                                <label class="col-md-4 col-form-label text-secondary">Location for Generated Exports:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Location for Generated Exports" value="location for generated exports">
+                                </div>
+                              </div>
+                              <div class="row mt-3">                                  
+                                <label class="col-md-4 col-form-label text-secondary">Location for Component Documentation:</label>
+                                <div class="col-md-7">
+                                  <input type="text" class="form-control" placeholder="Location for Component Documentation" value="location for component documentation">
+                                </div>
+                              </div>
+                            </div>
+                          </form><!-- End System Form -->
+
+                        </div>
+                      </div><!-- End Right Overview -->
+
+                      <!-- Buttons Section -->
+                      <div class="col-xxl-12 col-lg-12 col-md-12">
+                        <div class="card">
+                          <div class="card-body buttons_section">
+                            <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
+                            <button type="button" class="btn btn-outline-primary">Commit</button>
+                          </div>
+                        </div>
+                      </div><!-- End Buttons Section -->
+                    </div><!-- End Main Content -->
+                  </div>
+                  <!-- // End System Tab Content -->
+                </div><!-- End Bordered Tabs -->
+              </div>
+            </div>
+          </div><!-- End Reports -->
+        </div>
+      </div><!-- End Left side columns -->
+    </div>
+    
+  </section>
+{% endblock %}

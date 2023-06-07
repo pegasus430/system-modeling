@@ -66,90 +66,110 @@ def connections(request):
 
 def definitions(request):
     page = 'definitions'
+    sidebar_title = 'system_parameters'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title,
     }
     
     return render(request, 'definitions_system_parameters.html', context=context)
 
 def definitions_system_users(request):
     page = 'definitions'
+    sidebar_title = 'system_users'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title,
     }
     
     return render(request, 'definitions_system_users.html', context=context)
 
 def definitions_equipment_types(request):
     page = 'definitions'
+    sidebar_title = 'equipment_types'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title
     }
     
     return render(request, 'definitions_equipment_types.html', context=context)
 
 def definitions_equipment_properties(request):
     page = 'definitions'
+    sidebar_title = 'equipment_properties'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title
     }
     
     return render(request, 'definitions_equipment_properties.html', context=context)
 
 def definitions_equipment_resources(request):
     page = 'definitions'
+    sidebar_title = 'equipment_resources'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title
     }
     
     return render(request, 'definitions_equipment_resources.html', context=context)
 
 def definitions_equipment_interfaces(request):
     page = 'definitions'
+    sidebar_title = 'equipment_interfaces'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title
     }
     
     return render(request, 'definitions_equipment_interfaces.html', context=context)
 
 def definitions_equipment_interface_classes(request):
     page = 'definitions'
+    sidebar_title = 'equipment_interface_classes'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title,
     }
     
     return render(request, 'definitions_equipment_interface_classes.html', context=context)
 
 def definitions_connection_types(request):
     page = 'definitions'
+    sidebar_title = 'connection_types'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title,
     }
     
     return render(request, 'definitions_connection_types.html', context=context)
 
 def definitions_property_data_types(request):
     page = 'definitions'
+    sidebar_title = 'property_data_types'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title
     }
     
     return render(request, 'definitions_property_data_types.html', context=context)
 
 def definitions_possible_equipment_connection_states(request):
     page = 'definitions'
+    sidebar_title = 'possible_equipment_connection_states'
     context = {
         'title': 'Definitions',
         'page': page,
+        'sidebar_title': sidebar_title
     }
     
     return render(request, 'definitions_possible_equipment_connection_states.html', context=context)

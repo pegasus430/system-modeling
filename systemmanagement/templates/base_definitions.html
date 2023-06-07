@@ -37,61 +37,61 @@
                         <div class="card info-card left_state_menu border-gray">
                           <ul class="sidebar-nav" id="sidebar-nav">
                             <li class="nav-item">
-                              <a class="nav-link" href="{% url 'definitions' %}">
+                              <a class="nav-link {% if sidebar_title == 'system_parameters' %} {% else %} collapsed {% endif %}" href="{% url 'definitions' %}">
                                 <i class="bi bi-wallet"></i>
                                 <span>System Parameters</span>
                               </a>
                             </li><!-- End System Parameters Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_system_users' %}">
+                              <a class="nav-link {% if sidebar_title == 'system_users' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_system_users' %}">
                                 <i class="bi bi-wallet"></i>
                                 <span>System Users</span>
                               </a>
                             </li><!-- End System Users Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_equipment_types' %}">
+                              <a class="nav-link {% if sidebar_title == 'equipment_types' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_equipment_types' %}">
                                 <i class="bi bi-wallet"></i>
                                 <span>Equipment Types</span>
                               </a>
                             </li><!-- End Equipment Types Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_equipment_properties' %}">
+                              <a class="nav-link {% if sidebar_title == 'equipment_properties' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_equipment_properties' %}">
                                 <i class="bi bi-truck"></i>
                                 <span>Equipment Properties</span>
                               </a>
                             </li><!-- End Equipment Properties Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_equipment_resources' %}">
+                              <a class="nav-link {% if sidebar_title == 'equipment_resources' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_equipment_resources' %}">
                                 <i class="bi bi-display"></i>
                                 <span>Equipment Resources</span>
                               </a>
                             </li><!-- End Equipmenmt Resources Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_equipment_interfaces' %}">
+                              <a class="nav-link {% if sidebar_title == 'equipment_interfaces' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_equipment_interfaces' %}">
                                 <i class="bi bi-display"></i>
                                 <span>Equipment Interfaces</span>
                               </a>
                             </li><!-- End Equipmenmt Interfaces Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_equipment_interface_classes' %}">
+                              <a class="nav-link {% if sidebar_title == 'equipment_interface_classes' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_equipment_interface_classes' %}">
                                 <i class="bi bi-display"></i>
                                 <span>Equipment Interface Classes</span>
                               </a>
                             </li><!-- End Equipmenmt Interface Classes Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_connection_types' %}">
+                              <a class="nav-link {% if sidebar_title == 'connection_types' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_connection_types' %}">
                                 <i class="bi bi-display"></i>
                                 <span>Connection Types</span>
                               </a>
                             </li><!-- End Connection Types Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_property_data_types' %}">
+                              <a class="nav-link {% if sidebar_title == 'property_data_types' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_property_data_types' %}">
                                 <i class="bi bi-display"></i>
                                 <span>Property Data Types</span>
                               </a>
                             </li><!-- End Property Data Types Nav -->
                             <li class="nav-item">
-                              <a class="nav-link collapsed" href="{% url 'definitions_possible_equipment_connection_states' %}">
+                              <a class="nav-link {% if sidebar_title == 'possible_equipment_connection_states' %} {% else %} collapsed {% endif %}" href="{% url 'definitions_possible_equipment_connection_states' %}">
                                 <i class="bi bi-display"></i>
                                 <span>Possible Equipment/Connection States</span>
                               </a>

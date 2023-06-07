@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section connection">
+    <div class="row">
+
+      <!-- Left side columns -->
+      <div class="col-lg-12">
+        <div class="row">
+          <!-- Reports -->
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                
+                <div class="row">
+                  <div class="input-group mb-2 mt-3 p-0">
+                    <span class="input-group-text">
+                      <i class="bi bi-arrow-left-circle mr-3"></i>
+                      <i class="bi bi-arrow-right-circle mr-3"></i>
+                      <i class="bi bi-arrow-up-circle mr-3"></i>
+                      <i class="bi bi-arrow-down-circle"></i>
+                    </span>
+                    <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="Full identifier (description)">
+                  </div>
+                </div>
+
+                <div class="tab-content pt-2">
+
+                  <!-- Start Connection Tab Content -->
+                  <div class="tab-pane fade show active">
+                    <!-- Main Content -->
+                    <div class="row">
+                      <!-- Left Object Hierarchy -->
+                      <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
+                        <div class="card info-card left_object_hierarchy border-gray">
+                          <div class="treeview js-treeview mt-3">
+                            <ul>
+                              <li>
+                                <div class="treeview__level" data-level="&#x26AC;">
+                                  <span class="level-title">Connection A</span>
+                                  <div class="treeview__level-btns">
+                                    <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                    <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                    <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                    <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                  </div>
+                                </div>
+                                <ul>
+                                  <li>
+                                    <div class="treeview__level" data-level="&#x26AC;">
+                                      <span class="level-title">Connection B</span>
+                                      <div class="treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                          <li>
+                                            <div class="treeview__level" data-level="&#x26AC;">
+                                              <span class="level-title">Connection D</span>
+                                              <div class="treeview__level-btns">
+                                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                              </div>
+                                            </div>
+                                            <ul>
+                                            </ul>
+                                          </li>
+                                        </ul>
+                                      </li>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                        </ul>
+                                      </li>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                        </ul>
+                                      </li>
+                                    </ul>
+                                  </li>
+                                  <li>
+                                    <div class="treeview__level" data-level="&#x26AC;">
+                                      <span class="level-title">Connection B</span>
+                                      <div class="treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                    </ul>
+                                  </li>
+                                </ul>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                          
+                        <template id="levelMarkup">
+                          <li>
+                            <div class="treeview__level" data-level="&#x26AC;">
+                              <span class="level-title">Connection X</span>
+                              <div class="treeview__level-btns">
+                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                              </div>
+                            </div>
+                            <ul>
+                            </ul>
+                          </li>
+                        </template>
+                      </div><!-- End Left Object Hierarchy -->
+                      
+                      <!-- Middle Overview -->
+                      <div class="col-xxl-6 col-lg-6 col-md-8 p-0">
+                        <div class="card card-body right_overview border-gray">
+                          <!-- Connections Form -->
+                          <form class="row g-3">
+                            <h5 class="card-title nav-tabs-bordered">Connection Detail</h5>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Full Identifier:</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Full Identifier" value="Connection full identifier">
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Identifier:</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="Identifier" value="Connection identifier">
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Description:</label>
+                              <div class="col-md-8">
+                                <textarea class="form-control" placeholder="Description" style="height: 100px;">Connection description</textarea>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Parent Path:</label>
+                              <div class="col-md-8">
+                                <select class="form-select">
+                                  <option selected>All connections</option>
+                                  <option value="1">Connection1</option>
+                                  <option value="2">Connection2</option>
+                                  <option value="3">Connection3</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Start Equipment:</label>
+                              <div class="col-md-8">
+                                <select class="form-select">
+                                  <option selected>All equipments</option>
+                                  <option value="1">Equipment1</option>
+                                  <option value="2">Equipment2</option>
+                                  <option value="3">Equipment3</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">End Equipment:</label>
+                              <div class="col-md-8">
+                                <select class="form-select">
+                                  <option selected>All equipments</option>
+                                  <option value="1">Equipment1</option>
+                                  <option value="2">Equipment2</option>
+                                  <option value="3">Equipment3</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Type:</label>
+                              <div class="col-md-8">
+                                <select class="form-select">
+                                  <option selected>All connection types</option>
+                                  <option value="1">Connection type1</option>
+                                  <option value="2">Connection type2</option>
+                                  <option value="3">Connection type3</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Length:</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="0" value="1">
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Comment:</label>
+                              <div class="col-md-8">
+                                <textarea class="form-control" placeholder="Comment" style="height: 100px;">Connection comment</textarea>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                  <input class="form-check-input form-control" type="checkbox" checked>
+                                  <label class="form-check-label">Is Approved?</label>
+                                </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                <button type="button" class="btn btn-outline-success">Show Connection Type</button>
+                              </div>
+                            </div>
+                          </form><!-- End Connections Form -->
+
+                          <hr/>
+
+                          <div class="row">
+                            <div class="col-md-12">
+                              <!-- Start Connection Details table -->
+                              <h5 class="card-title">Connection Details</h5>
+                              <table class="display nowrap custom_datatable">
+                                <thead>
+                                  <tr>
+                                    <th colspan="4" class="text-center bl br bt">Start Interface Details</th>
+                                    <th colspan="2" class="text-center br bt">Connection Details</th>
+                                    <th colspan="4" class="text-center br bt">End Interface Details</th>
+                                  </tr>
+                                  <tr>
+                                    <th class="bl">Identifier</th>
+                                    <th>Description</th>
+                                    <th>Class</th>
+                                    <th class="br">Used</th>
+                                    <th>Full Identifier</th>
+                                    <th class="br">Description</th>
+                                    <th>Identifier</th>
+                                    <th>Description</th>
+                                    <th>Class</th>
+                                    <th class="br">Used</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td class="bl bb">identifier1</td>
+                                    <td class="bb">description1</td>
+                                    <td class="bb">class1</td>
+                                    <td class="br bb">true</td>
+                                    <td class="bb">full identifier1</td>
+                                    <td class="br bb">description1</td>
+                                    <td class="bb">identifier1</td>
+                                    <td class="bb">description1</td>
+                                    <td class="bb">class1</td>
+                                    <td class="br bb">true</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="bl bb">identifier2</td>
+                                    <td class="bb">description2</td>
+                                    <td class="bb">class2</td>
+                                    <td class="br bb">true</td>
+                                    <td class="bb">full identifier2</td>
+                                    <td class="br bb">description2</td>
+                                    <td class="bb">identifier2</td>
+                                    <td class="bb">description2</td>
+                                    <td class="bb">class2</td>
+                                    <td class="br bb">true</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="bl bb">identifier3</td>
+                                    <td class="bb">description3</td>
+                                    <td class="bb">class3</td>
+                                    <td class="br bb">true</td>
+                                    <td class="bb">full identifier3</td>
+                                    <td class="br bb">description3</td>
+                                    <td class="bb">identifier3</td>
+                                    <td class="bb">description3</td>
+                                    <td class="bb">class3</td>
+                                    <td class="br bb">true</td>
+                                  </tr>
+                                </tbody>
+                              </table><!-- End Connection Details table -->
+                            </div>
+                          </div>
+                        </div>
+                      </div><!-- End Middle Overview -->
+
+                      <!-- Right Object Hierarchy -->
+                      <div class="col-xxl-3 col-lg-3 col-md-4 p-0">
+                        <div class="card info-card right_object_hierarchy border-gray">
+                          <h5 class="card-title pl-3 pb-0">Child Connections</h5>
+                          <div class="treeview js-treeview mt-3">
+                            <ul>
+                              <li>
+                                <div class="treeview__level" data-level="&#x26AC;">
+                                  <span class="level-title">Connection A</span>
+                                  <div class="treeview__level-btns">
+                                    <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                    <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                    <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                    <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                  </div>
+                                </div>
+                                <ul>
+                                  <li>
+                                    <div class="treeview__level" data-level="&#x26AC;">
+                                      <span class="level-title">Connection B</span>
+                                      <div class="treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                          <li>
+                                            <div class="treeview__level" data-level="&#x26AC;">
+                                              <span class="level-title">Connection D</span>
+                                              <div class="treeview__level-btns">
+                                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                              </div>
+                                            </div>
+                                            <ul>
+                                            </ul>
+                                          </li>
+                                        </ul>
+                                      </li>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                        </ul>
+                                      </li>
+                                      <li>
+                                        <div class="treeview__level" data-level="&#x26AC;">
+                                          <span class="level-title">Connection C</span>
+                                          <div class="treeview__level-btns">
+                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                          </div>
+                                        </div>
+                                        <ul>
+                                        </ul>
+                                      </li>
+                                    </ul>
+                                  </li>
+                                  <li>
+                                    <div class="treeview__level" data-level="&#x26AC;">
+                                      <span class="level-title">Connection B</span>
+                                      <div class="treeview__level-btns">
+                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                    </ul>
+                                  </li>
+                                </ul>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                          
+                        <template id="levelMarkup">
+                          <li>
+                            <div class="treeview__level" data-level="&#x26AC;">
+                              <span class="level-title">Connection X</span>
+                              <div class="treeview__level-btns">
+                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
+                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
+                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
+                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                              </div>
+                            </div>
+                            <ul>
+                            </ul>
+                          </li>
+                        </template>
+                      </div><!-- End Right Object Hierarchy -->
+
+                      <!-- Buttons Section -->
+                      <div class="col-xxl-12 col-lg-12 col-md-12">
+                        <div class="card">
+                          <div class="card-body buttons_section">
+                            <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
+                            <button type="button" class="btn btn-outline-primary">Commit</button>
+                          </div>
+                        </div>
+                      </div><!-- End Buttons Section -->
+                    </div><!-- End Main Content -->
+                  </div>
+                  <!-- // End Connection Tab Content -->
+                </div><!-- End Bordered Tabs -->
+              </div>
+            </div>
+          </div><!-- End Reports -->
+        </div>
+      </div><!-- End Left side columns -->
+    </div>
+    
+  </section>
+{% endblock %}

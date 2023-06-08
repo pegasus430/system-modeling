@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block content %}
+
+{{all_equipment | json_script:'all_equipment'}}
+
 <section class="section equipment">
     <div class="row">
 
@@ -32,101 +35,12 @@
                     <!-- Main Content -->
                     <div class="row">
                       <!-- Left Object Hierarchy -->
+                      
                       <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
                         <div class="card info-card left_object_hierarchy border-gray">
-                          <div class="treeview js-treeview mt-3">
-                            <ul>
-                              <li>
-                                <div class="treeview__level" data-level="&#x26AC;">
-                                  <span class="level-title">Equipment A</span>
-                                  <div class="treeview__level-btns">
-                                    <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                    <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                    <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                    <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                  </div>
-                                </div>
-                                <ul>
-                                  <li>
-                                    <div class="treeview__level" data-level="&#x26AC;">
-                                      <span class="level-title">Equipment B</span>
-                                      <div class="treeview__level-btns">
-                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                      </div>
-                                    </div>
-                                    <ul>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                          <li>
-                                            <div class="treeview__level" data-level="&#x26AC;">
-                                              <span class="level-title">Equipment D</span>
-                                              <div class="treeview__level-btns">
-                                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                              </div>
-                                            </div>
-                                            <ul>
-                                            </ul>
-                                          </li>
-                                        </ul>
-                                      </li>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                        </ul>
-                                      </li>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                        </ul>
-                                      </li>
-                                    </ul>
-                                  </li>
-                                  <li>
-                                    <div class="treeview__level" data-level="&#x26AC;">
-                                      <span class="level-title">Equipment B</span>
-                                      <div class="treeview__level-btns">
-                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                      </div>
-                                    </div>
-                                    <ul>
-                                    </ul>
-                                  </li>
-                                </ul>
-                              </li>
+                          <div class="treeview js-treeview mt-3" >
+                            <ul id="all_equipment_tree">
+                             
                             </ul>
                           </div>
                         </div>
@@ -299,97 +213,7 @@
                           <h5 class="card-title pl-3 pb-0">Child Equipments</h5>
                           <div class="treeview js-treeview mt-3">
                             <ul>
-                              <li>
-                                <div class="treeview__level" data-level="&#x26AC;">
-                                  <span class="level-title">Equipment A</span>
-                                  <div class="treeview__level-btns">
-                                    <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                    <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                    <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                    <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                  </div>
-                                </div>
-                                <ul>
-                                  <li>
-                                    <div class="treeview__level" data-level="&#x26AC;">
-                                      <span class="level-title">Equipment B</span>
-                                      <div class="treeview__level-btns">
-                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                      </div>
-                                    </div>
-                                    <ul>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                          <li>
-                                            <div class="treeview__level" data-level="&#x26AC;">
-                                              <span class="level-title">Equipment D</span>
-                                              <div class="treeview__level-btns">
-                                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                              </div>
-                                            </div>
-                                            <ul>
-                                            </ul>
-                                          </li>
-                                        </ul>
-                                      </li>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                        </ul>
-                                      </li>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                        </ul>
-                                      </li>
-                                    </ul>
-                                  </li>
-                                  <li>
-                                    <div class="treeview__level" data-level="&#x26AC;">
-                                      <span class="level-title">Equipment B</span>
-                                      <div class="treeview__level-btns">
-                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                      </div>
-                                    </div>
-                                    <ul>
-                                    </ul>
-                                  </li>
-                                </ul>
-                              </li>
+                              
                             </ul>
                           </div>
                         </div>
@@ -432,4 +256,51 @@
     </div>
     
   </section>
+  <script type="text/javascript">
+    allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+    
+    function createTree(data) {
+      const nodeWithParent = []
+
+      //Find the parent for each element
+      data.forEach(element => {
+        const parent = element.equipment_path.includes('.')? element.equipment_path.substr(0, element.equipment_path.lastIndexOf('.')):null
+        nodeWithParent.push({...element, parent})
+      });
+
+      //Recursive function to create HTML out of node
+      function getNodeHtml(n) {
+        const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
+        let html = '<li> \
+                      <div class="treeview__level" data-level="&#x26AC;"> \
+                          <span class="level-title">'+ n.equipment_full_identifier + '(' + n.equipment_description + ')' +'</span> \
+                          <div class="treeview__level-btns"> \
+                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div> \
+                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div> \
+                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div> \
+                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div> \
+                          </div> \
+                        </div>'
+        if(children.length>0) {
+          html += '<ul>' 
+            + children.map( getNodeHtml).join('')
+            + '</ul>'
+        }
+        html += '</li>'
+        return html
+      }
+
+      // Get all root nodes (without parent)
+      const root = nodeWithParent.filter(d => d.parent === null)
+
+      return root.map(getNodeHtml).join('')
+    }
+
+    const html = createTree(allEquipment)
+    document.getElementById('all_equipment_tree').innerHTML = html
+
+    
+
+  </script>
 {% endblock %}
+

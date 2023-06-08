@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from .models import AllEquipment
+from django.db.models.functions import JSONObject
 
 # Create your views here.
 def system(request):
@@ -48,9 +50,11 @@ def system_state(request):
 
 def equipment(request):
     page = 'equipment'
+    all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
     context = {
         'title': 'Equipment',
         'page': page,
+        'all_equipment': all_equipment,
     }
     
     return render(request, 'equipment.html', context=context)

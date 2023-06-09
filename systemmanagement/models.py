@@ -1,9 +1,11 @@
 from django.db import models
+from django_ltree_field.fields import LTreeField
 
 # Create your models here.
 class AllEquipment(models.Model):
     equipment_id = models.BigIntegerField(primary_key=True)
-    equipment_path = models.CharField(max_length=255)
+    # equipment_path = models.CharField(max_length=255)
+    equipment_path = LTreeField(unique=True)
     equipment_tree_level = models.IntegerField()
     equipment_sort_identifier = models.TextField()
     equipment_full_identifier = models.TextField()

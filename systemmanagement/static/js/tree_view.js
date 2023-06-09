@@ -1,4 +1,6 @@
 $(function() {
+
+  let gChildEquipments
   let treeview = {
     resetBtnToggle: function() {
       $(".js-treeview")
@@ -109,16 +111,14 @@ $(function() {
     return root.map(getNodeHtml).join('')
   }
 
-  // Selected Level
-  $(".js-treeview").on("click", ".level-title", function() {
+  // Selected Level for left tree
+  $(".left_object_hierarchy .js-treeview").on("click", ".level-title", function() {
     let isSelected = $(this).closest("[data-level]").hasClass("selected");
     !isSelected && $(this).closest(".js-treeview").find("[data-level]").removeClass("selected");
     $(this).closest("[data-level]").toggleClass("selected");
-
-    chileEquipments = []
     
     selectedEquipmentPath = $(this).closest(".treeview__level").attr("data-equipmentpath")
-    console.log("selectedEquipmentPath ", selectedEquipmentPath)
+    
     $.ajax({
       type: "GET",
       url: '/getChildElements',
@@ -127,12 +127,20 @@ $(function() {
       },
       success: function (data){
         jsonData = JSON.parse(data)
-        const html = createChildElementTree(jsonData)
-        console.log(html)
+        childEquipments = jsonData['child_equipments']
+        gChildEquipments = childEquipments
+        const html = createChildElementTree(childEquipments)
         document.getElementById('child_equipment_tree').innerHTML = html
       }
     })
-
-    
   }); 
+
+  //selected equipment in right tree
+  $(".right_object_hierarchy .js-treeview").on("click", ".level-title", function() {
+    
+    selectedEquipmentPath = $(this).closest(".treeview__level").attr("data-equipmentpath")
+    selectedEquipment = gChildEquipments.filter(d=> d.equipment_path === selectedEquipmentPath)
+    console.log(selectedEquipment)
+    
+    }); 
 });

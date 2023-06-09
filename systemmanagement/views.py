@@ -72,8 +72,12 @@ def get_child_elements(request):
         )
 
         child_equipments_list = list(child_equipments_db.values())
+
+        data = json.dumps({
+            'child_equipments': child_equipments_list,
+            })
         
-        return HttpResponse(json.dumps(child_equipments_list))
+        return HttpResponse(data)
 
 def connections(request):
     page = 'connections'

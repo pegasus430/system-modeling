@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment
+from .models import AllEquipment , EquipmentType
 import json
 
 # Create your views here.
@@ -52,10 +52,12 @@ def system_state(request):
 def equipment(request):
     page = 'equipment'
     all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
+    all_equipment_types = list(EquipmentType.objects.values())
     context = {
         'title': 'Equipment',
         'page': page,
         'all_equipment': all_equipment,
+        'all_equipment_types': all_equipment_types
     }
     
     return render(request, 'equipment.html', context=context)

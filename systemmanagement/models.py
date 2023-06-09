@@ -21,17 +21,17 @@ class AllEquipment(models.Model):
         db_table = 'all_equipment'
 
 class EquipmentType(models.Model):
-    equipment_type_id = models.BigIntegerField(primary_key=True)
-    equipment_type_path = LTreeField(unique=True)
-    equipment_type_label = models.CharField(max_length=255)
-    equipment_type_model = models.TextField()
-    equipment_type_modifier = models.TextField()
-    equipment_type_manufacturer = models.TextField()
-    equipment_type_description = models.TextField()
-    equipment_type_comment = models.TextField()
-    equipment_type_is_approved = models.BooleanField()
-    equipment_type_modified_at = models.DateTimeField()
-    equipment_type_origin_path = LTreeField()
+    id = models.BigIntegerField(primary_key=True)
+    path = LTreeField(unique=True)
+    label = models.CharField(max_length=255)
+    model = models.TextField()
+    modifier = models.TextField()
+    manufacturer = models.TextField()
+    description = models.TextField()
+    comment = models.TextField()
+    is_approved = models.BooleanField()
+    modified_at = models.DateTimeField()
+    origin_path = LTreeField()
     class Meta:
         managed = False
         db_table = 'equipment_type'

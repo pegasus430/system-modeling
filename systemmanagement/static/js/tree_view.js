@@ -137,10 +137,63 @@ $(function() {
 
   //selected equipment in right tree
   $(".right_object_hierarchy .js-treeview").on("click", ".level-title", function() {
-    
+    $("#location_path").find('option').remove()
+    $("#parent_path").find('option').remove()
+    $('#all_equipment_types_select').find('option').remove()
+
     selectedEquipmentPath = $(this).closest(".treeview__level").attr("data-equipmentpath")
     selectedEquipment = gChildEquipments.filter(d=> d.equipment_path === selectedEquipmentPath)
-    console.log(selectedEquipment)
+
+    allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
     
+    allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
+
+    $('#equipment_id').innerHTML = selectedEquipment[0]['equipment_id']
+    $('#equipment_full_identifier').val(selectedEquipment[0]['equipment_full_identifier'])
+    $('#equipment_description').val(selectedEquipment[0]['equipment_description'])
+    $('#equipment_comment').val(selectedEquipment[0]['equipment_comment'])
+
+    if(selectedEquipment[0]['equipment_is_approved']){
+      $('#equipment_is_approved').attr("checked", "checked")
+      $('#equipment_is_approved').checked = true
+    }
+
+    allEquipmentExceptSelectedOne = allEquipment.filter( d => d.equipment_id !== selectedEquipment[0]['equipment_id'])
+
+    // display parent and location path
+    allEquipmentExceptSelectedOne.forEach( element => {
+      element_equipment_path = element.equipment_path.join('.')
+      
+      selected_element_parent_path = selectedEquipment[0]['equipment_path']
+      selected_element_parent_path = selected_element_parent_path.substr(0, selected_element_parent_path.lastIndexOf('.'))
+      
+      var selected = element_equipment_path === selected_element_parent_path ? true : false ;
+      var o = new Option(element.equipment_full_identifier, element.equipment_full_identifier, undefined, selected);
+      $(o).html(element.equipment_full_identifier);
+      $("#parent_path").append(o);
+
+      location_path = selectedEquipment[0]['equipment_location_path']
+      var locationSelected = element_equipment_path === location_path ? true : false
+      var p = new Option(element.equipment_full_identifier, element.equipment_full_identifier, undefined, locationSelected);
+      
+      $(p).html(element.equipment_full_identifier);
+      $("#location_path").append(p);
+
+    })
+
+    // display type drop down 
+    typeLabelDescription = ''
+    allEquipmentTypes.forEach( element => {
+      var selected = element.id === selectedEquipment[0]['type_id'] ? true : false ;
+      if(element.id === selectedEquipment[0]['type_id'] ){
+          typeLabelDescription = element.description + '('+ (element.is_approved ? 'approved' : 'not approved') +')'
+      }
+      var t = new Option(element.label, element.label, undefined, selected);
+      $(t).html(element.label);
+      $("#all_equipment_types_select").append(t);
+    })
+
+    $('#type_label').val(typeLabelDescription)
+
     }); 
 });

@@ -4,6 +4,7 @@
 {% block content %}
 
 {{all_equipment | json_script:'all_equipment'}}
+{{all_equipment_types | json_script:'all_equipment_types'}}
 
 <section class="section equipment">
     <div class="row">
@@ -67,74 +68,72 @@
                         <div class="card card-body right_overview border-gray">
                           <!-- Equipments Form -->
                           <form class="row g-3">
+                            
                             <h5 class="card-title nav-tabs-bordered">Equipment Detail</h5>
+                            <div class="hidden" id="equipment_id"></div>
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Full Name:</label>
                               <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder="Full Name" value="Equipment name">
+                                <input type="text" class="form-control" placeholder="Equipment name" value="" id="equipment_full_identifier">
                               </div>
                             </div>
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Description:</label>
                               <div class="col-md-8">
-                                <textarea class="form-control" placeholder="Description" style="height: 100px;">Equipment description</textarea>
+                                <textarea class="form-control" placeholder="Description" style="height: 100px;" id="equipment_description"></textarea>
                               </div>
                             </div>
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Parent Path:</label>
                               <div class="col-md-8">
-                                <select class="form-select">
-                                  <option selected>All equipments</option>
-                                  <option value="1">Equipment1</option>
-                                  <option value="2">Equipment2</option>
-                                  <option value="3">Equipment3</option>
+                                <select class="form-select" id="parent_path">
+                                  
                                 </select>
                               </div>
                             </div>
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Location Path:</label>
                               <div class="col-md-8">
-                                <select class="form-select">
-                                  <option selected>All equipments</option>
-                                  <option value="1">Equipment1</option>
-                                  <option value="2">Equipment2</option>
-                                  <option value="3">Equipment3</option>
+                                <select class="form-select" id="location_path">
+                                  
                                 </select>
                               </div>
                             </div>
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Type:</label>
                               <div class="col-md-8">
-                                <select class="form-select">
-                                  <option selected>All equipment types</option>
-                                  <option value="1">Equipment type1</option>
-                                  <option value="2">Equipment type2</option>
-                                  <option value="3">Equipment type3</option>
+                                <select class="form-select" id="all_equipment_types_select">
+                                  
                                 </select>
                               </div>
                             </div>
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Type Label:</label>
                               <div class="col-md-8">
-                                <textarea class="form-control" placeholder="Type Label" style="height: 100px;">Type description</textarea>
+                                <textarea class="form-control" placeholder="Type Label Description" style="height: 100px;" id="type_label"></textarea>
                               </div>
                             </div>
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Comment:</label>
                               <div class="col-md-8">
-                                <textarea class="form-control" placeholder="Comment" style="height: 100px;">Equipment comment</textarea>
+                                <textarea class="form-control" placeholder="Comment" style="height: 100px;" id="equipment_comment"></textarea>
                               </div>
                             </div>
                             <div class="row mt-3">
                               <div class="col-md-6">
                                 <div class="form-check form-switch">
-                                  <input class="form-check-input form-control" type="checkbox" checked>
+                                  <input class="form-check-input form-control" type="checkbox" id="equipment_is_approved">
                                   <label class="form-check-label">Is Approved?</label>
                                 </div>
                               </div>
 
                               <div class="col-md-6">
-                                <button type="button" class="btn btn-outline-success">Show Equipment Type</button>
+                                <button type="button" class="btn btn-outline-success">
+                                  <a class="nav-link" href="{% url 'definitions_equipment_types' %}">
+                                    Show Equipment Type
+                                  </a>
+                                  
+                                </button>
                               </div>
                             </div>
                           </form><!-- End Equipments Form -->
@@ -259,6 +258,8 @@
   <script type="text/javascript">
     
     allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+    allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
+    
     
     function createTree(data) {
       const nodeWithParent = []
@@ -305,8 +306,6 @@
 
     const html = createTree(allEquipment)
     document.getElementById('all_equipment_tree').innerHTML = html
-
-    
 
   </script>
 {% endblock %}

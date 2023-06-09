@@ -212,7 +212,7 @@
                         <div class="card info-card right_object_hierarchy border-gray">
                           <h5 class="card-title pl-3 pb-0">Child Equipments</h5>
                           <div class="treeview js-treeview mt-3">
-                            <ul>
+                            <ul id="child_equipment_tree">
                               
                             </ul>
                           </div>
@@ -257,10 +257,17 @@
     
   </section>
   <script type="text/javascript">
+    
     allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
     
     function createTree(data) {
       const nodeWithParent = []
+      
+      //make the equipment_path as string from list
+      data.forEach(element => {
+        path = element.equipment_path.join('.')
+        element.equipment_path = path        
+      })
 
       //Find the parent for each element
       data.forEach(element => {
@@ -272,7 +279,7 @@
       function getNodeHtml(n) {
         const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
         let html = '<li> \
-                      <div class="treeview__level" data-level="&#x26AC;"> \
+                      <div class="treeview__level" data-level="&#x26AC;" data-equipmentpath="'+ n.equipment_path +'"> \
                           <span class="level-title">'+ n.equipment_full_identifier + '(' + n.equipment_description + ')' +'</span> \
                           <div class="treeview__level-btns"> \
                             <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div> \

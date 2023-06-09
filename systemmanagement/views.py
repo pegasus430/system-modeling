@@ -1,6 +1,7 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 from .models import AllEquipment
-from django.db.models.functions import JSONObject
+import json
 
 # Create your views here.
 def system(request):
@@ -58,6 +59,21 @@ def equipment(request):
     }
     
     return render(request, 'equipment.html', context=context)
+
+def get_child_elements(request):
+    if request.method == 'GET':
+        selected_equipment_path = request.GET['selectedEquipmentPath']
+
+        child_equipments_db = AllEquipment.objects.extra(
+            where=[
+                "equipment_path <@ '"+ selected_equipment_path + "'"
+            ],
+            order_by=['equipment_sort_identifier']
+        )
+
+        child_equipments_list = list(child_equipments_db.values())
+        
+        return HttpResponse(json.dumps(child_equipments_list))
 
 def connections(request):
     page = 'connections'

@@ -19,5 +19,5 @@ urlpatterns = [
     path('definitions/connection_types', views.definitions_connection_types, name='definitions_connection_types'),
     path('definitions/property_data_types', views.definitions_property_data_types, name='definitions_property_data_types'),
     path('definitions/possible_equipment_connection_states', views.definitions_possible_equipment_connection_states, name='definitions_possible_equipment_connection_states'),
-    
+    path(r'getChildElements', views.get_child_elements, name="get_child_elements"),
 ]

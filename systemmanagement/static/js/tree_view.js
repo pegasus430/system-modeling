@@ -65,10 +65,74 @@ $(function() {
     }
   }); 
 
+  function createChildElementTree(data) {
+    const nodeWithParent = []
+    
+    // make the equipment_path as string from list
+    data.forEach(element => {
+      path = element.equipment_path.join('.')
+      element.equipment_path = path        
+    })
+
+    //Find the parent for each element
+    data.forEach(element => {
+      const parent = element.equipment_path.includes('.')? element.equipment_path.substr(0, element.equipment_path.lastIndexOf('.')):null
+      nodeWithParent.push({...element, parent})
+    });
+    
+    //Recursive function to create HTML out of node
+    function getNodeHtml(n) {
+      const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
+      let html = '<li> \
+                    <div class="treeview__level" data-level="&#x26AC;" data-equipmentpath="'+ n.equipment_path +'"> \
+                        <span class="level-title">'+ n.equipment_full_identifier + '(' + n.equipment_description + ')' +'</span> \
+                        <div class="treeview__level-btns"> \
+                          <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div> \
+                          <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div> \
+                          <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div> \
+                          <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div> \
+                        </div> \
+                      </div>'
+      if(children.length>0) {
+        html += '<ul>' 
+          + children.map( getNodeHtml).join('')
+          + '</ul>'
+      }
+      html += '</li>'
+      return html
+    }
+
+    // Get all root nodes (without parent)
+    // const root = nodeWithParent.filter(d => d.parent === null)
+    const root = nodeWithParent.filter(d=> d.parent === nodeWithParent[0].parent ) 
+
+    return root.map(getNodeHtml).join('')
+  }
+
   // Selected Level
   $(".js-treeview").on("click", ".level-title", function() {
     let isSelected = $(this).closest("[data-level]").hasClass("selected");
     !isSelected && $(this).closest(".js-treeview").find("[data-level]").removeClass("selected");
     $(this).closest("[data-level]").toggleClass("selected");
+
+    chileEquipments = []
+    
+    selectedEquipmentPath = $(this).closest(".treeview__level").attr("data-equipmentpath")
+    console.log("selectedEquipmentPath ", selectedEquipmentPath)
+    $.ajax({
+      type: "GET",
+      url: '/getChildElements',
+      data: {
+        selectedEquipmentPath: selectedEquipmentPath
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        const html = createChildElementTree(jsonData)
+        console.log(html)
+        document.getElementById('child_equipment_tree').innerHTML = html
+      }
+    })
+
+    
   }); 
 });

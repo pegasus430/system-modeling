@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType
+from .models import AllEquipment , EquipmentType, EquipmentResource
 import json
 
 # Create your views here.
@@ -79,6 +79,25 @@ def get_child_elements(request):
             'child_equipments': child_equipments_list,
             })
         
+        return HttpResponse(data)
+
+def get_equipmentdetail_tabledata(request):
+    if request.method == 'GET':
+        selectedEquipmentId = request.GET['selectedEquipmentId']
+
+        equipment_resource_db = EquipmentResource.objects.select_related('resource').only(
+            'resource_id', '"resource".modifier', '"resource".description').extra(
+        
+            where=[
+                'equipment_id = ' + selectedEquipmentId
+            ]
+
+        )
+        print(str(equipment_resource_db.query))
+        equipment_resource_list = list(equipment_resource_db.values())
+        data = json.dumps({
+            'resource_details': equipment_resource_list
+        })
         return HttpResponse(data)
 
 def connections(request):

@@ -147,8 +147,8 @@ $(function() {
     allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
     
     allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
-
-    $('#equipment_id').innerHTML = selectedEquipment[0]['equipment_id']
+    selectedEquipmentId = selectedEquipment[0]['equipment_id']
+    $('#equipment_id').innerHTML = selectedEquipmentId
     $('#equipment_full_identifier').val(selectedEquipment[0]['equipment_full_identifier'])
     $('#equipment_description').val(selectedEquipment[0]['equipment_description'])
     $('#equipment_comment').val(selectedEquipment[0]['equipment_comment'])
@@ -192,8 +192,23 @@ $(function() {
       $(t).html(element.label);
       $("#all_equipment_types_select").append(t);
     })
-
     $('#type_label').val(typeLabelDescription)
 
+    // display Equipment details tables
+    $.ajax({
+      type: "GET",
+      url: '/getEquipmentDetailsTableData',
+      data: {
+        selectedEquipmentId: selectedEquipmentId
+      },
+      success: function (data){
+        console.log('Resource Details ' ,data)
+        // jsonData = JSON.parse(data)
+        // childEquipments = jsonData['child_equipments']
+        // gChildEquipments = childEquipments
+        // const html = createChildElementTree(childEquipments)
+        // document.getElementById('child_equipment_tree').innerHTML = html
+      }
+    })
     }); 
 });

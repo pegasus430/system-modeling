@@ -48,7 +48,7 @@ class Resource(models.Model):
         managed = False
         db_table = 'resource'
 class EquipmentResource(models.Model):
-    equipment_id = models.BigIntegerField(primary_key=False)
+    equipment_id = models.BigIntegerField()
     equipment_path = LTreeField(unique=True)
     equipment_tree_level = models.IntegerField()
     equipment_sort_identifier = models.TextField()
@@ -63,8 +63,7 @@ class EquipmentResource(models.Model):
     type_resource_id = models.BigIntegerField()
     type_path = models.CharField(max_length=255)
     definition_type_id = models.BigIntegerField()
-    # resource_id = models.BigIntegerField()
-    resource = models.ForeignKey(Resource, on_delete=models.CASCADE , null=True)
+    resource_id = models.BigIntegerField()
     type_resource_comment = models.TextField()
 
     class Meta:

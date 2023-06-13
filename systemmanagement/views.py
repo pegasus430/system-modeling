@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from .models import AllEquipment , EquipmentType, EquipmentResource
+from django.db import connection
+import datetime
 import json
 
 # Create your views here.
@@ -84,20 +86,21 @@ def get_child_elements(request):
 def get_equipmentdetail_tabledata(request):
     if request.method == 'GET':
         selectedEquipmentId = request.GET['selectedEquipmentId']
-
-        equipment_resource_db = EquipmentResource.objects.select_related('resource').only(
-            'resource_id', '"resource".modifier', '"resource".description').extra(
         
-            where=[
-                'equipment_id = ' + selectedEquipmentId
-            ]
+        raw_query = "SELECT  A.resource_id , B.modifier , B.description FROM public.all_equipment_resource as A  \
+            inner join resource B on A.resource_id = B.id \
+            where equipment_id = " + selectedEquipmentId
 
-        )
-        print(str(equipment_resource_db.query))
-        equipment_resource_list = list(equipment_resource_db.values())
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        
+        equipment_resource_list = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
+
         data = json.dumps({
             'resource_details': equipment_resource_list
-        })
+        }, 
+        cls=DateTimeEncoder)
         return HttpResponse(data)
 
 def connections(request):
@@ -218,3 +221,10 @@ def definitions_possible_equipment_connection_states(request):
     }
     
     return render(request, 'definitions_possible_equipment_connection_states.html', context=context)
+
+# Custom JSON encoder to handle datetime objects
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        return super().default(obj)

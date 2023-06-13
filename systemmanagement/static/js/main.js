@@ -5,6 +5,11 @@
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
+// Treeview Initialization
+$(document).ready(function() {
+  $('.treeview-animated').mdbTreeview();
+});
+
 (function() {
   "use strict";
 

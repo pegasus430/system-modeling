@@ -37,32 +37,18 @@
                     <div class="row">
                       <!-- Left Object Hierarchy -->
                       
-                      <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
+                       <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
                         <div class="card info-card left_object_hierarchy border-gray">
-                          <div class="treeview js-treeview mt-3" >
-                            <ul id="all_equipment_tree">
-                             
+                          <div class="treeview-animated w-20 border mx-4 my-4">
+                            <h6 class="pt-3 pl-3">Equipments</h6>
+                            <hr>
+                            <ul class="treeview-animated-list mb-3" id="all_equipment_tree">
+                              
                             </ul>
-                          </div>
+                          </div>  
                         </div>
-                          
-                        <template id="levelMarkup">
-                          <li>
-                            <div class="treeview__level" data-level="&#x26AC;">
-                              <span class="level-title">Equipment X</span>
-                              <div class="treeview__level-btns">
-                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                              </div>
-                            </div>
-                            <ul>
-                            </ul>
-                          </li>
-                        </template>
-                      </div><!-- End Left Object Hierarchy -->
-                      
+                      </div> 
+                      <!-- End Left Object Hierarchy -->
                       <!-- Middle Overview -->
                       <div class="col-xxl-6 col-lg-6 col-md-8 p-0">
                         <div class="card card-body right_overview border-gray">
@@ -143,7 +129,7 @@
                           <div class="row">
                             <div class="col-md-12">
                               <!-- Equipment Details table -->
-                              <h5 class="card-title">Equipment Details</h5>
+                              <h5 class="card-title">Equipment Attributes</h5>
 
                               <table class="display nowrap custom_datatable">
                                 <thead>
@@ -189,8 +175,8 @@
                       <div class="col-xxl-3 col-lg-3 col-md-4 p-0">
                         <div class="card info-card right_object_hierarchy border-gray">
                           <h5 class="card-title pl-3 pb-0">Child Equipments</h5>
-                          <div class="treeview js-treeview mt-3">
-                            <ul id="child_equipment_tree">
+                          <div class="child-treeview treeview-animated mt-3">
+                            <ul class="treeview-animated-list" id="child_equipment_tree">
                               
                             </ul>
                           </div>
@@ -235,6 +221,8 @@
     
   </section>
   <script type="text/javascript">
+
+      
     
     allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
     allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
@@ -257,23 +245,23 @@
 
       //Recursive function to create HTML out of node
       function getNodeHtml(n) {
+        let html = ''
         const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
-        let html = '<li> \
-                      <div class="treeview__level" data-level="&#x26AC;" data-equipmentpath="'+ n.equipment_path +'"> \
-                          <span class="level-title">'+ n.equipment_full_identifier + '(' + n.equipment_description + ')' +'</span> \
-                          <div class="treeview__level-btns"> \
-                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div> \
-                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div> \
-                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div> \
-                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div> \
-                          </div> \
-                        </div>'
-        if(children.length>0) {
-          html += '<ul>' 
+                  
+        if(children.length > 0) {
+          html += '<li class="treeview-animated-items treeview-li"> \
+                      <a class="closed"> \
+                        <i class="fas fa-angle-right"></i> \
+                        <span class="ml-1 treeview-title" data-equipmentpath="'+ n.equipment_path +'">'+ n.equipment_full_identifier + '  (' + n.equipment_description + ')</span> \
+                      </a> \
+                      <ul class="nested">' 
             + children.map( getNodeHtml).join('')
-            + '</ul>'
+            + '</ul></li>'
         }
-        html += '</li>'
+        else{
+          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-equipmentpath="'+ n.equipment_path + '"> \
+          '+n.equipment_full_identifier + '  (' + n.equipment_description +')</li>'
+        }
         return html
       }
 

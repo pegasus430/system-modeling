@@ -1,5 +1,8 @@
 $(function() {
-
+    // Treeview Initialization
+    
+      
+    
   let gChildEquipments
   let treeview = {
     resetBtnToggle: function() {
@@ -84,23 +87,24 @@ $(function() {
     
     //Recursive function to create HTML out of node
     function getNodeHtml(n) {
-      const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
-      let html = '<li> \
-                    <div class="treeview__level" data-level="&#x26AC;" data-equipmentpath="'+ n.equipment_path +'"> \
-                        <span class="level-title">'+ n.equipment_full_identifier + '(' + n.equipment_description + ')' +'</span> \
-                        <div class="treeview__level-btns"> \
-                          <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div> \
-                          <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div> \
-                          <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div> \
-                          <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div> \
-                        </div> \
-                      </div>'
-      if(children.length>0) {
-        html += '<ul>' 
-          + children.map( getNodeHtml).join('')
-          + '</ul>'
-      }
-      html += '</li>'
+      let html = ''
+        const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
+                  
+        if(children.length > 0) {
+          html += '<li class="treeview-animated-items"> \
+                      <a class="closed"> \
+                        <i class="fas fa-angle-right"></i> \
+                        <span class="ml-1" data-equipmentpath="'+ n.equipment_path +'">'+ n.equipment_full_identifier + '  (' + n.equipment_description + ')</span> \
+                      </a> \
+                      <ul class="nested">' 
+            + children.map( getNodeHtml).join('')
+            + '</ul></li>'
+        }
+        else{
+          html += '<li><div class="treeview-animated-element" data-equipmentpath="'+ n.equipment_path + '"> \
+          '+n.equipment_full_identifier + '  (' + n.equipment_description +')</li>'
+        }
+        
       return html
     }
 
@@ -112,12 +116,13 @@ $(function() {
   }
 
   // Selected Level for left tree
-  $(".left_object_hierarchy .js-treeview").on("click", ".level-title", function() {
-    let isSelected = $(this).closest("[data-level]").hasClass("selected");
-    !isSelected && $(this).closest(".js-treeview").find("[data-level]").removeClass("selected");
-    $(this).closest("[data-level]").toggleClass("selected");
+  $(".left_object_hierarchy .treeview-li").on("click", ".treeview-title", function() {
     
-    selectedEquipmentPath = $(this).closest(".treeview__level").attr("data-equipmentpath")
+    $("#location_path").find('option').remove()
+    $("#parent_path").find('option').remove()
+    $('#all_equipment_types_select').find('option').remove()
+
+    selectedEquipmentPath = $(this).attr("data-equipmentpath")
     
     $.ajax({
       type: "GET",
@@ -131,70 +136,64 @@ $(function() {
         gChildEquipments = childEquipments
         const html = createChildElementTree(childEquipments)
         document.getElementById('child_equipment_tree').innerHTML = html
+        $('.child-treeview').mdbTreeview();
+        selectedEquipment = gChildEquipments.filter(d=> d.equipment_path === selectedEquipmentPath)
+
+        allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+        
+        allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
+        selectedEquipmentId = selectedEquipment[0]['equipment_id']
+
+        $('#equipment_id').innerHTML = selectedEquipmentId
+        $('#equipment_full_identifier').val(selectedEquipment[0]['equipment_full_identifier'])
+        $('#equipment_description').val(selectedEquipment[0]['equipment_description'])
+        $('#equipment_comment').val(selectedEquipment[0]['equipment_comment'])
+
+        if(selectedEquipment[0]['equipment_is_approved']){
+          $('#equipment_is_approved').attr("checked", "checked")
+          $('#equipment_is_approved').checked = true
+        }
+
+        allEquipmentExceptSelectedOne = allEquipment.filter( d => d.equipment_id !== selectedEquipment[0]['equipment_id'])
+
+        // display parent and location path
+        allEquipmentExceptSelectedOne.forEach( element => {
+          element_equipment_path = element.equipment_path.join('.')
+          
+          selected_element_parent_path = selectedEquipment[0]['equipment_path']
+          selected_element_parent_path = selected_element_parent_path.substr(0, selected_element_parent_path.lastIndexOf('.'))
+          
+          var selected = element_equipment_path === selected_element_parent_path ? true : false ;
+          var o = new Option(element.equipment_full_identifier, element.equipment_full_identifier, undefined, selected);
+          $(o).html(element.equipment_full_identifier);
+          $("#parent_path").append(o);
+
+          location_path = selectedEquipment[0]['equipment_location_path']
+          var locationSelected = element_equipment_path === location_path ? true : false
+          var p = new Option(element.equipment_full_identifier, element.equipment_full_identifier, undefined, locationSelected);
+          
+          $(p).html(element.equipment_full_identifier);
+          $("#location_path").append(p);
+
+        })
+
+        // display type drop down 
+        typeLabelDescription = ''
+        allEquipmentTypes.forEach( element => {
+          var selected = element.id === selectedEquipment[0]['type_id'] ? true : false ;
+          if(element.id === selectedEquipment[0]['type_id'] ){
+              typeLabelDescription = element.description + '('+ (element.is_approved ? 'approved' : 'not approved') +')'
+          }
+          var t = new Option(element.label, element.label, undefined, selected);
+          $(t).html(element.label);
+          $("#all_equipment_types_select").append(t);
+        })
+        $('#type_label').val(typeLabelDescription)
+
       }
     })
-  }); 
-
-  //selected equipment in right tree
-  $(".right_object_hierarchy .js-treeview").on("click", ".level-title", function() {
-    $("#location_path").find('option').remove()
-    $("#parent_path").find('option').remove()
-    $('#all_equipment_types_select').find('option').remove()
-
-    selectedEquipmentPath = $(this).closest(".treeview__level").attr("data-equipmentpath")
-    selectedEquipment = gChildEquipments.filter(d=> d.equipment_path === selectedEquipmentPath)
-
-    allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
     
-    allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
-    selectedEquipmentId = selectedEquipment[0]['equipment_id']
-    $('#equipment_id').innerHTML = selectedEquipmentId
-    $('#equipment_full_identifier').val(selectedEquipment[0]['equipment_full_identifier'])
-    $('#equipment_description').val(selectedEquipment[0]['equipment_description'])
-    $('#equipment_comment').val(selectedEquipment[0]['equipment_comment'])
-
-    if(selectedEquipment[0]['equipment_is_approved']){
-      $('#equipment_is_approved').attr("checked", "checked")
-      $('#equipment_is_approved').checked = true
-    }
-
-    allEquipmentExceptSelectedOne = allEquipment.filter( d => d.equipment_id !== selectedEquipment[0]['equipment_id'])
-
-    // display parent and location path
-    allEquipmentExceptSelectedOne.forEach( element => {
-      element_equipment_path = element.equipment_path.join('.')
-      
-      selected_element_parent_path = selectedEquipment[0]['equipment_path']
-      selected_element_parent_path = selected_element_parent_path.substr(0, selected_element_parent_path.lastIndexOf('.'))
-      
-      var selected = element_equipment_path === selected_element_parent_path ? true : false ;
-      var o = new Option(element.equipment_full_identifier, element.equipment_full_identifier, undefined, selected);
-      $(o).html(element.equipment_full_identifier);
-      $("#parent_path").append(o);
-
-      location_path = selectedEquipment[0]['equipment_location_path']
-      var locationSelected = element_equipment_path === location_path ? true : false
-      var p = new Option(element.equipment_full_identifier, element.equipment_full_identifier, undefined, locationSelected);
-      
-      $(p).html(element.equipment_full_identifier);
-      $("#location_path").append(p);
-
-    })
-
-    // display type drop down 
-    typeLabelDescription = ''
-    allEquipmentTypes.forEach( element => {
-      var selected = element.id === selectedEquipment[0]['type_id'] ? true : false ;
-      if(element.id === selectedEquipment[0]['type_id'] ){
-          typeLabelDescription = element.description + '('+ (element.is_approved ? 'approved' : 'not approved') +')'
-      }
-      var t = new Option(element.label, element.label, undefined, selected);
-      $(t).html(element.label);
-      $("#all_equipment_types_select").append(t);
-    })
-    $('#type_label').val(typeLabelDescription)
-
-    // display Equipment details tables
+    // display Equipment Attributes tables
     $.ajax({
       type: "GET",
       url: '/getEquipmentDetailsTableData',
@@ -211,4 +210,5 @@ $(function() {
       }
     })
     }); 
-});
+
+  }); 

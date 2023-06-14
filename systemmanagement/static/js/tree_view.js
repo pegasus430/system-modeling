@@ -136,9 +136,10 @@ $(function() {
         gChildEquipments = childEquipments
         const html = createChildElementTree(childEquipments)
         document.getElementById('child_equipment_tree').innerHTML = html
+        
         $('.child-treeview').mdbTreeview();
+        $('.child-treeview a').trigger('click');
         selectedEquipment = gChildEquipments.filter(d=> d.equipment_path === selectedEquipmentPath)
-
         allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
         
         allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
@@ -148,7 +149,7 @@ $(function() {
         $('#equipment_full_identifier').val(selectedEquipment[0]['equipment_full_identifier'])
         $('#equipment_description').val(selectedEquipment[0]['equipment_description'])
         $('#equipment_comment').val(selectedEquipment[0]['equipment_comment'])
-
+        $('#basic-full-identifier').val(selectedEquipment[0]['equipment_full_identifier'] + ' ('+ selectedEquipment[0]['equipment_description'] + ')')
         if(selectedEquipment[0]['equipment_is_approved']){
           $('#equipment_is_approved').attr("checked", "checked")
           $('#equipment_is_approved').checked = true

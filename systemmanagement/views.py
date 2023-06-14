@@ -86,21 +86,48 @@ def get_child_elements(request):
 def get_equipmentdetail_tabledata(request):
     if request.method == 'GET':
         selectedEquipmentId = request.GET['selectedEquipmentId']
-        
+        # get equipment resources per selected equipmnet
         raw_query = "SELECT  A.resource_id , B.modifier , B.description FROM public.all_equipment_resource as A  \
             inner join resource B on A.resource_id = B.id \
             where equipment_id = " + selectedEquipmentId
-
         with connection.cursor() as cursor:
             cursor.execute(raw_query)
             results = cursor.fetchall()
-        
         equipment_resource_list = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
 
-        data = json.dumps({
-            'resource_details': equipment_resource_list
-        }, 
-        cls=DateTimeEncoder)
+        # get equipment interfaces per selected equipment
+        raw_query = "select interface_id, resource_id, interface_full_identifier, interface_description,  \
+            (select CASE  WHEN count(*) > 0 THEN 'Used' ELSE 'Not used' END as used from all_connection_interface  \
+            where (start_equipment_id = "+ selectedEquipmentId +" and start_interface_id = interface_id) or(end_equipment_id = "+ selectedEquipmentId +" and end_interface_id = interface_id)) \
+            from all_equipment_interface \
+            inner join resource on all_equipment_interface.resource_id = resource.id \
+            where equipment_id = "+ selectedEquipmentId+" and resource_id in ( \
+                SELECT A.resource_id FROM public.all_equipment_resource as A  \
+                inner join resource B on A.resource_id = B.id \
+                where equipment_id = "+ selectedEquipmentId +") \
+            order by interface_full_identifier"
+        
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        equipment_interfaces_list = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
+
+        raw_query = "select resource_id, property_modifier, property_description, datatype_label \
+            from all_equipment_property where equipment_id = " + selectedEquipmentId + " order by property_modifier"
+        
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        equipment_properties_list = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
+
+        data = json.dumps(
+            {
+                'resource_list': equipment_resource_list,
+                'interface_list': equipment_interfaces_list,
+                'property_list': equipment_properties_list
+            }, 
+            cls=DateTimeEncoder
+        )
         return HttpResponse(data)
 
 def connections(request):

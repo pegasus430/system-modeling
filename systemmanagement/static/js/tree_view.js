@@ -117,7 +117,6 @@ $(function() {
 
   // Selected Level for left tree
   $(".left_object_hierarchy .treeview-li").on("click", ".treeview-title", function() {
-    
     $("#location_path").find('option').remove()
     $("#parent_path").find('option').remove()
     $('#all_equipment_types_select').find('option').remove()
@@ -191,25 +190,79 @@ $(function() {
         })
         $('#type_label').val(typeLabelDescription)
 
+        // display Equipment Attributes tables
+        $.ajax({
+          type: "GET",
+          url: '/getEquipmentDetailsTableData',
+          data: {
+            selectedEquipmentId: selectedEquipmentId
+          },
+          success: function (data){
+            var html = ''
+            equipmentAttributes = JSON.parse(data)
+            propertyList = equipmentAttributes['property_list']
+            resoureList = equipmentAttributes['resource_list']
+            
+            interfaceList = equipmentAttributes['interface_list']
+            
+            if(resoureList.length){
+              resoureList.forEach(resource => {
+                  html +='<tr style="background-color: #eee ;border-top: solid 2px; border-left: 1px; border-right: 1px;"> \
+                    <td>'+ (resource.modifier !== null ? resource.modifier :'' )+ ' (' + resource.description + ')' + '</td> \
+                    <td>Interface</td> \
+                    <td>Details</td> \
+                    </tr>'
+                  resource_interface = interfaceList.filter(interface => interface.resource_id == resource.resource_id)
+                  
+                  resource_interface.forEach(interface =>{
+                    html += '  <tr style=" border-left: 1px; border-right: 1px;"> \
+                    <td></td> \
+                    <td></td> \
+                    <td>'+ interface.interface_full_identifier + ' (' + interface.interface_description + ') - '+ interface.used +'</td> \
+                  </tr>'
+                  })
+
+                  html += '<tr style="border-left: 1px; border-right: 1px;"> \
+                    <td></td> \
+                    <td>Property</td> \
+                    <td>Details</td></tr>'
+
+                  resource_property = propertyList.filter(property => property.resource_id == resource.resource_id)
+                  if(resource_property.length){
+                    resource_property.forEach(property => {
+                      html += '<tr style=" border-left: 1px; border-right: 1px;"> \
+                      <td></td> \
+                      <td></td> \
+                      <td>'+ property.property_modifier + ' ('+ property.property_description + ' - ' + property.datatype_label +')</td> \
+                    </tr>'
+                    })
+                      
+                  }
+                  else{
+                    html += '<tr style=" border-left: 1px; border-right: 1px;"> \
+                    <td></td> \
+                    <td></td> \
+                    <td>None</td> \
+                  </tr>'
+                  }
+
+              })
+             
+            }else{
+              html += '<tr style="border: solid 1px"> \
+              <td></td> \
+              <td></td> \
+              <td></td> \
+            </tr>'
+            }
+            $('#equipment_attribute').html( html )
+          }
+        })
+
       }
     })
     
-    // display Equipment Attributes tables
-    $.ajax({
-      type: "GET",
-      url: '/getEquipmentDetailsTableData',
-      data: {
-        selectedEquipmentId: selectedEquipmentId
-      },
-      success: function (data){
-        console.log('Resource Details ' ,data)
-        // jsonData = JSON.parse(data)
-        // childEquipments = jsonData['child_equipments']
-        // gChildEquipments = childEquipments
-        // const html = createChildElementTree(childEquipments)
-        // document.getElementById('child_equipment_tree').innerHTML = html
-      }
-    })
+    
     }); 
 
   }); 

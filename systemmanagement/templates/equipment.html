@@ -39,7 +39,7 @@
                       
                        <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
                         <div class="card info-card left_object_hierarchy border-gray">
-                          <div class="treeview-animated w-20 border mx-4 my-4">
+                          <div class="treeview-animated border mx-2 my-2">
                             <h6 class="pt-3 pl-3">Equipments</h6>
                             <hr>
                             <ul class="treeview-animated-list mb-3" id="all_equipment_tree">
@@ -108,9 +108,35 @@
                               </div>
 
                               <div class="col-md-6">
-                                <button type="button" class="btn btn-outline-success">
+                                <button type="button" class="btn btn-primary">
                                   <a class="nav-link" href="{% url 'definitions_equipment_types' %}">
                                     Show Equipment Type
+                                  </a>
+                                  
+                                </button>
+                              </div>
+                            </div>
+                            <div class="row mt-3 p-2 pl-4">
+                              <div class="col-md-4">
+                                <button type="button" class="btn btn-success">
+                                  <a class="nav-link" >
+                                    Add Same
+                                  </a>
+                                  
+                                </button>
+                              </div>
+                              <div class="col-md-4">
+                                <button type="button" class="btn btn-info">
+                                  <a class="nav-link" >
+                                    Add Child
+                                  </a>
+                                  
+                                </button>
+                              </div>
+                              <div class="col-md-4">
+                                <button type="button" class="btn btn-danger">
+                                  <a class="nav-link">
+                                    Delete
                                   </a>
                                   
                                 </button>

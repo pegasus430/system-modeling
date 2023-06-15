@@ -322,6 +322,14 @@ $(document).ready(function() {
       }).observe(mainContainer);
     }, 200);
   }
+
+  on('click','#btn_equipment_delete' , function(){
+    if(confirm('Are you sure to delete the equipment?')){
+      allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+      
+    }
+  })
+
 } )
 ();
 

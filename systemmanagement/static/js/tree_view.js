@@ -116,7 +116,7 @@ $(function() {
   }
 
   // Selected Level for left tree
-  $(".left_object_hierarchy .treeview-li").on("click", ".treeview-title", function() {
+  $(".left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
     $("#location_path").find('option').remove()
     $("#parent_path").find('option').remove()
     $('#all_equipment_types_select').find('option').remove()

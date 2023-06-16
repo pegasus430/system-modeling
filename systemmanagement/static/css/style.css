@@ -1309,3 +1309,18 @@ a.nav-link.nav {
 a.nav-link.active {
   border-bottom: 2px solid #0d6efd;
 }
+
+/* .treeview-animated .treeview-animated-list .treeview-animated-element.opened{
+  color: blue;
+} */
+.treeview-animated .treeview-animated-list .treeview-animated-items .open{
+  background-color: white;
+}
+
+.treeview-animated .treeview-animated-list .treeview-animated-items .closed .fa-angle-right.down{
+  color: black;
+}
+
+.treeview-animated .treeview-animated-list .treeview-animated-items .open span{
+  color: black
+}

@@ -207,22 +207,31 @@ $(function() {
             
             if(resoureList.length){
               resoureList.forEach(resource => {
-                  html +='<tr style="background-color: #eee ;border-top: solid 2px; border-left: 1px; border-right: 1px;"> \
+                  html +='<tr style="background-color: #eee ;border-top: solid 3px; border-left: 1px; border-right: 1px;"> \
                     <td>'+ (resource.modifier !== null ? resource.modifier :'' )+ ' (' + resource.description + ')' + '</td> \
                     <td>Interface</td> \
                     <td>Details</td> \
                     </tr>'
                   resource_interface = interfaceList.filter(interface => interface.resource_id == resource.resource_id)
                   
-                  resource_interface.forEach(interface =>{
-                    html += '  <tr style=" border-left: 1px; border-right: 1px;"> \
+                  if(resource_interface.length){
+                    resource_interface.forEach(interface =>{
+                      html += '  <tr style=" border-left: 1px; border-right: 1px;"> \
+                      <td></td> \
+                      <td></td> \
+                      <td>'+ interface.interface_full_identifier + ' (' + interface.interface_description + ') - '+ interface.used +'</td> \
+                    </tr>'
+                    })
+                  }else{
+                    html += '<tr style=" border-left: 1px; border-right: 1px;"> \
                     <td></td> \
                     <td></td> \
-                    <td>'+ interface.interface_full_identifier + ' (' + interface.interface_description + ') - '+ interface.used +'</td> \
+                    <td>None</td> \
                   </tr>'
-                  })
+                  }
+                 
 
-                  html += '<tr style="border-left: 1px; border-right: 1px;"> \
+                  html += '<tr style=" background-color: #eee ;border-left: 1px; border-right: 1px;"> \
                     <td></td> \
                     <td>Property</td> \
                     <td>Details</td></tr>'

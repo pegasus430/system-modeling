@@ -133,8 +133,9 @@ $(function() {
         $('#equipment_comment').val(selectedEquipment[0]['equipment_comment'])
         $('#basic-full-identifier').val(selectedEquipment[0]['equipment_full_identifier'] + ' ('+ selectedEquipment[0]['equipment_description'] + ')')
         if(selectedEquipment[0]['equipment_is_approved']){
-          $('#equipment_is_approved').attr("checked", "checked")
-          $('#equipment_is_approved').checked = true
+          $('#equipment_is_approved').prop('checked' , true)
+        }else{
+          $('#equipment_is_approved').prop('checked' , false)
         }
 
         allEquipmentExceptSelectedOne = allEquipment.filter( d => d.equipment_id !== selectedEquipment[0]['equipment_id'])
@@ -282,15 +283,64 @@ $(function() {
         $('.child-treeview').mdbTreeview();
         $('.child-treeview a').trigger('click');
         selectedConnection = childConnection.filter(d=> d.connection_path === selectedConnectionPath)
+        console.log(selectedConnection)
         allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+        console.log(allEquipment)
+        allConnection = JSON.parse(document.getElementById('all_connection').textContent)
         
         allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
-        selectedConnectionId = selectedEquipment[0]['connection_id']
+        selectedConnectionId = selectedConnection[0]['connection_id']
+        
+        $('#connection_full_identifier').val(selectedConnection[0]['connection_identifier'])
+        $('#connection_identifier').val(selectedConnection[0]['connection_local_identifier'])
+        $('#connection_description').val(selectedConnection[0]['connection_description'])
+        $('#connection_comment').val(selectedConnection[0]['connection_comment'])
+        $('#connection_length').val(selectedConnection[0]['connection_length'])
+        $('#basic_connection_full_identifier').val(selectedConnection[0]['connection_identifier'] + ' ('+ selectedConnection[0]['connection_description'] + ')')
+        if(selectedConnection[0]['connection_is_approved']){
+          $('#connection_is_approved').prop('checked', true)
+        }else{
+          $('#connection_is_approved').prop('checked', false)
+        }
 
+        allConnectionExceptSelectedone = allConnection.filter( d => d.connection_id !== selectedConnectionId)
+        
+        // display parent  path lists
+        allConnectionExceptSelectedone.forEach( element => {
+          element_connection_path = element.connection_path.join('.')
+          
+          selected_element_parent_path = selectedConnection[0]['connection_path']
+          selected_element_parent_path = selected_element_parent_path.substr(0, selected_element_parent_path.lastIndexOf('.'))
+          
+          var selected = element_connection_path === selected_element_parent_path ? true : false ;
+          var o = new Option(element.connection_identifier, element.connection_identifier, undefined, selected);
+          $(o).html(element.connection_identifier);
+          $("#connection_parent_path").append(o);
+        })
+
+        //display start and End equipment dropdown lists
+        allEquipment.forEach(element => {
+          var selected = element.equipment_id === selectedConnection[0]['start_equipment_id'] ? true: false
+          var p = new Option(element.equipment_full_identifier, element.equipment_full_identifier,  undefined, selected)
+          $(p).html(element.equipment_full_identifier)
+          $('#start_equipment').append(p)
+
+          selected = element.equipment_id === selectedConnection[0]['end_equipment_id'] ? true: false
+          var t = new Option(element.equipment_full_identifier, element.equipment_full_identifier,  undefined, selected)
+          $(t).html(element.equipment_full_identifier)
+          $('#end_equipment').append(t)
+
+        })
+
+        //diplay connection type dropdown lists
+        allConnectionTypes.forEach( element => {
+          var selected = selectedConnection[0]['connection_type_id'] === element.id ? true : false ;
+          var o = new Option(element.label, element.label, undefined, selected);
+          $(o).html(element.label);
+          $("#all_connection_type").append(o);
+        })
       }
     })
-    
-    
     }); 
 
   

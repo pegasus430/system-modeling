@@ -80,6 +80,7 @@ class AllConnection(models.Model):
     connection_type_id = models.IntegerField()
     connection_type_description = models.TextField()
     connection_description = models.TextField()
+    connection_length = models.FloatField()
     connection_is_approved = models.BooleanField()
     connection_comment = models.TextField()
     start_equipment_id = models.IntegerField()

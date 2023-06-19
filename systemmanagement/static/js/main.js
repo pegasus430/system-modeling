@@ -323,12 +323,24 @@ $(document).ready(function() {
     }, 200);
   }
 
-  on('click','#btn_equipment_delete' , function(){
-    if(confirm('Are you sure to remove the equipment?')){
-      allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
-      
-    }
-  })
+  if(select('#btn_equipment_delete')){
+    on('click','#btn_equipment_delete' , function(){
+      if(confirm('Are you sure to remove the equipment?')){
+        allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+        
+      }
+    })
+  }
+
+  if(select('#btn_connection_delete')){
+    on('click','#btn_connection_delete' , function(){
+      if(confirm('Are you sure to remove the connection?')){
+        allEquipment = JSON.parse(document.getElementById('all_connection').textContent)
+        
+      }
+    })
+  }
+  
 
 } )
 ();

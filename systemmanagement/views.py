@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, EquipmentResource
+from .models import AllEquipment , EquipmentType, EquipmentResource , AllConnection, ConnectionType
 from django.db import connection
 import datetime
 import json
@@ -64,7 +64,7 @@ def equipment(request):
     
     return render(request, 'equipment.html', context=context)
 
-def get_child_elements(request):
+def get_equipment_child_elements(request):
     if request.method == 'GET':
         selected_equipment_path = request.GET['selectedEquipmentPath']
 
@@ -79,6 +79,25 @@ def get_child_elements(request):
 
         data = json.dumps({
             'child_equipments': child_equipments_list,
+            })
+        
+        return HttpResponse(data)
+
+def get_connection_child_elements(request):
+    if request.method == 'GET':
+        selected_connection_path = request.GET['selectedConnectionPath']
+
+        child_connection_db = AllConnection.objects.extra(
+            where=[
+                "connection_path <@ '"+ selected_connection_path + "'"
+            ],
+            order_by=['connection_identifier']
+        )
+
+        child_connection_list = list(child_connection_db.values())
+
+        data = json.dumps({
+            'child_connection': child_connection_list,
             })
         
         return HttpResponse(data)
@@ -132,9 +151,15 @@ def get_equipmentdetail_tabledata(request):
 
 def connections(request):
     page = 'connections'
+    all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
+    all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
+    all_connection_types = list(ConnectionType.objects.values())
     context = {
         'title': 'Connections',
         'page': page,
+        'all_equipment': all_equipment,
+        'all_connection': all_connection,
+        'all_connection_types': all_connection_types,
     }
     
     return render(request, 'connections.html', context=context)

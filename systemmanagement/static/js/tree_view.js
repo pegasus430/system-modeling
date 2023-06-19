@@ -4,73 +4,9 @@ $(function() {
       
     
   let gChildEquipments
-  let treeview = {
-    resetBtnToggle: function() {
-      $(".js-treeview")
-        .find(".level-add")
-        .find("span")
-        .removeClass()
-        .addClass("bi bi-plus-lg");
-      $(".js-treeview")
-        .find(".level-add")
-        .siblings()
-        .removeClass("in");
-    },
-    addSameLevel: function(target) {
-      let ulElm = target.closest("ul");
-      let sameLevelCodeASCII = target
-        .closest("[data-level]")
-        .attr("data-level")
-        .charCodeAt(0);
-      ulElm.append($("#levelMarkup").html());
-      ulElm
-        .children("li:last-child")
-        .find("[data-level]")
-        .attr("data-level", String.fromCharCode(sameLevelCodeASCII));
-    },
-    addSubLevel: function(target) {
-      let liElm = target.closest("li");
-      // let nextLevelCodeASCII = liElm.find("[data-level]").attr("data-level").charCodeAt(0) + 1;
-      let nextLevelCodeASCII = liElm.find("[data-level]").attr("data-level").charCodeAt(0);
-      liElm.children("ul").append($("#levelMarkup").html());
-      liElm.children("ul").find("[data-level]")
-        .attr("data-level", String.fromCharCode(nextLevelCodeASCII));
-    },
-    removeLevel: function(target) {
-      target.closest("li").remove();
-      
-    }
-  };
+ 
 
-  // Treeview Functions
-  $(".js-treeview").on("click", ".level-add", function() {
-    $(this).find("span").toggleClass("bi-plug-lg").toggleClass("bi-x-lg text-danger");
-    $(this).siblings().toggleClass("in");
-  });
-
-  // Add same level
-  $(".js-treeview").on("click", ".level-same", function() {
-    if (confirm('Are you sure?')) {
-      treeview.addSameLevel($(this));
-      treeview.resetBtnToggle();
-    }
-  });
-
-  // Add sub level
-  $(".js-treeview").on("click", ".level-sub", function() {
-    if (confirm('Are you sure?')) {
-      treeview.addSubLevel($(this));
-      treeview.resetBtnToggle();
-    }
-  });
-    // Remove Level
-  $(".js-treeview").on("click", ".level-remove", function() {
-    if (confirm('Are you sure?')) {
-      treeview.removeLevel($(this));
-    }
-  }); 
-
-  function createChildElementTree(data) {
+  function createEquipmentChildElementTree(data) {
     const nodeWithParent = []
     
     // make the equipment_path as string from list
@@ -115,8 +51,55 @@ $(function() {
     return root.map(getNodeHtml).join('')
   }
 
-  // Selected Level for left tree
-  $(".left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
+  function createConnectionChildElementTree(data) {
+    const nodeWithParent = []
+    
+    // make the equipment_path as string from list
+    data.forEach(element => {
+      path = element.connection_path.join('.')
+      element.connection_path = path        
+    })
+
+    //Find the parent for each element
+    data.forEach(element => {
+      const parent = element.connection_path.includes('.')? element.connection_path.substr(0, element.connection_path.lastIndexOf('.')):null
+      nodeWithParent.push({...element, parent})
+    });
+    
+    //Recursive function to create HTML out of node
+    function getNodeHtml(n) {
+      let html = ''
+        const children = nodeWithParent.filter(d => d.parent === n.connection_path)
+                  
+        if(children.length > 0) {
+          html += '<li class="treeview-animated-items"> \
+                      <a class="closed"> \
+                        <i class="fas fa-angle-right"></i> \
+                        <span class="ml-1" data-connectionpath="'+ n.connection_path +'">'+ 
+                        n.connection_local_identifier + '  (' + n.connection_description + ')</span> \
+                      </a> \
+                      <ul class="nested">' 
+            + children.map( getNodeHtml).join('')
+            + '</ul></li>'
+        }
+        else{
+          html += '<li><div class="treeview-animated-element" data-connectionpath="'+ n.connection_path + '"> \
+          '+n.connection_local_identifier + '  (' + n.connection_description +')</li>'
+        }
+        
+      return html
+    }
+
+    // Get all root nodes (without parent)
+    // const root = nodeWithParent.filter(d => d.parent === null)
+    const root = nodeWithParent.filter(d=> d.parent === nodeWithParent[0].parent ) 
+
+    return root.map(getNodeHtml).join('')
+  }
+
+  // Selected Level for left tree on Equipment page
+  $(".equipment_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
+    
     $("#location_path").find('option').remove()
     $("#parent_path").find('option').remove()
     $('#all_equipment_types_select').find('option').remove()
@@ -125,7 +108,7 @@ $(function() {
     
     $.ajax({
       type: "GET",
-      url: '/getChildElements',
+      url: '/getEquipmentChildElements',
       data: {
         selectedEquipmentPath: selectedEquipmentPath
       },
@@ -133,7 +116,7 @@ $(function() {
         jsonData = JSON.parse(data)
         childEquipments = jsonData['child_equipments']
         gChildEquipments = childEquipments
-        const html = createChildElementTree(childEquipments)
+        const html = createEquipmentChildElementTree(childEquipments)
         document.getElementById('child_equipment_tree').innerHTML = html
         
         $('.child-treeview').mdbTreeview();
@@ -274,4 +257,41 @@ $(function() {
     
     }); 
 
+  // Selected Level for left tree on connecction page
+  $(".connection_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
+      
+    $("#connection_parent_path").find('option').remove()
+    $("#start_equipment").find('option').remove()
+    $("#end_equipment").find('option').remove()
+    $('#all_connection_type').find('option').remove()
+
+    selectedConnectionPath = $(this).attr("data-connectionpath")
+    
+    $.ajax({
+      type: "GET",
+      url: '/getConnectionChildElements',
+      data: {
+        selectedConnectionPath: selectedConnectionPath
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        childConnection = jsonData['child_connection']
+        const html = createConnectionChildElementTree(childConnection)
+        document.getElementById('child_connection_tree').innerHTML = html
+        
+        $('.child-treeview').mdbTreeview();
+        $('.child-treeview a').trigger('click');
+        selectedConnection = childConnection.filter(d=> d.connection_path === selectedConnectionPath)
+        allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+        
+        allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
+        selectedConnectionId = selectedEquipment[0]['connection_id']
+
+      }
+    })
+    
+    
+    }); 
+
+  
   }); 

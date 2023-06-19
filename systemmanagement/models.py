@@ -70,3 +70,38 @@ class EquipmentResource(models.Model):
         managed = False
         db_table = 'all_equipment_resource'
 
+class AllConnection(models.Model):
+    connection_id = models.BigIntegerField(primary_key=True)
+    connection_path = LTreeField(unique=True)
+    connection_tree_level = models.IntegerField()
+    connection_identifier_location = models.TextField()
+    connection_identifier = models.TextField()
+    connection_local_identifier = models.CharField(max_length=255)
+    connection_type_id = models.IntegerField()
+    connection_type_description = models.TextField()
+    connection_description = models.TextField()
+    connection_is_approved = models.BooleanField()
+    connection_comment = models.TextField()
+    start_equipment_id = models.IntegerField()
+    start_interface_id = models.IntegerField()
+    end_equipment_id = models.IntegerField()
+    end_interface_id = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'all_connection'
+
+class ConnectionType(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    path = LTreeField(unique=True)
+    label = models.CharField(max_length=255)
+    model = models.TextField()
+    modifier = models.TextField()
+    manufacturer = models.TextField()
+    description = models.TextField()
+    comment = models.TextField()
+    is_approved = models.BooleanField()
+    modified_at = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'connection_type'

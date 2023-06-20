@@ -85,12 +85,15 @@ class AllConnection(models.Model):
     connection_comment = models.TextField()
     start_equipment_id = models.IntegerField()
     start_interface_id = models.IntegerField()
+    start_interface_full_identifier = models.TextField()
+    start_interface_description = models.TextField()
     end_equipment_id = models.IntegerField()
     end_interface_id = models.IntegerField()
-
+    end_interface_full_identifier = models.TextField()
+    end_interface_description = models.TextField()
     class Meta:
         managed = False
-        db_table = 'all_connection'
+        db_table = 'all_connection_interface'
 
 class ConnectionType(models.Model):
     id = models.BigIntegerField(primary_key=True)

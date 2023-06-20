@@ -280,12 +280,10 @@ $(function() {
         const html = createConnectionChildElementTree(childConnection)
         document.getElementById('child_connection_tree').innerHTML = html
         
-        $('.child-treeview').mdbTreeview();
-        $('.child-treeview a').trigger('click');
+        // $('.child-treeview').mdbTreeview();
+        // $('.child-treeview a').trigger('click');
         selectedConnection = childConnection.filter(d=> d.connection_path === selectedConnectionPath)
-        console.log(selectedConnection)
         allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
-        console.log(allEquipment)
         allConnection = JSON.parse(document.getElementById('all_connection').textContent)
         
         allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
@@ -339,6 +337,26 @@ $(function() {
           $(o).html(element.label);
           $("#all_connection_type").append(o);
         })
+        var connectionHtml = ""
+        childConnection.forEach((element, index) => {
+          if(index == 0){
+            connectionHtml += '<tr style="background-color: #eee;"> \
+            <td>'+ element.connection_identifier + ' ('+ element.connection_description +')</td> \
+            <td></td> \
+            <td>'+ element.start_interface_full_identifier + ' ('+ element.start_interface_description + ')</td> \
+            <td>'+ element.end_interface_full_identifier + ' ('+ element.end_interface_description + ')</td>  \
+          </tr>'
+          }else{
+            connectionHtml += '<tr> \
+            <td></td> \
+            <td>'+ element.connection_identifier + ' ('+ element.connection_description +')</td> \
+            <td>'+ element.start_interface_full_identifier + ' ('+ element.start_interface_description + ')</td> \
+            <td>'+ element.end_interface_full_identifier + ' ('+ element.end_interface_description + ')</td>  \
+          </tr>'
+          }
+            
+        })
+        $('#connection_attribute').html( connectionHtml )
       }
     })
     }); 

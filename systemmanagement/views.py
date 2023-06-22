@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, EquipmentResource , AllConnection, ConnectionType
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail
 from django.db import connection
 import datetime
 import json
@@ -17,18 +17,26 @@ def system(request):
 
 def system_purchasing_overview(request):
     page = 'system'
+    purchasing_equipment = list(PurchasingEquipmentType.objects.order_by('type_modifier').values())
+    purchasing_connection = list(PurchasingConnectionType.objects.order_by('type_modifier').values())
     context = {
         'title': 'System Purchasing Overview',
         'page': page,
+        'purchasing_equipment': purchasing_equipment,
+        'purchasing_connection': purchasing_connection
     }
     
     return render(request, 'system_purchasing_overview.html', context=context)
 
 def system_purchasing_detail(request):
     page = 'system'
+    purchasing_equipment = list(PurchasingEquipmentTypeDetail.objects.order_by('type_modifier').values())
+    purchasing_connection = list(PurchasingConnectionTypeDetail.objects.order_by('connection_type_modifier').values())
     context = {
         'title': 'System Purchasing detail',
         'page': page,
+        'purchasing_equipment': purchasing_equipment,
+        'purchasing_connection': purchasing_connection
     }
     
     return render(request, 'system_purchasing_detail.html', context=context)
@@ -101,6 +109,44 @@ def get_connection_child_elements(request):
             })
         
         return HttpResponse(data)
+
+def get_ConnectionType_purchasing_overview(request):
+    if request.method == 'GET':
+        selectedTypePath = request.GET['selectedTypePath']
+
+        child_connection_db = PurchasingConnectionType.objects.extra(
+            where=[
+                "type_path <@ '"+ selectedTypePath + "'"
+            ],
+            order_by=['type_modifier']
+        )
+
+        child_connection_list = list(child_connection_db.values())
+
+        data = json.dumps({
+            'child_connectiontype': child_connection_list,
+            })
+        
+        return HttpResponse(data)
+
+def get_EquipmentType_purchasing_overview(request):
+     if request.method == 'GET':
+            selectedTypePath = request.GET['selectedTypePath']
+
+            child_connection_db = PurchasingEquipmentType.objects.extra(
+                where=[
+                    "type_path <@ '"+ selectedTypePath + "'"
+                ],
+                order_by=['type_modifier']
+            )
+
+            child_connection_list = list(child_connection_db.values())
+
+            data = json.dumps({
+                'child_equipmenttype': child_connection_list,
+                })
+            
+            return HttpResponse(data)
 
 def get_equipmentdetail_tabledata(request):
     if request.method == 'GET':

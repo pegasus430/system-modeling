@@ -22,4 +22,6 @@ urlpatterns = [
     path(r'getEquipmentChildElements', views.get_equipment_child_elements, name="get_equipment_child_elements"),
     path(r'getConnectionChildElements', views.get_connection_child_elements, name="get_connection_child_elements"),
     path(r'getEquipmentDetailsTableData', views.get_equipmentdetail_tabledata, name='get_equipmentdetail_tabledata'),
+    path(r'getConnectionTypePurchasingOverview', views.get_ConnectionType_purchasing_overview, name='get_ConnectionType_purchasing_overview'),
+    path(r'getEquipmentTypePurchasingOverview', views.get_EquipmentType_purchasing_overview, name='get_EquipmentType_purchasing_overview'),
 ]

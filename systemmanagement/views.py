@@ -148,6 +148,49 @@ def get_EquipmentType_purchasing_overview(request):
             
             return HttpResponse(data)
 
+def get_EquipmentType_purchasing_detail(request):
+     if request.method == 'GET':
+            selectedTypePath = request.GET['selectedTypePath']
+
+            child_connection_db = PurchasingEquipmentTypeDetail.objects.extra(
+                where=[
+                    "type_path <@ '"+ selectedTypePath + "'"
+                ],
+                order_by=['type_modifier']
+            )
+
+            child_connection_list = list(child_connection_db.values())
+
+            data = json.dumps({
+                'child_equipmenttype': child_connection_list,
+                },
+                cls=DateTimeEncoder
+                )
+            
+            return HttpResponse(data)
+
+def get_ConnectionType_purchasing_detail(request):
+    if request.method == 'GET':
+        selectedTypePath = request.GET['selectedTypePath']
+
+        child_connection_db = PurchasingConnectionTypeDetail.objects.extra(
+            where=[
+                "connection_type_path <@ '"+ selectedTypePath + "'"
+            ],
+            order_by=['connection_type_modifier']
+        )
+
+        child_connection_list = list(child_connection_db.values())
+        print(child_connection_list)
+
+        data = json.dumps({
+                    'child_connectiontype': child_connection_list,
+                },
+                cls=DateTimeEncoder
+            )
+        
+        return HttpResponse(data)
+
 def get_equipmentdetail_tabledata(request):
     if request.method == 'GET':
         selectedEquipmentId = request.GET['selectedEquipmentId']
@@ -323,6 +366,6 @@ def definitions_possible_equipment_connection_states(request):
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, datetime.datetime):
+        if isinstance(obj, datetime.date):
             return obj.isoformat()
         return super().default(obj)

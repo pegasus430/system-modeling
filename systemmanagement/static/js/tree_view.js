@@ -429,7 +429,6 @@ $(function() {
                tableData.push({
                 'label': element.type_label ,
                 'description': element.type_description,
-                'physical_description' : '',
                 'leadtime': element.lead_time_days ,
                 'total_required':element.total_quantity ,
                 'total_ordered':element.ordered_count ,
@@ -444,7 +443,6 @@ $(function() {
               columns: [
                 { data: 'label' },
                 { data: 'description' },
-                { data: 'physical_description' },
                 { data: 'leadtime' },
                 { data: 'total_required' },
                 { data: 'total_ordered' },
@@ -456,4 +454,104 @@ $(function() {
     })
 
   })
+
+  $('.equipment-type-purchase-detail .treeview-li .treeview-title').on('click', function(){
+    selectedTypePath = $(this).attr("data-typepath")
+    $.ajax({
+      type: "GET",
+      url: '/getEquipmentTypePurchasingDetail',
+      data: {
+        selectedTypePath: selectedTypePath
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        var tableData = []
+
+        child_purchasing_equipment_type = jsonData['child_equipmenttype']
+        
+        if(child_purchasing_equipment_type.length){
+          child_purchasing_equipment_type.forEach(element => {
+               tableData.push({
+                'full_identifier': element.equipment_full_identifier ,
+                'description': element.equipment_description,
+                'manufacturer' : element.manufacturer,
+                'model' : element.model,
+                'quote_reference': element.quote_reference,
+                'leadtime': element.lead_time_days ,
+                'po_date': element.purchase_order_date,
+                'po_reference': element.purchase_order_reference,
+                'due_date': element.due_date,
+               })
+            })
+            
+            $('#purchasing_detail_equipment_type_table').DataTable({
+              data:  tableData ,
+              scrollX: true,
+              destroy: true,
+              columns: [
+                { data: 'full_identifier' },
+                { data: 'description' },
+                { data: 'manufacturer' },
+                { data: 'model' },
+                { data: 'element.quote_reference'},
+                { data: 'leadtime' },
+                { data: 'po_date' },
+                { data: 'po_reference' },
+                { data: 'due_date' }
+              ]}
+            )
+        }
+      }
+    })
+
+  })
+
+  $('.connection-type-purchase-detail .treeview-li .treeview-title').on('click', function(){
+    selectedTypePath = $(this).attr("data-typepath")
+    
+    $.ajax({
+      type: "GET",
+      url: '/getConnectionTypePurchasingDetail',
+      data: {
+        selectedTypePath: selectedTypePath
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        var tableData = []
+
+        child_purchasing_connection_type = jsonData['child_connectiontype']       
+
+        if(child_purchasing_connection_type.length){
+            child_purchasing_connection_type.forEach(element => {
+               tableData.push({
+                'location_identifier': element.connection_location_identifier ,
+                'description': element.connection_description,
+                'quote_reference': element.quote_reference,
+                'leadtime': element.lead_time_days ,
+                'po_date': element.purchase_order_date,
+                'po_reference': element.purchase_order_reference,
+                'due_date': element.due_date,
+               })
+            })
+            
+            $('#purchasing_detail_connection_type_table').DataTable({
+              data:  tableData ,
+              scrollX: true,
+              destroy: true,
+              columns: [
+                { data: 'location_identifier' },
+                { data: 'description' },
+                { data: 'quote_reference' },
+                { data: 'leadtime' },
+                { data: 'po_date' },
+                { data: 'po_reference' },
+                { data: 'due_date' }
+              ]}
+            )
+        }
+      }
+    })
+
+  })
+
 }); 

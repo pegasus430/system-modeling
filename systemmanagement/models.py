@@ -109,3 +109,78 @@ class ConnectionType(models.Model):
     class Meta:
         managed = False
         db_table = 'connection_type'
+
+class PurchasingEquipmentType(models.Model):
+    type_path = LTreeField(unique=True, primary_key=True)
+    type_label = models.CharField(max_length=255)
+    model = models.CharField(max_length=255)
+    type_modifier = models.CharField(max_length=255)
+    manufacturer = models.TextField()
+    type_description = models.TextField()
+    type_comment = models.TextField()
+    type_is_approved = models.BooleanField()
+    total_required = models.BigIntegerField()
+    ordered_count = models.BigIntegerField()
+    to_order_count = models.BigIntegerField()
+    received_count = models.BigIntegerField()
+    installed_count = models.BigIntegerField()
+    lead_time_days = models.IntegerField()
+    class Meta:
+        managed = False
+        db_table = 'type_purchasing'
+
+class PurchasingConnectionType(models.Model):
+    type_path = LTreeField(unique=True, primary_key=True)
+    type_label = models.CharField(max_length=255)
+    model = models.CharField(max_length=255)
+    type_modifier = models.CharField(max_length=255)
+    manufacturer = models.TextField()
+    type_description = models.TextField()
+    type_comment = models.TextField()
+    type_is_approved = models.BooleanField()
+    total_quantity = models.BigIntegerField()
+    total_length = models.FloatField()
+    ordered_count = models.BigIntegerField()
+    ordered_length = models.FloatField()
+    to_order_count = models.BigIntegerField()
+    to_order_length = models.FloatField()
+    received_count = models.BigIntegerField()
+    installed_count = models.BigIntegerField()
+    lead_time_days = models.IntegerField()
+    class Meta:
+        managed = False
+        db_table = 'connection_type_purchasing'
+
+class PurchasingEquipmentTypeDetail(models.Model):
+    type_path = LTreeField(unique=True, primary_key=True)
+    type_modifier = models.CharField(max_length=255)
+    type_description = models.TextField()
+    type_label = models.CharField(max_length=255)
+    equipment_full_identifier = models.CharField(max_length=255)
+    model = models.CharField(max_length=255)
+    manufacturer = models.TextField()
+    equipment_description = models.TextField()
+    lead_time_days = models.IntegerField()
+    quote_reference = models.TextField()
+    purchase_order_date = models.DateField()
+    purchase_order_reference = models.TextField()
+    due_date = models.DateField()
+    class Meta:
+        managed = False
+        db_table = 'equipment_purchasing_detail'
+
+class PurchasingConnectionTypeDetail(models.Model):
+    connection_type_path = LTreeField(unique=True, primary_key=True)
+    connection_type_modifier = models.CharField(max_length=255)
+    connection_type_description = models.TextField()
+    connection_type_label = models.CharField(max_length=255)
+    connection_location_identifier = models.CharField(max_length=255)
+    connection_description = models.TextField()
+    lead_time_days = models.IntegerField()
+    quote_reference = models.TextField()
+    purchase_order_date = models.DateField()
+    purchase_order_reference = models.TextField()
+    due_date = models.DateField()
+    class Meta:
+        managed = False
+        db_table = 'connection_purchasing_detail'

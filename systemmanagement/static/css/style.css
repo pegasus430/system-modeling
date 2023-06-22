@@ -1324,3 +1324,10 @@ a.nav-link.active {
 .treeview-animated .treeview-animated-list .treeview-animated-items .open span{
   color: black
 }
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+  color: blue
+}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link{
+  color: black
+}

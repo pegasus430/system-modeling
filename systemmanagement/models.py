@@ -30,11 +30,14 @@ class EquipmentType(models.Model):
     description = models.TextField()
     comment = models.TextField()
     is_approved = models.BooleanField()
-    modified_at = models.DateTimeField()
-    origin_path = LTreeField()
+    hierarchy_valid = models.BooleanField()
+    reference_valid = models.BooleanField()
+    resource_exist_valid = models.BooleanField()
+    property_exist_valid = models.BooleanField()
+    interface_exist_valid = models.BooleanField()
     class Meta:
         managed = False
-        db_table = 'equipment_type'
+        db_table = 'view_report_equipment_type'
 
 class Resource(models.Model):
     id = models.BigIntegerField(primary_key=True)
@@ -42,11 +45,13 @@ class Resource(models.Model):
     modifier = models.TextField()
     description = models.TextField()
     comment = models.TextField()
-    modified_at = models.DateTimeField()
+    used_valid = models.BooleanField()
+    property_exist_valid = models.BooleanField()
+    interface_exist_valid = models.BooleanField()
 
     class Meta:
         managed = False
-        db_table = 'resource'
+        db_table = 'view_report_resource'
 class EquipmentResource(models.Model):
     equipment_id = models.BigIntegerField()
     equipment_path = LTreeField(unique=True)
@@ -105,10 +110,11 @@ class ConnectionType(models.Model):
     description = models.TextField()
     comment = models.TextField()
     is_approved = models.BooleanField()
-    modified_at = models.DateTimeField()
+    hierarchy_valid = models.BooleanField()
+    reference_valid = models.BooleanField()
     class Meta:
         managed = False
-        db_table = 'connection_type'
+        db_table = 'view_report_connection_type'
 
 class PurchasingEquipmentType(models.Model):
     type_path = LTreeField(unique=True, primary_key=True)

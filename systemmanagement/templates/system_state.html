@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block content %}
+
+{{all_equipment | json_script:'all_equipment'}}
+{{all_connection | json_script:'all_connection'}}
+
 <section class="section equipment">
     <div class="row">
 
@@ -21,16 +25,14 @@
                       <i class="bi bi-arrow-up-circle mr-3"></i>
                       <i class="bi bi-arrow-down-circle"></i>
                     </span>
-                    <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="Full identifier (description)">
+                    <input type="text" class="form-control" id="basic_delievery_full_identifer" aria-describedby="basic-addon3" placeholder="Full identifier (description)">
                   </div>
                 </div>
-
-                <div class="tab-content pt-2">
 
                   <!-- Start System Tab Content -->
                   <div class="tab-pane fade show active">
                     <!-- Main Content -->
-                    <div class="row">
+                    <div class="row ">
                       <!-- Left State Menu -->
                       <div class="col-xxl-2 col-lg-2 col-md-3 p-0">
                         <div class="card info-card left_state_menu border-gray">
@@ -68,339 +70,106 @@
                           </ul>
                         </div>
                       </div><!-- End Left State Menu -->
-
-                      <!-- Middle Object Hierarchy -->
-                      <div class="col-xxl-3 col-lg-3 col-md-9 p-0">
-                        <div class="card info-card middle_object_hierarchy border-gray">
-                          <!-- Start TreeView Content -->
-                          <div class="treeview js-treeview mt-3">
-                            <ul class="mb-0">
-                              <li>
-                                <div class="treeview__level" data-level="&#x26AC;">
-                                  <span class="level-title">Equipment A</span>
-                                  <div class="treeview__level-btns">
-                                    <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                    <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                    <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                    <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                  </div>
-                                </div>
-                                <ul>
-                                  <li>
-                                    <div class="treeview__level" data-level="&#x26AC;">
-                                      <span class="level-title">Equipment B</span>
-                                      <div class="treeview__level-btns">
-                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                      </div>
-                                    </div>
-                                    <ul>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                          <li>
-                                            <div class="treeview__level" data-level="&#x26AC;">
-                                              <span class="level-title">Equipment D</span>
-                                              <div class="treeview__level-btns">
-                                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                              </div>
-                                            </div>
-                                            <ul>
-                                            </ul>
-                                          </li>
-                                        </ul>
-                                      </li>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                        </ul>
-                                      </li>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Equipment C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                        </ul>
-                                      </li>
-                                    </ul>
-                                  </li>
-                                  <li>
-                                    <div class="treeview__level" data-level="&#x26AC;">
-                                      <span class="level-title">Equipment B</span>
-                                      <div class="treeview__level-btns">
-                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                      </div>
-                                    </div>
-                                    <ul>
-                                    </ul>
-                                  </li>
-                                </ul>
-                              </li>
-                            </ul>
+                      <div class="col-xxl-10 col-lg-10 col-md-9 p-0 pl-1">
+                        <nav>
+                          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="nav-equipment-tab" data-bs-toggle="tab" data-bs-target="#nav-equipment" type="button" role="tab" aria-controls="nav-equipment" aria-selected="true">Equipment</button>
+                            <button class="nav-link" id="nav-connection-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Connection</button>
                           </div>
-                          <!-- // End TreeView Content -->
-                          <hr/>
-                          <!-- Start TreeView Content -->
-                          <div class="treeview js-treeview">
-                            <ul>
-                              <li>
-                                <div class="treeview__level" data-level="&#x26AC;">
-                                  <span class="level-title">Connection A</span>
-                                  <div class="treeview__level-btns">
-                                    <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                    <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                    <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                    <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
+                        </nav>
+                        <div class="tab-content " id="nav-tabContent">
+                          <div class="state-equipment tab-pane fade show active pt-2" id="nav-equipment" role="tabpanel" aria-labelledby="nav-equipment-tab">
+                            <div class="row ml-2 pr-2">
+                              <div class="col-xxl-3 col-lg-3 col-md-3 p-0">
+                                <div class="card info-card middle_object_hierarchy border-gray">
+                                  <!-- Start TreeView Content -->
+                                  <div class="treeview-animated border mt-3">
+                                    <h6 class="pt-3 pl-3">Equipment</h6>
+                                    <ul class="treeview-animated-list mb-3" id="state_equipment_tree">
+                                      
+                                    </ul>
                                   </div>
+                                  <!-- // End TreeView Content -->
                                 </div>
-                                <ul>
-                                  <li>
-                                    <div class="treeview__level" data-level="&#x26AC;">
-                                      <span class="level-title">Connection B</span>
-                                      <div class="treeview__level-btns">
-                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                      </div>
-                                    </div>
-                                    <ul>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Connection C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                          <li>
-                                            <div class="treeview__level" data-level="&#x26AC;">
-                                              <span class="level-title">Connection D</span>
-                                              <div class="treeview__level-btns">
-                                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                              </div>
-                                            </div>
-                                            <ul>
-                                            </ul>
-                                          </li>
-                                        </ul>
-                                      </li>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Connection C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                        </ul>
-                                      </li>
-                                      <li>
-                                        <div class="treeview__level" data-level="&#x26AC;">
-                                          <span class="level-title">Connection C</span>
-                                          <div class="treeview__level-btns">
-                                            <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                            <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                            <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                            <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                          </div>
-                                        </div>
-                                        <ul>
-                                        </ul>
-                                      </li>
-                                    </ul>
-                                  </li>
-                                  <li>
-                                    <div class="treeview__level" data-level="&#x26AC;">
-                                      <span class="level-title">Connection B</span>
-                                      <div class="treeview__level-btns">
-                                        <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                        <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                        <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                        <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                                      </div>
-                                    </div>
-                                    <ul>
-                                    </ul>
-                                  </li>
-                                </ul>
-                              </li>
-                            </ul>
-                          </div>
-                          <!-- // End TreeView Content -->
-                        </div>
-                          
-                        <template id="levelMarkup">
-                          <li>
-                            <div class="treeview__level" data-level="&#x26AC;">
-                              <span class="level-title">Connection X</span>
-                              <div class="treeview__level-btns">
-                                <div class="btn btn-default btn-sm level-add"><span class="bi bi-plus-lg"></span></div>
-                                <div class="btn btn-default btn-sm level-remove"><span class="bi bi-trash text-danger"></span></div>
-                                <div class="btn btn-default btn-sm level-same"><span>+ Same</span></div>
-                                <div class="btn btn-default btn-sm level-sub"><span>+ Child</span></div>
-                              </div>
+                              </div><!-- End Middle Object Hierarchy -->
+                              <!-- Right Overview -->
+                              <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
+                                <div class="card card-body right_overview border-gray">
+                                  <!-- Equipment Type purchasing table -->
+                                  <h5 class="card-title">Equipment Details</h5>
+                                  <table class="display nowrap custom_datatable text-center" id='state_equipment_table'>
+                                    <thead class="text-center">
+                                      <tr>
+                                        <th>Full identifier</th>
+                                        <th>Equip Description</th>
+                                        <th>Quoted</th>
+                                        <th>Ordered</th>
+                                        <th>Received</th>
+                                        <th>Installed</th>
+                                        <th>In Warranty</th>
+                                        <th>Design approved</th>
+                                        <th>Configured</th>
+                                        <th>Fat_complete</th>
+                                        <th>Sat_complete</th>
+                                        <th>Commissioning_complete</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                      
+                                    </tbody>
+                                  </table> 
+        
+                                </div>
+                              </div><!-- End Right Overview -->
                             </div>
-                            <ul>
-                            </ul>
-                          </li>
-                        </template>
-                      </div><!-- End Middle Object Hierarchy -->
-                      
-                      <!-- Right Overview -->
-                      <div class="col-xxl-7 col-lg-7 col-md-12 p-0">
-                        <div class="card card-body right_overview border-gray">
-                          <!-- Equipment details table -->
-                          <h5 class="card-title">Equipment Details</h5>
-                          <table class="display nowrap custom_datatable">
-                            <thead>
-                              <tr>
-                                <th>Full Identifier</th>
-                                <th>Equip Description</th>
-                                <th>Quoted</th>
-                                <th>Ordered</th>
-                                <th>Received</th>
-                                <th>Installed</th>
-                                <th>In Warranty</th>
-                                <th>State Label</th>
-                                <th>...</th>
-                                <th>State Label</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <th>full identifier1</th>
-                                <td>equip description1</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>state label1</td>
-                                <td>...</td>
-                                <td>state label11</td>
-                              </tr>
-                              <tr>
-                                <th>full identifier2</th>
-                                <td>equip description2</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>state label2</td>
-                                <td>...</td>
-                                <td>state label22</td>
-                              </tr>
-                              <tr>
-                                <th>full identifier3</th>
-                                <td>equip description3</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>state label3</td>
-                                <td>...</td>
-                                <td>state label33</td>
-                              </tr>
-                            </tbody>
-                          </table><!-- End Equipment details table -->
-                          <!-- Connection details table -->
-                          <h5 class="card-title">Connection Details</h5>
-                          <table class="display nowrap custom_datatable">
-                            <thead>
-                              <tr>
-                                <th>Full Identifier</th>
-                                <th>Equip Description</th>
-                                <th>Quoted</th>
-                                <th>Ordered</th>
-                                <th>Received</th>
-                                <th>Installed</th>
-                                <th>State Label</th>
-                                <th>...</th>
-                                <th>State Label</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <th>full identifier1</th>
-                                <td>equip description1</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>state label1</td>
-                                <td>...</td>
-                                <td>state label11</td>
-                              </tr>
-                              <tr>
-                                <th>full identifier2</th>
-                                <td>equip description2</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>state label2</td>
-                                <td>...</td>
-                                <td>state label22</td>
-                              </tr>
-                              <tr>
-                                <th>full identifier3</th>
-                                <td>equip description3</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>True</td>
-                                <td>state label3</td>
-                                <td>...</td>
-                                <td>state label33</td>
-                              </tr>
-                            </tbody>
-                          </table><!-- End Connection Details table -->
-
+                          </div>
+                          <div class="state-connection tab-pane fade pt-2" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                            <div class="row ml-2 pr-2">
+                              <div class="col-xxl-3 col-lg-3 col-md-3 p-0">
+                                <div class="card info-card middle_object_hierarchy border-gray">
+                                  <!-- Start TreeView Content -->
+                                  <div class="treeview-animated border">
+                                    <h6 class="pt-3 pl-3">Connection</h6>
+                                    <ul class="treeview-animated-list mb-3" id="state_connection_tree">
+                                      
+                                    </ul>
+                                  </div>
+                                  <!-- // End TreeView Content -->
+                                </div>
+                              </div><!-- End Middle Object Hierarchy -->
+                              
+                              <!-- Right Overview -->
+                              <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
+                                <div class="card card-body right_overview border-gray">
+                                  <!-- Connection Type purchasing table -->
+                                  <h5 class="card-title">Connection Details</h5>
+                                  <table class="display nowrap custom_datatable text-center" id='state_connection_table'>
+                                    <thead class="text-center">
+                                      <tr>
+                                          <th>Full identifier</th>
+                                          <th>Connection Description</th>
+                                          <th>Quoted</th>
+                                          <th>Ordered</th>
+                                          <th>Received</th>
+                                          <th>Installed</th>
+                                          <th>In Warranty</th>
+                                          <th>Design approved</th>
+                                          <th>Fat_complete</th>
+                                          <th>Sat_complete</th>
+                                          <th>Commissioning_complete</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                      
+                                    </tbody>
+                                  </table><!-- End Connection Type purchasing table with stripped rows -->
+                                </div>
+                              </div><!-- End Right Overview -->
+                            </div>
+                          </div>
                         </div>
-                      </div><!-- End Right Overview -->
-
+                      </div>
+                      <!-- Middle Object Hierarchy -->
                       <!-- Buttons Section -->
                       <div class="col-xxl-12 col-lg-12 col-md-12">
                         <div class="card">
@@ -422,4 +191,100 @@
     </div>
     
   </section>
+  <script type="text/javascript">
+    all_equipment = JSON.parse(document.getElementById('all_equipment').textContent)
+    all_connection = JSON.parse(document.getElementById('all_connection').textContent)
+    
+    function createEquipmentTree(data) {
+      const nodeWithParent = []
+      
+      //make the equipment_path as string from list
+      data.forEach(element => {
+        path = element.equipment_path.join('.')
+        element.equipment_path = path        
+      })
+
+      //Find the parent for each element
+      data.forEach(element => {
+        const parent = element.equipment_path.includes('.')? element.equipment_path.substr(0, element.equipment_path.lastIndexOf('.')):null
+        nodeWithParent.push({...element, parent})
+      });
+
+      //Recursive function to create HTML out of node
+      function getNodeHtml(n) {
+        let html = ''
+        const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
+                  
+        if(children.length > 0) {
+          html += '<li class="treeview-animated-items treeview-li"> \
+                      <a class="closed"> \
+                        <i class="fas fa-angle-right"></i> \
+                        <span class="ml-1 treeview-title" data-equipmentpath="'+ n.equipment_path +'">'+ n.equipment_full_identifier + '  (' + n.equipment_description + ')</span> \
+                      </a> \
+                      <ul class="nested">' 
+            + children.map( getNodeHtml).join('')
+            + '</ul></li>'
+        }
+        else{
+          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-equipmentpath="'+ n.equipment_path + '"> \
+          '+n.equipment_full_identifier + '  (' + n.equipment_description +')</li>'
+        }
+        return html
+      }
+
+      // Get all root nodes (without parent)
+      const root = nodeWithParent.filter(d => d.parent === null)
+
+      return root.map(getNodeHtml).join('')
+    }
+
+    function createConnectionTree(data) {
+      const nodeWithParent = []
+      
+      //make the equipment_path as string from list
+      data.forEach(element => {
+        path = element.connection_path.join('.')
+        element.connection_path = path        
+      })
+
+      //Find the parent for each element
+      data.forEach(element => {
+        const parent = element.connection_path.includes('.')? element.connection_path.substr(0, element.connection_path.lastIndexOf('.')):null
+        nodeWithParent.push({...element, parent})
+      });
+
+      //Recursive function to create HTML out of node
+      function getNodeHtml(n) {
+        let html = ''
+        const children = nodeWithParent.filter(d => d.parent === n.connection_path)
+                  
+        if(children.length > 0) {
+          html += '<li class="treeview-animated-items treeview-li"> \
+                      <a class="closed"> \
+                        <i class="fas fa-angle-right"></i> \
+                        <span class="ml-1 treeview-title" data-connectionpath="'+ n.connection_path +'">'+ n.connection_local_identifier + '  (' + n.connection_description + ')</span> \
+                      </a> \
+                      <ul class="nested">' 
+            + children.map( getNodeHtml).join('')
+            + '</ul></li>'
+        }
+        else{
+          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-connectionpath="'+ n.connection_path + '"> \
+          '+n.connection_local_identifier + '  (' + n.connection_description +')</li>'
+        }
+        return html
+      }
+
+      // Get all root nodes (without parent)
+      const root = nodeWithParent.filter(d => d.parent === null)
+
+      return root.map(getNodeHtml).join('')
+    }
+
+    const equipmenthtml = createEquipmentTree(all_equipment)
+    const connectionhtml = createConnectionTree(all_connection)
+    document.getElementById('state_equipment_tree').innerHTML = equipmenthtml
+    document.getElementById('state_connection_tree').innerHTML = connectionhtml
+
+  </script>
 {% endblock %}

@@ -192,7 +192,7 @@
   <script type="text/javascript">
     purchasing_equipment = JSON.parse(document.getElementById('purchasing_equipment').textContent)
     purchasing_connection = JSON.parse(document.getElementById('purchasing_connection').textContent)
-
+    console.log(purchasing_equipment)
     function createTree(data) {
       const nodeWithParent = []
       
@@ -232,12 +232,12 @@
       }
 
       // Get all root nodes (without parent)
-      const root = nodeWithParent.filter(d => d.parent === nodeWithParent[0].parent)
-
+      root = nodeWithParent
       return root.map(getNodeHtml).join('')
     }
 
     const equipmentTypehtml = createTree(purchasing_equipment)
+    console.log(equipmentTypehtml)
     const connectionTypehtml = createTree(purchasing_connection)
     document.getElementById('purchasing_equipment_tree').innerHTML = equipmentTypehtml
     document.getElementById('purchasing_connection_tree').innerHTML = connectionTypehtml

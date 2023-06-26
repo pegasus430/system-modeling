@@ -235,7 +235,7 @@
       }
 
       // Get all root nodes (without parent)
-      const root = nodeWithParent.filter(d => d.parent === nodeWithParent[0].parent)
+      const root = nodeWithParent
 
       return root.map(getNodeHtml).join('')
     }
@@ -279,7 +279,7 @@
       }
 
       // Get all root nodes (without parent)
-      const root = nodeWithParent.filter(d => d.parent === nodeWithParent[0].parent)
+      const root = nodeWithParent
 
       return root.map(getNodeHtml).join('')
     }

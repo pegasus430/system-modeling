@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState
 from django.db import connection
 import datetime
 import json
@@ -43,18 +43,26 @@ def system_purchasing_detail(request):
 
 def system_delivery(request):
     page = 'system'
+    purchasing_equipment = list(PurchasingEquipmentTypeDetail.objects.order_by('type_modifier').values())
+    purchasing_connection = list(PurchasingConnectionTypeDetail.objects.order_by('connection_type_modifier').values())
     context = {
         'title': 'System Delivery',
         'page': page,
+        'purchasing_equipment': purchasing_equipment,
+        'purchasing_connection': purchasing_connection
     }
     
     return render(request, 'system_delivery.html', context=context)
 
 def system_state(request):
     page = 'system'
+    all_equipment = list(EquipmentState.objects.order_by('equipment_sort_identifier').values())
+    all_connection = list(ConnectionState.objects.order_by('connection_identifier').values())
     context = {
         'title': 'System State',
         'page': page,
+        'all_equipment': all_equipment,
+        'all_connection': all_connection
     }
     
     return render(request, 'system_state.html', context=context)

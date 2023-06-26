@@ -171,6 +171,8 @@ class PurchasingEquipmentTypeDetail(models.Model):
     purchase_order_date = models.DateField()
     purchase_order_reference = models.TextField()
     due_date = models.DateField()
+    received_date = models.DateField()
+    location = models.TextField()
     class Meta:
         managed = False
         db_table = 'equipment_purchasing_detail'
@@ -187,6 +189,63 @@ class PurchasingConnectionTypeDetail(models.Model):
     purchase_order_date = models.DateField()
     purchase_order_reference = models.TextField()
     due_date = models.DateField()
+    received_date = models.DateField()
+    location = models.TextField()
     class Meta:
         managed = False
         db_table = 'connection_purchasing_detail'
+
+class EquipmentState(models.Model):
+    equipment_id = models.BigIntegerField(primary_key=True)
+    equipment_path = LTreeField(unique=True)
+    equipment_tree_level = models.IntegerField()
+    equipment_sort_identifier = models.TextField()
+    equipment_full_identifier = models.TextField()
+    equipment_location_path = models.CharField(max_length=255)
+    equipment_location_identifier = models.CharField(max_length=255)
+    equipment_local_identifier = models.CharField(max_length=255)
+    type_id = models.IntegerField()
+    equipment_description = models.TextField()
+    equipment_is_approved = models.BooleanField()
+    equipment_comment = models.CharField(max_length=255)
+    location = models.TextField()
+    quote_received = models.BooleanField()
+    is_ordered = models.BooleanField()
+    is_received = models.BooleanField()
+    is_configured = models.BooleanField()
+    is_installed = models.BooleanField()
+    in_warranty = models.BooleanField()
+    is_commissioned = models.BooleanField()
+    design_approved = models.BooleanField()
+    fat_complete = models.BooleanField()
+    sat_complete = models.BooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'all_equipment_state'
+
+class ConnectionState(models.Model):
+    connection_id = models.BigIntegerField(primary_key=True)
+    connection_path = LTreeField(unique=True)
+    connection_tree_level = models.IntegerField()
+    connection_identifier_location = models.TextField()
+    connection_identifier = models.TextField()
+    connection_local_identifier = models.CharField(max_length=255)
+    connection_type_id = models.IntegerField()
+    connection_description = models.TextField()
+    connection_length = models.FloatField()
+    connection_is_approved = models.BooleanField()
+    connection_comment = models.TextField()
+    location = models.TextField()
+    quote_received = models.BooleanField()
+    is_ordered = models.BooleanField()
+    is_received = models.BooleanField()
+    is_installed = models.BooleanField()
+    in_warranty = models.BooleanField()
+    is_commissioned = models.BooleanField()
+    design_approved = models.BooleanField()
+    fat_complete = models.BooleanField()
+    sat_complete = models.BooleanField()
+    class Meta:
+        managed = False
+        db_table = 'all_connection_state'

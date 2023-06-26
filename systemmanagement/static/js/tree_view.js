@@ -554,4 +554,106 @@ $(function() {
 
   })
 
+  $('.delivery-equipment .treeview-li .treeview-title').on('click', function(){
+    selectedTypePath = $(this).attr("data-typepath")
+    $.ajax({
+      type: "GET",
+      url: '/getEquipmentTypePurchasingDetail',
+      data: {
+        selectedTypePath: selectedTypePath
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        var tableData = []
+
+        child_purchasing_equipment_type = jsonData['child_equipmenttype']
+        
+        if(child_purchasing_equipment_type.length){
+          child_purchasing_equipment_type.forEach(element => {
+               tableData.push({
+                'full_identifier': element.equipment_full_identifier ,
+                'description': element.equipment_description,
+                'manufacturer' : element.manufacturer,
+                'po_reference': element.purchase_order_reference,
+                'po_date': element.purchase_order_date,
+                'due_date': element.due_date,
+                'received_data': element.received_date,
+                'serial_number': '',
+                'location': elememt.location
+               })
+            })
+            
+            $('#delivery_equipment_type_table').DataTable({
+              data:  tableData ,
+              scrollX: true,
+              destroy: true,
+              columns: [
+                { data: 'full_identifier' },
+                { data: 'description' },
+                { data: 'manufacturer' },
+                { data: 'po_reference' },
+                { data: 'po_date' },
+                { data: 'due_date' },
+                { data: 'received_data' },
+                { data: 'serial_number' },
+                { data: 'location' },
+              ]}
+            )
+        }
+      }
+    })
+
+  })
+
+  $('.delivery-connection .treeview-li .treeview-title').on('click', function(){
+    selectedTypePath = $(this).attr("data-typepath")
+    
+    $.ajax({
+      type: "GET",
+      url: '/getConnectionTypePurchasingDetail',
+      data: {
+        selectedTypePath: selectedTypePath
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        var tableData = []
+
+        child_purchasing_connection_type = jsonData['child_connectiontype']       
+
+        if(child_purchasing_connection_type.length){
+            child_purchasing_connection_type.forEach(element => {
+               tableData.push({
+                'location_identifier': element.connection_location_identifier ,
+                'description': element.connection_description,
+                'po_reference': element.purchase_order_reference,
+                'po_date': element.purchase_order_date,
+                'due_date': element.due_date,
+                'received_data': element.received_date,
+                'serial_number': '',
+                'location': element.location
+               })
+            })
+            
+            $('#delivery_connection_type_table').DataTable({
+              data:  tableData ,
+              scrollX: true,
+              destroy: true,
+              columns: [
+                { data: 'location_identifier' },
+                { data: 'description' },
+                { data: 'po_reference' },
+                { data: 'po_date' },
+                { data: 'due_date' },
+                { data: 'received_data' },
+                { data: 'serial_number' },
+                { data: 'location' },
+              ]}
+            )
+        }
+      }
+    })
+
+  })
+
+
 }); 

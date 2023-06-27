@@ -468,7 +468,6 @@ $(function() {
         var tableData = []
 
         child_purchasing_equipment_type = jsonData['child_equipmenttype']
-        
         if(child_purchasing_equipment_type.length){
           child_purchasing_equipment_type.forEach(element => {
                tableData.push({
@@ -493,7 +492,7 @@ $(function() {
                 { data: 'description' },
                 { data: 'manufacturer' },
                 { data: 'model' },
-                { data: 'element.quote_reference'},
+                { data: 'quote_reference'},
                 { data: 'leadtime' },
                 { data: 'po_date' },
                 { data: 'po_reference' },
@@ -578,8 +577,8 @@ $(function() {
                 'po_date': element.purchase_order_date,
                 'due_date': element.due_date,
                 'received_data': element.received_date,
-                'serial_number': '',
-                'location': elememt.location
+                'serial_number': element.unique_code,
+                'location': element.location
                })
             })
             
@@ -629,7 +628,7 @@ $(function() {
                 'po_date': element.purchase_order_date,
                 'due_date': element.due_date,
                 'received_data': element.received_date,
-                'serial_number': '',
+                'serial_number': element.unique_code,
                 'location': element.location
                })
             })
@@ -647,6 +646,121 @@ $(function() {
                 { data: 'received_data' },
                 { data: 'serial_number' },
                 { data: 'location' },
+              ]}
+            )
+        }
+      }
+    })
+
+  })
+
+  $('.state-equipment .treeview-li .treeview-title').on('click', function(){
+    selectedEquipmentPath = $(this).attr("data-equipmentpath")
+  
+    $.ajax({
+      type: "GET",
+      url: '/getEquipmentStateDetail',
+      data: {
+        selectedEquipmentPath: selectedEquipmentPath
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        
+        var tableData = []
+
+        state_equipment_detail = jsonData['state_equipment_detail']       
+        
+        if(state_equipment_detail.length){
+          state_equipment_detail.forEach(element => {
+               tableData.push({
+                'full_identifier': element.equipment_full_identifier ,
+                'description': element.equipment_description,
+                'quoted': element.quote_received,
+                'ordered': element.is_ordered,
+                'received': element.is_received,
+                'installed': element.is_installed,
+                'in_warranty': element.in_warranty,
+                'design_approved': element.design_approved,
+                'configured': element.is_configured,
+                'fat_complete': element.fat_complete,
+                'sat_complete': element.sat_complete,
+                'commissioning_complete': element. is_commissioned
+               })
+            })
+            
+            $('#state_equipment_table').DataTable({
+              data:  tableData ,
+              scrollX: true,
+              destroy: true,
+              columns: [
+                { data: 'full_identifier' },
+                { data: 'description' },
+                { data: 'quoted' },
+                { data: 'ordered' },
+                { data: 'received' },
+                { data: 'installed' },
+                { data: 'in_warranty' },
+                { data: 'design_approved' },
+                { data: 'configured' },
+                { data: 'fat_complete' },
+                { data: 'sat_complete' },
+                { data: 'commissioning_complete' },
+              ]}
+            )
+        }
+      }
+    })
+
+  })
+
+  $('.state-connection .treeview-li .treeview-title').on('click', function(){
+    selectedConnectionPath = $(this).attr("data-connectionpath")
+    
+    $.ajax({
+      type: "GET",
+      url: '/getConnectionStateDetail',
+      data: {
+        selectedConnectionPath: selectedConnectionPath
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        var tableData = []
+
+        state_connection_detail = jsonData['state_connection_detail']       
+        console.log(state_connection_detail)
+        if(state_connection_detail.length){
+          state_connection_detail.forEach(element => {
+               tableData.push({
+                'full_identifier': element.connection_local_identifier ,
+                'description': element.connection_description,
+                'quoted': element.quote_received,
+                'ordered': element.is_ordered,
+                'received': element.is_received,
+                'installed': element.is_installed,
+                'in_warranty': element.in_warranty,
+                'design_approved': element.design_approved,                
+                'fat_complete': element.fat_complete,
+                'sat_complete': element.sat_complete,
+                'commissioning_complete': element.is_commissioned
+               })
+            })
+            
+            $('#state_connection_table').DataTable({
+              data:  tableData ,
+              scrollX: true,
+              destroy: true,
+              columns: [
+                { data: 'full_identifier' },
+                { data: 'description' },
+                { data: 'quoted' },
+                { data: 'ordered' },
+                { data: 'received' },
+                { data: 'installed' },
+                { data: 'in_warranty' },
+                { data: 'design_approved' },
+                { data: 'fat_complete' },
+                { data: 'sat_complete' },
+                { data: 'commissioning_complete' },
               ]}
             )
         }

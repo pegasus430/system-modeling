@@ -30,7 +30,7 @@ def system_purchasing_overview(request):
 
 def system_purchasing_detail(request):
     page = 'system'
-    purchasing_equipment = list(PurchasingEquipmentTypeDetail.objects.order_by('type_modifier').values())
+    purchasing_equipment = list(PurchasingEquipmentTypeDetail.objects.order_by('type_modifier').values())    
     purchasing_connection = list(PurchasingConnectionTypeDetail.objects.order_by('connection_type_modifier').values())
     context = {
         'title': 'System Purchasing detail',
@@ -189,7 +189,7 @@ def get_ConnectionType_purchasing_detail(request):
         )
 
         child_connection_list = list(child_connection_db.values())
-        print(child_connection_list)
+        
 
         data = json.dumps({
                     'child_connectiontype': child_connection_list,
@@ -371,6 +371,43 @@ def definitions_possible_equipment_connection_states(request):
     
     return render(request, 'definitions_possible_equipment_connection_states.html', context=context)
 
+def get_equipment_state_detail(request):
+    if request.method == 'GET':
+        selected_equipment_path = request.GET['selectedEquipmentPath']
+
+        child_equipments_db = EquipmentState.objects.extra(
+            where=[
+                "equipment_path <@ '"+ selected_equipment_path + "'"
+            ],
+            order_by=['equipment_sort_identifier']
+        )
+
+        child_equipments_list = list(child_equipments_db.values())
+
+        data = json.dumps({
+            'state_equipment_detail': child_equipments_list,
+            })
+        
+        return HttpResponse(data)
+
+def get_connection_state_detail(request):
+    if request.method == 'GET':
+        selected_connection_path = request.GET['selectedConnectionPath']
+
+        child_connection_db = ConnectionState.objects.extra(
+            where=[
+                "connection_path <@ '"+ selected_connection_path + "'"
+            ],
+            order_by=['connection_identifier']
+        )
+
+        child_connection_list = list(child_connection_db.values())
+
+        data = json.dumps({
+            'state_connection_detail': child_connection_list,
+            })
+        
+        return HttpResponse(data)
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

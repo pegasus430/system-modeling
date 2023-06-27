@@ -173,6 +173,7 @@ class PurchasingEquipmentTypeDetail(models.Model):
     due_date = models.DateField()
     received_date = models.DateField()
     location = models.TextField()
+    unique_code = models.TextField()
     class Meta:
         managed = False
         db_table = 'equipment_purchasing_detail'
@@ -191,6 +192,7 @@ class PurchasingConnectionTypeDetail(models.Model):
     due_date = models.DateField()
     received_date = models.DateField()
     location = models.TextField()
+    unique_code = models.TextField()
     class Meta:
         managed = False
         db_table = 'connection_purchasing_detail'

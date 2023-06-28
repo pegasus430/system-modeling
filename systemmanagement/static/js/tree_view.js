@@ -114,6 +114,7 @@ $(function() {
       },
       success: function (data){
         jsonData = JSON.parse(data)
+        
         childEquipments = jsonData['child_equipments']
         gChildEquipments = childEquipments
         const html = createEquipmentChildElementTree(childEquipments)
@@ -140,8 +141,12 @@ $(function() {
         }
 
         allEquipmentExceptSelectedOne = allEquipment.filter( d => d.equipment_id !== selectedEquipment[0]['equipment_id'])
-
+        
         // display parent and location path
+          var p = new Option('none' , '', undefined, false);
+          $(p).html('none');
+          $("#location_path").append(p);
+
         allEquipmentExceptSelectedOne.forEach( element => {
           element_equipment_path = element.equipment_path.join('.')
           
@@ -149,13 +154,13 @@ $(function() {
           selected_element_parent_path = selected_element_parent_path.substr(0, selected_element_parent_path.lastIndexOf('.'))
           
           var selected = element_equipment_path === selected_element_parent_path ? true : false ;
-          var o = new Option(element.equipment_full_identifier, element.equipment_full_identifier, undefined, selected);
+          var o = new Option(element.equipment_full_identifier, element.equipment_path, undefined, selected);
           $(o).html(element.equipment_full_identifier);
           $("#parent_path").append(o);
 
           location_path = selectedEquipment[0]['equipment_location_path']
           var locationSelected = element_equipment_path === location_path ? true : false
-          var p = new Option(element.equipment_full_identifier, element.equipment_full_identifier, undefined, locationSelected);
+          var p = new Option(element.equipment_full_identifier, element.equipment_path, undefined, locationSelected);
           
           $(p).html(element.equipment_full_identifier);
           $("#location_path").append(p);
@@ -169,7 +174,7 @@ $(function() {
           if(element.id === selectedEquipment[0]['type_id'] ){
               typeLabelDescription = element.description + '('+ (element.is_approved ? 'approved' : 'not approved') +')'
           }
-          var t = new Option(element.label, element.label, undefined, selected);
+          var t = new Option(element.label, element.id, undefined, selected);
           $(t).html(element.label);
           $("#all_equipment_types_select").append(t);
         })

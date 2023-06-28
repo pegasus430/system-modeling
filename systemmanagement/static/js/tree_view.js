@@ -99,7 +99,7 @@ $(function() {
 
   // Selected Level for left tree on Equipment page
   $(".equipment_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
-    
+    $('#div_equipment_local_identifier').addClass('d-none')
     $("#location_path").find('option').remove()
     $("#parent_path").find('option').remove()
     $('#all_equipment_types_select').find('option').remove()
@@ -127,8 +127,9 @@ $(function() {
         allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
         selectedEquipmentId = selectedEquipment[0]['equipment_id']
 
-        $('#equipment_id').innerHTML = selectedEquipmentId
+        $('#equipment_id').val(selectedEquipmentId)
         $('#equipment_full_identifier').val(selectedEquipment[0]['equipment_full_identifier'])
+        $('#equipment_local_identifier').val(selectedEquipment[0]['equipment_local_identifier'])
         $('#equipment_description').val(selectedEquipment[0]['equipment_description'])
         $('#equipment_comment').val(selectedEquipment[0]['equipment_comment'])
         $('#basic-full-identifier').val(selectedEquipment[0]['equipment_full_identifier'] + ' ('+ selectedEquipment[0]['equipment_description'] + ')')

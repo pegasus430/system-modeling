@@ -37,7 +37,7 @@
                     <div class="row">
                       <!-- Left Object Hierarchy -->
                       
-                       <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
+                      <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
                         <div class="card info-card left_object_hierarchy border-gray">
                           <div class="treeview-animated border mx-2 my-2">
                             <h6 class="pt-3 pl-3">Equipments</h6>
@@ -56,11 +56,17 @@
                           <form class="row g-3">
                             
                             <h5 class="card-title nav-tabs-bordered">Equipment Detail</h5>
-                            <div class="hidden" id="equipment_id"></div>
+                            <input style="display: none;" id="equipment_id" value=""></input>
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Full Name:</label>
                               <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder="Equipment name" value="" id="equipment_full_identifier">
+                                <input type="text" class="form-control" placeholder="Equipment name" value="" id="equipment_full_identifier" readonly>
+                                <div class="row mt-3 d-none" id="div_equipment_local_identifier">
+                                   <label class="col-md-3 col-form-label text-secondary">Local Name:</label>
+                                   <div class="col-md-8">
+                                     <input type="text" class="form-control" placeholder="Equipment name" value="" id="equipment_local_identifier">
+                                   </div>
+                                </div>
                               </div>
                             </div>
                             <div class="row mt-3">
@@ -161,6 +167,13 @@
 
                             </div>
                           </div>
+                          <!-- Buttons Section -->
+                          <div class="col-xxl-12 col-lg-12 col-md-12">
+                              <div class="card-body buttons_section">
+                                <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
+                                <button type="button" class="btn btn-outline-primary" id='commit'>Commit</button>
+                              </div>
+                            </div><!-- End Buttons Section -->
                         </div>
                       </div><!-- End Middle Overview -->
 
@@ -177,15 +190,7 @@
                           
                       </div><!-- End Right Object Hierarchy -->
 
-                      <!-- Buttons Section -->
-                      <div class="col-xxl-12 col-lg-12 col-md-12">
-                        <div class="card">
-                          <div class="card-body buttons_section">
-                            <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
-                            <button type="button" class="btn btn-outline-primary">Commit</button>
-                          </div>
-                        </div>
-                      </div><!-- End Buttons Section -->
+                      
                     </div><!-- End Main Content -->
                   </div>
                   <!-- // End Equipment Tab Content -->

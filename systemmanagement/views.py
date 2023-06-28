@@ -4,6 +4,8 @@ from .models import AllEquipment , EquipmentType, PurchasingConnectionType, Purc
 from django.db import connection
 import datetime
 import json
+import pytz
+
 
 # Create your views here.
 def system(request):
@@ -408,6 +410,50 @@ def get_connection_state_detail(request):
             })
         
         return HttpResponse(data)
+    
+def update_equipment_detail(request):
+    if request.method == 'GET':
+        equipment_id = request.GET['equipment_id']
+        equipment_local_identifier = request.GET['equipment_local_identifier']
+        equipment_parent_path =  request.GET['equipment_parent_path']
+        
+        equipment_path = equipment_parent_path.replace(',', '.') + '.' + equipment_id
+        
+        equipment_description =  request.GET['equipment_description']
+        equipment_location_path =  request.GET['equipment_location_path']
+        equipment_location_path = equipment_location_path.replace(',', '.')
+        
+        equipment_type_id =  request.GET['equipment_type_id']
+        equipment_comment =  request.GET['equipment_comment']
+        equipment_is_approved = request.GET['equipment_is_approved'] 
+
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        equipment_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        
+        
+        raw_query = "SELECT  fn_update_equipment(" + equipment_id + " , '" + equipment_local_identifier + "' , '" +  \
+            equipment_path + "', true , '"+ equipment_location_path + "', " + equipment_type_id + ", '" \
+            + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
+            + equipment_modified_at + "')" 
+        
+        
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
+        
+        data = json.dumps(
+            {
+                
+                'equipment_list': all_equipment,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+        
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

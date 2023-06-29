@@ -8,6 +8,76 @@
 // Treeview Initialization
 $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
+    // display purchasing_overview_table as default
+    var tableData = []
+    if(document.getElementById('purchasing_overview_equipment')){
+      purchasing_overview_equipment = JSON.parse(document.getElementById('purchasing_overview_equipment').textContent)
+      if(purchasing_overview_equipment.length){
+        purchasing_overview_equipment.forEach(element => {
+              tableData.push({
+              'label': element.type_label ,
+              'description': element.type_description,
+              'manufacturer' : element.manufacturer,
+              'model' : element.model,
+              'leadtime': element.lead_time_days ,
+              'total_required':element.total_required ,
+              'total_ordered':element.ordered_count ,
+              'total_to_order':element.to_order_count 
+              })
+          })
+     
+          $('#purchasing_equipment_type_overview_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            autoWidth: false,
+            columns: [
+              { data: 'label' },
+              { data: 'description' },
+              { data: 'manufacturer' },
+              { data: 'model' },
+              { data: 'leadtime' },
+              { data: 'total_required' },
+              { data: 'total_ordered' },
+              { data: 'total_to_order' }
+            ]}
+          )
+      }
+  
+    }
+    if(document.getElementById('purchasing_overview_connection')){
+      tableData = []
+      purchasing_overview_connection = JSON.parse(document.getElementById('purchasing_overview_connection').textContent)
+      if(purchasing_overview_connection.length){
+          purchasing_overview_connection.forEach(element => {
+                 tableData.push({
+                  'label': element.type_label ,
+                  'description': element.type_description,
+                  'leadtime': element.lead_time_days ,
+                  'total_required':element.total_quantity ,
+                  'total_ordered':element.ordered_count ,
+                  'total_to_order':element.to_order_count 
+                 })
+              })
+              
+              $('#purchasing_connection_type_overview_table').DataTable({
+                data:  tableData ,
+                
+                destroy: true,
+                columns: [
+                  { data: 'label' },
+                  { data: 'description' },
+                  { data: 'leadtime' },
+                  { data: 'total_required' },
+                  { data: 'total_ordered' },
+                  { data: 'total_to_order' }
+                ]}
+              )
+      }
+    }
+    
+
+
+   
 });
 
 (function() {
@@ -340,8 +410,52 @@ $(document).ready(function() {
       }
     })
   }
-  
 
+  if(select('#equipment_full_identifier')){
+    on('click', '#equipment_full_identifier', function(){
+      console.log('selected full identifier')
+      $('#div_equipment_local_identifier').removeClass('d-none')
+    })
+  }
+
+  if(select('.equipment_page #commit'))
+  {
+    on('click', '.equipment_page #commit', function(){
+      if(confirm('Are you sure to update this equipment?')){
+         var equipment_local_identifier = $('#equipment_local_identifier').val()
+         var equipment_id = $('#equipment_id').val()
+         var equipment_parent_path = $('#parent_path').val()
+         var equipment_description = $('#equipment_description').val()
+         var equipment_location_path = $('#location_path').val()
+         var equipment_type_id = $('#all_equipment_types_select').val()
+         var equipment_comment = $('#equipment_comment').val()
+         var equipment_is_approved = $('#equipment_is_approved').prop('checked')
+         console.log(equipment_location_path)
+         $.ajax({
+          type: "GET",
+          url: '/updateEquipmentDetail',
+          data: {
+            equipment_id: equipment_id,
+            equipment_local_identifier: equipment_local_identifier,  
+            equipment_parent_path: equipment_parent_path,
+            equipment_description: equipment_description,
+            equipment_location_path: equipment_location_path,
+            equipment_type_id: equipment_type_id,
+            equipment_comment: equipment_comment,
+            equipment_is_approved: equipment_is_approved          
+          },
+          success: function (data){
+            console.log(data)
+
+            $('#div_equipment_local_identifier').addClass('d-none')
+          }
+         })
+
+      }
+    })
+  }
+  
+ 
 } )
 ();
 

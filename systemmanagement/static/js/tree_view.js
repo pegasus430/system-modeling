@@ -1,8 +1,6 @@
 $(function() {
     // Treeview Initialization
     
-      
-    
   let gChildEquipments
  
 
@@ -380,7 +378,7 @@ $(function() {
         var tableData = []
 
         child_purchasing_equipment_type = jsonData['child_equipmenttype']
-        console.log(child_purchasing_equipment_type)
+        
         if(child_purchasing_equipment_type.length){
           child_purchasing_equipment_type.forEach(element => {
                tableData.push({
@@ -397,7 +395,6 @@ $(function() {
             
             $('#purchasing_equipment_type_overview_table').DataTable({
               data:  tableData ,
-              scrollX: true,
               destroy: true,
               columns: [
                 { data: 'label' },
@@ -444,7 +441,7 @@ $(function() {
             
             $('#purchasing_connection_type_overview_table').DataTable({
               data:  tableData ,
-              scrollX: true,
+              
               destroy: true,
               columns: [
                 { data: 'label' },

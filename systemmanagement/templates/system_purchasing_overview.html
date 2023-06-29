@@ -3,8 +3,8 @@
 
 {% block content %}
 
-{{purchasing_equipment | json_script:'purchasing_equipment'}}
-{{purchasing_connection | json_script:'purchasing_connection'}}
+{{purchasing_equipment | json_script:'purchasing_overview_equipment'}}
+{{purchasing_connection | json_script:'purchasing_overview_connection'}}
 
 <section class="section equipment">
     <div class="row">
@@ -97,7 +97,7 @@
                               
                               <!-- Right Overview -->
                               <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-                                <div class="card card-body right_overview border-gray">
+                                <div class="card card-body right_overview border-gray" style="overflow-x: auto;">
                                   <!-- Equipment Type purchasing table -->
                                   <h5 class="card-title">Equipment Type Purchasing Details</h5>
                                   <table class="display nowrap custom_datatable text-center" id='purchasing_equipment_type_overview_table'>
@@ -141,7 +141,7 @@
                               
                               <!-- Right Overview -->
                               <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-                                <div class="card card-body right_overview border-gray">
+                                <div class="card card-body right_overview border-gray" style="overflow-x: auto;">
                                 
                                   <!-- Connection Type purchasing table -->
                                   <h5 class="card-title">Connection Type Purchasing Details</h5>
@@ -189,10 +189,11 @@
     </div>
     
   </section>
+
   <script type="text/javascript">
-    purchasing_equipment = JSON.parse(document.getElementById('purchasing_equipment').textContent)
-    purchasing_connection = JSON.parse(document.getElementById('purchasing_connection').textContent)
-    console.log(purchasing_equipment)
+    purchasing_overview_equipment = JSON.parse(document.getElementById('purchasing_overview_equipment').textContent)
+    purchasing_overview_connection = JSON.parse(document.getElementById('purchasing_overview_connection').textContent)
+
     function createTree(data) {
       const nodeWithParent = []
       
@@ -236,11 +237,11 @@
       return root.map(getNodeHtml).join('')
     }
 
-    const equipmentTypehtml = createTree(purchasing_equipment)
-    console.log(equipmentTypehtml)
-    const connectionTypehtml = createTree(purchasing_connection)
+    const equipmentTypehtml = createTree(purchasing_overview_equipment)
+    const connectionTypehtml = createTree(purchasing_overview_connection)
     document.getElementById('purchasing_equipment_tree').innerHTML = equipmentTypehtml
     document.getElementById('purchasing_connection_tree').innerHTML = connectionTypehtml
 
+ 
   </script>
 {% endblock %}

@@ -2,7 +2,15 @@ $(function() {
     // Treeview Initialization
     
   let gChildEquipments
- 
+
+  var stateFunction = function(data) {
+    if(data == true)
+      return '<span class="bi bi-check" style="font-size: 1.5rem; color: rgb(0, 255, 0);"></span>'
+    if(data == false)
+      return '<span class="bi bi-x" style="font-size: 1.5rem; color: rgb(255, 0, 0);"></span>'
+    else
+      return ''
+}
 
   function createEquipmentChildElementTree(data) {
     const nodeWithParent = []
@@ -689,21 +697,49 @@ $(function() {
             
             $('#state_equipment_table').DataTable({
               data:  tableData ,
-              scrollX: true,
               destroy: true,
               columns: [
                 { data: 'full_identifier' },
                 { data: 'description' },
-                { data: 'quoted' },
-                { data: 'ordered' },
-                { data: 'received' },
-                { data: 'installed' },
-                { data: 'in_warranty' },
-                { data: 'design_approved' },
-                { data: 'configured' },
-                { data: 'fat_complete' },
-                { data: 'sat_complete' },
-                { data: 'commissioning_complete' },
+                { 
+                data: 'quoted' ,
+                render: stateFunction
+              },
+              { 
+                data: 'ordered' ,
+                render: stateFunction
+              },
+              { 
+                data: 'received' ,
+                render: stateFunction
+              },
+              { 
+                data: 'installed' ,
+                render: stateFunction 
+              },
+              { 
+                data: 'in_warranty' ,
+                render: stateFunction
+              },
+              { 
+                data: 'design_approved',
+                render: stateFunction 
+              },
+              { 
+                data: 'configured',
+                render: stateFunction 
+              },
+              { 
+                data: 'fat_complete',
+                render: stateFunction
+               },
+              { 
+                data: 'sat_complete',
+                render: stateFunction },
+              { 
+                data: 'commissioning_complete',
+                render: stateFunction
+               },
               ]}
             )
         }
@@ -730,7 +766,7 @@ $(function() {
         if(state_connection_detail.length){
           state_connection_detail.forEach(element => {
                tableData.push({
-                'full_identifier': element.connection_local_identifier ,
+                'full_identifier': element.connection_identifier ,
                 'description': element.connection_description,
                 'quoted': element.quote_received,
                 'ordered': element.is_ordered,
@@ -746,20 +782,41 @@ $(function() {
             
             $('#state_connection_table').DataTable({
               data:  tableData ,
-              scrollX: true,
               destroy: true,
               columns: [
                 { data: 'full_identifier' },
                 { data: 'description' },
-                { data: 'quoted' },
-                { data: 'ordered' },
-                { data: 'received' },
-                { data: 'installed' },
-                { data: 'in_warranty' },
-                { data: 'design_approved' },
-                { data: 'fat_complete' },
-                { data: 'sat_complete' },
-                { data: 'commissioning_complete' },
+                { 
+                  data: 'quoted' ,
+                  render: stateFunction
+                },
+                { 
+                  data: 'ordered',
+                  render: stateFunction
+                 },
+                { 
+                  data: 'received' ,
+                  render: stateFunction
+                },
+                { 
+                  data: 'installed',
+                  render: stateFunction
+                 },
+                { 
+                  data: 'in_warranty' ,
+                  render: stateFunction},
+                { 
+                  data: 'design_approved',
+                  render: stateFunction },
+                { 
+                  data: 'fat_complete',
+                  render: stateFunction },
+                { 
+                  data: 'sat_complete' ,
+                  render: stateFunction},
+                { 
+                  data: 'commissioning_complete' ,
+                  render: stateFunction},
               ]}
             )
         }

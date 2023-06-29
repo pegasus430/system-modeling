@@ -10,6 +10,14 @@ $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
     // display purchasing_overview_table as default
     var tableData = []
+    var stateFunction = function(data) {
+      if(data == true)
+        return '<span class="bi bi-check" style="font-size: 1.5rem; color: rgb(0, 255, 0);"></span>'
+      if(data == false)
+        return '<span class="bi bi-x" style="font-size: 1.5rem; color: rgb(255, 0, 0);"></span>'
+      else
+        return ''
+  }
     if(document.getElementById('purchasing_overview_equipment')){
       purchasing_overview_equipment = JSON.parse(document.getElementById('purchasing_overview_equipment').textContent)
       if(purchasing_overview_equipment.length){
@@ -217,6 +225,141 @@ $(document).ready(function() {
       }
     }
    
+    if(document.getElementById('all_equipment')){
+      tableData = []
+
+      state_equipment_detail = JSON.parse(document.getElementById('all_equipment').textContent)
+      
+      if(state_equipment_detail.length){
+        state_equipment_detail.forEach(element => {
+             tableData.push({
+              'full_identifier': element.equipment_full_identifier ,
+              'description': element.equipment_description,
+              'quoted': element.quote_received,
+              'ordered': element.is_ordered,
+              'received': element.is_received,
+              'installed': element.is_installed,
+              'in_warranty': element.in_warranty,
+              'design_approved': element.design_approved,
+              'configured': element.is_configured,
+              'fat_complete': element.fat_complete,
+              'sat_complete': element.sat_complete,
+              'commissioning_complete': element. is_commissioned
+             })
+          })
+          
+          $('#state_equipment_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'full_identifier' },
+              { data: 'description' },
+              { 
+                data: 'quoted' ,
+                render: stateFunction
+              },
+              { 
+                data: 'ordered' ,
+                render: stateFunction
+              },
+              { 
+                data: 'received' ,
+                render: stateFunction
+              },
+              { 
+                data: 'installed' ,
+                render: stateFunction 
+              },
+              { 
+                data: 'in_warranty' ,
+                render: stateFunction
+              },
+              { 
+                data: 'design_approved',
+                render: stateFunction 
+              },
+              { 
+                data: 'configured',
+                render: stateFunction 
+              },
+              { 
+                data: 'fat_complete',
+                render: stateFunction
+               },
+              { 
+                data: 'sat_complete',
+                render: stateFunction },
+              { 
+                data: 'commissioning_complete',
+                render: stateFunction
+               },
+            ]}
+          )
+      }
+    }
+    if(document.getElementById('all_connection')){
+      tableData = []
+
+      state_connection_detail =  JSON.parse(document.getElementById('all_connection').textContent)      
+      
+      if(state_connection_detail.length){
+        state_connection_detail.forEach(element => {
+             tableData.push({
+              'full_identifier': element.connection_identifier ,
+              'description': element.connection_description,
+              'quoted': element.quote_received,
+              'ordered': element.is_ordered,
+              'received': element.is_received,
+              'installed': element.is_installed,
+              'in_warranty': element.in_warranty,
+              'design_approved': element.design_approved,                
+              'fat_complete': element.fat_complete,
+              'sat_complete': element.sat_complete,
+              'commissioning_complete': element.is_commissioned
+             })
+          })
+          
+          $('#state_connection_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'full_identifier' },
+              { data: 'description' },
+              { 
+                data: 'quoted' ,
+                render: stateFunction
+              },
+              { 
+                data: 'ordered',
+                render: stateFunction
+               },
+              { 
+                data: 'received' ,
+                render: stateFunction
+              },
+              { 
+                data: 'installed',
+                render: stateFunction
+               },
+              { 
+                data: 'in_warranty' ,
+                render: stateFunction},
+              { 
+                data: 'design_approved',
+                render: stateFunction },
+              { 
+                data: 'fat_complete',
+                render: stateFunction },
+              { 
+                data: 'sat_complete' ,
+                render: stateFunction},
+              { 
+                data: 'commissioning_complete' ,
+                render: stateFunction},
+            ]}
+          )
+      }
+    }
 });
 
 (function() {

@@ -94,7 +94,7 @@
                               </div><!-- End Middle Object Hierarchy -->
                               <!-- Right Overview -->
                               <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-                                <div class="card card-body right_overview border-gray">
+                                <div class="card card-body right_overview border-gray" style="overflow-x: auto;">
                                   <!-- Equipment Type purchasing table -->
                                   <h5 class="card-title">Equipment Details</h5>
                                   <table class="display nowrap custom_datatable text-center" id='state_equipment_table'>
@@ -140,7 +140,7 @@
                               
                               <!-- Right Overview -->
                               <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-                                <div class="card card-body right_overview border-gray">
+                                <div class="card card-body right_overview border-gray" style="overflow-x: auto;">
                                   <!-- Connection Type purchasing table -->
                                   <h5 class="card-title">Connection Details</h5>
                                   <table class="display nowrap custom_datatable text-center" id='state_connection_table'>
@@ -194,7 +194,7 @@
   <script type="text/javascript">
     all_equipment = JSON.parse(document.getElementById('all_equipment').textContent)
     all_connection = JSON.parse(document.getElementById('all_connection').textContent)
-    console.log(all_connection)
+    
     function createEquipmentTree(data) {
       const nodeWithParent = []
       

@@ -50,13 +50,18 @@ def system_purchasing_detail(request):
 
 def system_delivery(request):
     page = 'system'
-    purchasing_equipment = list(PurchasingEquipmentTypeDetail.objects.order_by('type_modifier').values())
-    purchasing_connection = list(PurchasingConnectionTypeDetail.objects.order_by('connection_type_modifier').values())
+    purchasing_delivery_equipment = list(PurchasingEquipmentTypeDetail.objects.order_by('type_modifier').values())
+    purchasing_delivery_connection = list(PurchasingConnectionTypeDetail.objects.order_by('connection_type_modifier').values())
+    purchasing_overview_equipment = list(PurchasingEquipmentType.objects.order_by('type_modifier').values())
+    purchasing_overview_connection = list(PurchasingConnectionType.objects.order_by('type_modifier').values())
+   
     context = {
         'title': 'System Delivery',
         'page': page,
-        'purchasing_equipment': purchasing_equipment,
-        'purchasing_connection': purchasing_connection
+        'purchasing_delivery_equipment': purchasing_delivery_equipment,
+        'purchasing_delivery_connection': purchasing_delivery_connection,
+        'purchasing_overview_equipment': purchasing_overview_equipment,
+        'purchasing_overview_connection': purchasing_overview_connection,
     }
     
     return render(request, 'system_delivery.html', context=context)

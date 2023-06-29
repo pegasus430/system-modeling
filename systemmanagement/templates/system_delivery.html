@@ -3,8 +3,10 @@
 
 {% block content %}
 
-{{purchasing_equipment | json_script:'purchasing_equipment'}}
-{{purchasing_connection | json_script:'purchasing_connection'}}
+{{purchasing_delivery_equipment | json_script:'purchasing_delivery_equipment'}}
+{{purchasing_delivery_connection | json_script:'purchasing_delivery_connection'}}
+{{purchasing_overview_equipment | json_script:'purchasing_overview_equipment'}}
+{{purchasing_overview_connection | json_script:'purchasing_overview_connection'}}
 
 <section class="section equipment">
     <div class="row">
@@ -94,7 +96,7 @@
                               </div><!-- End Middle Object Hierarchy -->
                               <!-- Right Overview -->
                               <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-                                <div class="card card-body right_overview border-gray">
+                                <div class="card card-body right_overview border-gray" style="overflow-x: auto;">
                                   <!-- Equipment Type purchasing table -->
                                   <h5 class="card-title">Equipment Type Purchasing Details</h5>
                                   <table class="display nowrap custom_datatable text-center" id='delivery_equipment_type_table'>
@@ -137,7 +139,7 @@
                               
                               <!-- Right Overview -->
                               <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-                                <div class="card card-body right_overview border-gray">
+                                <div class="card card-body right_overview border-gray" style="overflow-x: auto;">
                                   <!-- Connection Type purchasing table -->
                                   <h5 class="card-title">Connection Type Purchasing Details</h5>
                                   <table class="display nowrap custom_datatable text-center" id='delivery_connection_type_table'>
@@ -186,11 +188,10 @@
     
   </section>
   <script type="text/javascript">
-    purchasing_equipment = JSON.parse(document.getElementById('purchasing_equipment').textContent)
+    purchasing_equipment = JSON.parse(document.getElementById('purchasing_overview_equipment').textContent)
+    purchasing_connection = JSON.parse(document.getElementById('purchasing_overview_connection').textContent)
     
-    purchasing_connection = JSON.parse(document.getElementById('purchasing_connection').textContent)
-    
-    function createEquipmentTree(data) {
+    function createTree(data) {
       const nodeWithParent = []
       
       //make the type_path as string from list
@@ -234,52 +235,8 @@
       return root.map(getNodeHtml).join('')
     }
 
-    function createConnectionTree(data) {
-      const nodeWithParent = []
-      
-      //make the type_path as string from list
-      data.forEach(element => {
-        path = element.connection_type_path.join('.')
-        element.connection_type_path = path        
-      })
-
-    
-      //Find the parent for each element
-      data.forEach(element => {
-        const parent = element.connection_type_path.includes('.')? element.connection_type_path.substr(0, element.connection_type_path.lastIndexOf('.')):null
-        nodeWithParent.push({...element, parent})
-      });
-
-      //Recursive function to create HTML out of node
-      function getNodeHtml(n) {
-        let html = ''
-        const children = nodeWithParent.filter(d => d.parent === n.connection_type_path)
-                  
-        if(children.length > 0) {
-          html += '<li class="treeview-animated-items treeview-li"> \
-                      <a class="closed"> \
-                        <i class="fas fa-angle-right"></i> \
-                        <span class="ml-1 treeview-title" data-typepath="'+ n.connection_type_path +'">'+ n.connection_type_label + '  (' + n.connection_type_description + ')</span> \
-                      </a> \
-                      <ul class="nested">' 
-            + children.map( getNodeHtml).join('')
-            + '</ul></li>'
-        }
-        else{
-          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-typepath="'+ n.connection_type_path + '"> \
-          '+ n.connection_type_label + '  (' + n.connection_type_description +')</li>'
-        }
-        return html
-      }
-
-      // Get all root nodes (without parent)
-      const root = nodeWithParent
-
-      return root.map(getNodeHtml).join('')
-    }
-
-    const equipmentTypehtml = createEquipmentTree(purchasing_equipment)
-    const connectionTypehtml = createConnectionTree(purchasing_connection)
+    const equipmentTypehtml = createTree(purchasing_equipment)
+    const connectionTypehtml = createTree(purchasing_connection)
     document.getElementById('delivery_equipment_tree').innerHTML = equipmentTypehtml
     document.getElementById('delivery_connection_tree').innerHTML = connectionTypehtml
 

@@ -585,7 +585,6 @@ $(function() {
             
             $('#delivery_equipment_type_table').DataTable({
               data:  tableData ,
-              scrollX: true,
               destroy: true,
               columns: [
                 { data: 'full_identifier' },
@@ -636,7 +635,6 @@ $(function() {
             
             $('#delivery_connection_type_table').DataTable({
               data:  tableData ,
-              scrollX: true,
               destroy: true,
               columns: [
                 { data: 'location_identifier' },

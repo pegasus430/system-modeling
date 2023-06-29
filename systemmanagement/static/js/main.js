@@ -144,7 +144,78 @@ $(document).ready(function() {
             )
         }
     }
+    if(document.getElementById('purchasing_delivery_equipment')){
+      tableData = []
+      purchasing_delivery_equipment = JSON.parse(document.getElementById('purchasing_delivery_equipment').textContent)
+      
+      
+      if(purchasing_delivery_equipment.length){
+        purchasing_delivery_equipment.forEach(element => {
+             tableData.push({
+              'full_identifier': element.equipment_full_identifier ,
+              'description': element.equipment_description,
+              'manufacturer' : element.manufacturer,
+              'po_reference': element.purchase_order_reference,
+              'po_date': element.purchase_order_date,
+              'due_date': element.due_date,
+              'received_data': element.received_date,
+              'serial_number': element.unique_code,
+              'location': element.location
+             })
+          })
+          
+          $('#delivery_equipment_type_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'full_identifier' },
+              { data: 'description' },
+              { data: 'manufacturer' },
+              { data: 'po_reference' },
+              { data: 'po_date' },
+              { data: 'due_date' },
+              { data: 'received_data' },
+              { data: 'serial_number' },
+              { data: 'location' },
+            ]}
+          )
+      }
+    }
+    if(document.getElementById('purchasing_delivery_connection')){
+      tableData = []
 
+      purchasing_delivery_connection = JSON.parse(document.getElementById('purchasing_delivery_connection').textContent)
+
+      if(purchasing_delivery_connection.length){
+        purchasing_delivery_connection.forEach(element => {
+             tableData.push({
+              'location_identifier': element.connection_location_identifier ,
+              'description': element.connection_description,
+              'po_reference': element.purchase_order_reference,
+              'po_date': element.purchase_order_date,
+              'due_date': element.due_date,
+              'received_data': element.received_date,
+              'serial_number': element.unique_code,
+              'location': element.location
+             })
+          })
+          
+          $('#delivery_connection_type_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'location_identifier' },
+              { data: 'description' },
+              { data: 'po_reference' },
+              { data: 'po_date' },
+              { data: 'due_date' },
+              { data: 'received_data' },
+              { data: 'serial_number' },
+              { data: 'location' },
+            ]}
+          )
+      }
+    }
    
 });
 

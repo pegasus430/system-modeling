@@ -75,7 +75,75 @@ $(document).ready(function() {
       }
     }
     
+    if(document.getElementById('purchasing_detail_equipment')){
+      tableData = []
+      purchasing_detail_equipment = JSON.parse(document.getElementById('purchasing_detail_equipment').textContent)
+      
+      if(purchasing_detail_equipment.length){
+        purchasing_detail_equipment.forEach(element => {
+             tableData.push({
+              'full_identifier': element.equipment_full_identifier ,
+              'description': element.equipment_description,
+              'manufacturer' : element.manufacturer,
+              'model' : element.model,
+              'quote_reference': element.quote_reference,
+              'leadtime': element.lead_time_days ,
+              'po_date': element.purchase_order_date,
+              'po_reference': element.purchase_order_reference,
+              'due_date': element.due_date,
+             })
+          })
+          
+          $('#purchasing_detail_equipment_type_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'full_identifier' },
+              { data: 'description' },
+              { data: 'manufacturer' },
+              { data: 'model' },
+              { data: 'quote_reference'},
+              { data: 'leadtime' },
+              { data: 'po_date' },
+              { data: 'po_reference' },
+              { data: 'due_date' }
+            ]}
+          )
+      }
+    }
+    if(document.getElementById('purchasing_detail_connection')){
+      tableData = []
 
+      purchasing_connection = JSON.parse(document.getElementById('purchasing_detail_connection').textContent)
+
+        if(purchasing_connection.length){
+          purchasing_connection.forEach(element => {
+               tableData.push({
+                'location_identifier': element.connection_location_identifier ,
+                'description': element.connection_description,
+                'quote_reference': element.quote_reference,
+                'leadtime': element.lead_time_days ,
+                'po_date': element.purchase_order_date,
+                'po_reference': element.purchase_order_reference,
+                'due_date': element.due_date,
+               })
+            })
+            
+            $('#purchasing_detail_connection_type_table').DataTable({
+              data:  tableData ,
+              destroy: true,
+              columns: [
+                { data: 'location_identifier' },
+                { data: 'description' },
+                { data: 'quote_reference' },
+                { data: 'leadtime' },
+                { data: 'po_date' },
+                { data: 'po_reference' },
+                { data: 'due_date' }
+              ]}
+            )
+        }
+    }
 
    
 });

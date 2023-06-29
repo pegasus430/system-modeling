@@ -488,7 +488,6 @@ $(function() {
             
             $('#purchasing_detail_equipment_type_table').DataTable({
               data:  tableData ,
-              scrollX: true,
               destroy: true,
               columns: [
                 { data: 'full_identifier' },
@@ -538,7 +537,6 @@ $(function() {
             
             $('#purchasing_detail_connection_type_table').DataTable({
               data:  tableData ,
-              scrollX: true,
               destroy: true,
               columns: [
                 { data: 'location_identifier' },

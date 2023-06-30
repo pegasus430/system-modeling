@@ -680,7 +680,7 @@ $(function() {
         if(state_equipment_detail.length){
           state_equipment_detail.forEach(element => {
                tableData.push({
-                'full_identifier': element.equipment_full_identifier ,
+                'identifier': element.equipment_full_identifier ,
                 'description': element.equipment_description,
                 'quoted': element.quote_received,
                 'ordered': element.is_ordered,
@@ -699,47 +699,47 @@ $(function() {
               data:  tableData ,
               destroy: true,
               columns: [
-                { data: 'full_identifier' },
+                { data: 'identifier' },
                 { data: 'description' },
                 { 
-                data: 'quoted' ,
-                render: stateFunction
-              },
-              { 
-                data: 'ordered' ,
-                render: stateFunction
-              },
-              { 
-                data: 'received' ,
-                render: stateFunction
-              },
-              { 
-                data: 'installed' ,
-                render: stateFunction 
-              },
-              { 
-                data: 'in_warranty' ,
-                render: stateFunction
-              },
-              { 
-                data: 'design_approved',
-                render: stateFunction 
-              },
-              { 
-                data: 'configured',
-                render: stateFunction 
-              },
-              { 
-                data: 'fat_complete',
-                render: stateFunction
-               },
-              { 
-                data: 'sat_complete',
-                render: stateFunction },
-              { 
-                data: 'commissioning_complete',
-                render: stateFunction
-               },
+                  data: 'design_approved',
+                  render: stateFunction 
+                },
+                { 
+                  data: 'quoted' ,
+                  render: stateFunction
+                },
+                { 
+                  data: 'ordered' ,
+                  render: stateFunction
+                },
+                { 
+                  data: 'received' ,
+                  render: stateFunction
+                },
+                { 
+                  data: 'configured',
+                  render: stateFunction 
+                },
+                { 
+                  data: 'fat_complete',
+                  render: stateFunction
+                },
+                { 
+                  data: 'installed' ,
+                  render: stateFunction 
+                },
+                { 
+                  data: 'sat_complete',
+                  render: stateFunction },
+                { 
+                  data: 'commissioning_complete',
+                  render: stateFunction
+                },
+                { 
+                  data: 'in_warranty' ,
+                  render: stateFunction
+                },
               ]}
             )
         }
@@ -766,7 +766,7 @@ $(function() {
         if(state_connection_detail.length){
           state_connection_detail.forEach(element => {
                tableData.push({
-                'full_identifier': element.connection_identifier ,
+                'identifier': element.connection_identifier ,
                 'description': element.connection_description,
                 'quoted': element.quote_received,
                 'ordered': element.is_ordered,
@@ -784,39 +784,43 @@ $(function() {
               data:  tableData ,
               destroy: true,
               columns: [
-                { data: 'full_identifier' },
+                { data: 'identifier' },
                 { data: 'description' },
+                { 
+                  data: 'design_approved',
+                  render: stateFunction 
+                },
                 { 
                   data: 'quoted' ,
                   render: stateFunction
                 },
                 { 
-                  data: 'ordered',
+                  data: 'ordered' ,
                   render: stateFunction
-                 },
+                },
                 { 
                   data: 'received' ,
                   render: stateFunction
                 },
                 { 
-                  data: 'installed',
+                  data: 'fat_complete',
                   render: stateFunction
-                 },
+                },
+                { 
+                  data: 'installed' ,
+                  render: stateFunction 
+                },
+                { 
+                  data: 'sat_complete',
+                  render: stateFunction },
+                { 
+                  data: 'commissioning_complete',
+                  render: stateFunction
+                },
                 { 
                   data: 'in_warranty' ,
-                  render: stateFunction},
-                { 
-                  data: 'design_approved',
-                  render: stateFunction },
-                { 
-                  data: 'fat_complete',
-                  render: stateFunction },
-                { 
-                  data: 'sat_complete' ,
-                  render: stateFunction},
-                { 
-                  data: 'commissioning_complete' ,
-                  render: stateFunction},
+                  render: stateFunction
+                },
               ]}
             )
         }

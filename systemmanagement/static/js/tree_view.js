@@ -105,7 +105,7 @@ $(function() {
 
   // Selected Level for left tree on Equipment page
   $(".equipment_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
-    $('#div_equipment_local_identifier').addClass('d-none')
+    
     $("#location_path").find('option').remove()
     $("#parent_path").find('option').remove()
     $('#all_equipment_types_select').find('option').remove()
@@ -137,6 +137,11 @@ $(function() {
         $('#equipment_id').val(selectedEquipmentId)
         $('#equipment_full_identifier').val(selectedEquipment[0]['equipment_full_identifier'])
         $('#equipment_local_identifier').val(selectedEquipment[0]['equipment_local_identifier'])
+        if(selectedEquipment[0]['equipment_use_parent_identifier']){
+          $('#equipment_use_parent_identifier').prop('checked' , true)
+        }else{
+          $('#equipment_use_parent_identifier').prop('checked' , false)
+        }
         $('#equipment_description').val(selectedEquipment[0]['equipment_description'])
         $('#equipment_comment').val(selectedEquipment[0]['equipment_comment'])
         $('#basic-full-identifier').val(selectedEquipment[0]['equipment_full_identifier'] + ' ('+ selectedEquipment[0]['equipment_description'] + ')')
@@ -276,6 +281,8 @@ $(function() {
     $("#connection_parent_path").find('option').remove()
     $("#start_equipment").find('option').remove()
     $("#end_equipment").find('option').remove()
+    $("#start_interface").find('option').remove()
+    $("#end_interface").find('option').remove()
     $('#all_connection_type').find('option').remove()
 
     selectedConnectionPath = $(this).attr("data-connectionpath")
@@ -296,6 +303,7 @@ $(function() {
         // $('.child-treeview a').trigger('click');
         selectedConnection = childConnection.filter(d=> d.connection_path === selectedConnectionPath)
         allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+        allInterface = JSON.parse(document.getElementById('all_interface').textContent)
         allConnection = JSON.parse(document.getElementById('all_connection').textContent)
         
         allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
@@ -303,6 +311,11 @@ $(function() {
         
         $('#connection_full_identifier').val(selectedConnection[0]['connection_identifier'])
         $('#connection_identifier').val(selectedConnection[0]['connection_local_identifier'])
+        if(selectedConnection[0]['connection_use_parent_identifier']){
+          $('#connection_use_parent_identifier').prop('checked' , true)
+        }else{
+          $('#connection_use_parent_identifier').prop('checked' , false)
+        }
         $('#connection_description').val(selectedConnection[0]['connection_description'])
         $('#connection_comment').val(selectedConnection[0]['connection_comment'])
         $('#connection_length').val(selectedConnection[0]['connection_length'])
@@ -342,6 +355,20 @@ $(function() {
 
         })
 
+        //display start and end interface with dropdown lists
+        allInterface.forEach(element => {
+          var selected = element.id === selectedConnection[0]['start_interface_id'] ? true: false
+          var p = new Option(element.identifier, element.id,  undefined, selected)
+          $(p).html(element.identifer)
+          $('#start_interface').append(p)
+
+          selected = element.id === selectedConnection[0]['end_interface_id'] ? true: false
+          var t = new Option(element.identifier, element.id,  undefined, selected)
+          $(t).html(element.identifier)
+          $('#end_interface').append(t)
+
+        })
+
         //diplay connection type dropdown lists
         allConnectionTypes.forEach( element => {
           var selected = selectedConnection[0]['connection_type_id'] === element.id ? true : false ;
@@ -349,6 +376,8 @@ $(function() {
           $(o).html(element.label);
           $("#all_connection_type").append(o);
         })
+
+
         var connectionHtml = ""
         childConnection.forEach((element, index) => {
           if(index == 0){

@@ -15,6 +15,7 @@ class AllEquipment(models.Model):
     equipment_description = models.TextField()
     equipment_is_approved = models.BooleanField()
     equipment_comment = models.CharField(max_length=255)
+    equipment_use_parent_identifier = models.BooleanField()
 
     class Meta:
         managed = False
@@ -52,6 +53,20 @@ class Resource(models.Model):
     class Meta:
         managed = False
         db_table = 'view_report_resource'
+
+class Interface(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    interface_class_id = models.BigIntegerField()
+    connecting_interface_class_id = models.BigIntegerField()
+    identifier = models.TextField()
+    description = models.TextField()
+    comment = models.TextField()
+    is_intermediate = models.BooleanField()
+    used_valid = models.BooleanField()
+    class Meta:
+        managed = False
+        db_table = 'view_report_interface'
+
 class EquipmentResource(models.Model):
     equipment_id = models.BigIntegerField()
     equipment_path = LTreeField(unique=True)
@@ -96,6 +111,7 @@ class AllConnection(models.Model):
     end_interface_id = models.IntegerField()
     end_interface_full_identifier = models.TextField()
     end_interface_description = models.TextField()
+    connection_use_parent_identifier = models.BooleanField()
     class Meta:
         managed = False
         db_table = 'all_connection_interface'

@@ -60,13 +60,19 @@
                             <div class="row mt-3">
                               <label class="col-md-3 col-form-label text-secondary">Full Name:</label>
                               <div class="col-md-8">
-                                <input type="text" class="form-control" placeholder="Equipment name" value="" id="equipment_full_identifier" readonly>
-                                <div class="row mt-3 d-none" id="div_equipment_local_identifier">
-                                   <label class="col-md-3 col-form-label text-secondary">Local Name:</label>
-                                   <div class="col-md-8">
-                                     <input type="text" class="form-control" placeholder="Equipment name" value="" id="equipment_local_identifier">
-                                   </div>
-                                </div>
+                                <input type="text" class="form-control" placeholder="Full name" value="" id="equipment_full_identifier" readonly>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Component Identifier:</label>
+                              <div class="col-md-8">
+                                <input type="text" class="form-control" placeholder="componenet name" value="" id="equipment_local_identifier">
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Include Parent Identifier</label>
+                              <div class="col-md-8 form-check form-switch ml-3 pt-3">
+                                <input class="form-check-input form-control" type="checkbox" id="equipment_use_parent_identifier">
                               </div>
                             </div>
                             <div class="row mt-3">
@@ -189,8 +195,7 @@
                         </div>
                           
                       </div><!-- End Right Object Hierarchy -->
-
-                      
+                                            
                     </div><!-- End Main Content -->
                   </div>
                   <!-- // End Equipment Tab Content -->

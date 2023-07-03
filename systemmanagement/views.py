@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface
 from django.db import connection
 import datetime
 import json
@@ -263,12 +263,14 @@ def connections(request):
     all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
     all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
     all_connection_types = list(ConnectionType.objects.values())
+    all_interface = list(Interface.objects.values())
     context = {
         'title': 'Connections',
         'page': page,
         'all_equipment': all_equipment,
         'all_connection': all_connection,
         'all_connection_types': all_connection_types,
+        'all_interface': all_interface,
     }
     
     return render(request, 'connections.html', context=context)

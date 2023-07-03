@@ -695,14 +695,7 @@ $(document).ready(function() {
         
       }
     })
-  }
-
-  if(select('#equipment_full_identifier')){
-    on('click', '#equipment_full_identifier', function(){
-      console.log('selected full identifier')
-      $('#div_equipment_local_identifier').removeClass('d-none')
-    })
-  }
+  } 
 
   if(select('.equipment_page #commit'))
   {
@@ -733,7 +726,6 @@ $(document).ready(function() {
           success: function (data){
             console.log(data)
 
-            $('#div_equipment_local_identifier').addClass('d-none')
           }
          })
 

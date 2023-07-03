@@ -6,6 +6,7 @@
 {{all_connection | json_script:'all_connection'}}
 {{all_equipment | json_script:'all_equipment'}}
 {{all_connection_types | json_script:'all_connection_types'}}
+{{all_interface | json_script:'all_interface'}}
 
 <section class="section connection">
     <div class="row">
@@ -58,15 +59,21 @@
                           <form class="row g-3">
                             <h5 class="card-title nav-tabs-bordered">Connection Detail</h5>
                             <div class="row mt-3">
-                              <label class="col-md-3 col-form-label text-secondary">Full Identifier:</label>
+                              <label class="col-md-3 col-form-label text-secondary">Identifier:</label>
                               <div class="col-md-8">
                                 <input type="text" class="form-control" placeholder="Full Identifier" value="" id="connection_full_identifier">
                               </div>
                             </div>
                             <div class="row mt-3">
-                              <label class="col-md-3 col-form-label text-secondary">Identifier:</label>
+                              <label class="col-md-3 col-form-label text-secondary">Component Identifier:</label>
                               <div class="col-md-8">
                                 <input type="text" class="form-control" placeholder="Identifier" value="" id="connection_identifier">
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Include Parent Identifier</label>
+                              <div class="col-md-8 form-check form-switch ml-3 pt-3">
+                                <input class="form-check-input form-control" type="checkbox" id="connection_use_parent_identifier">
                               </div>
                             </div>
                             <div class="row mt-3">
@@ -95,6 +102,22 @@
                               <label class="col-md-3 col-form-label text-secondary">End Equipment:</label>
                               <div class="col-md-8">
                                 <select class="form-select" id="end_equipment">
+                              
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">Start Interface:</label>
+                              <div class="col-md-8">
+                                <select class="form-select" id="start_interface">
+                                 
+                                </select>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <label class="col-md-3 col-form-label text-secondary">End Interface:</label>
+                              <div class="col-md-8">
+                                <select class="form-select" id="end_interface">
                               
                                 </select>
                               </div>

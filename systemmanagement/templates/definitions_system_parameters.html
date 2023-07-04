@@ -2,44 +2,66 @@
 {% load static %}
 
 {% block maincontent %}
+{{system_parameters | json_script:'system_parameters'}}
 
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-    <div class="card card-body system_overview border-gray">
-        <!-- System Settings Details table -->
-        <h5 class="card-title">Equipment Type Purchasing Details</h5>
-        <table class="display nowrap custom_datatable1">
-        <thead>
-            <tr>
-            <th>Label</th>
-            <th>Value</th>
-            <th>Comment</th>
-            <th>Last Modified</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-            <td>label1</td>
-            <td>value1</td>
-            <td>comment1</td>
-            <td>2023-05-01</td>
-            </tr>
-            <tr>
-            <td>label2</td>
-            <td>value2</td>
-            <td>comment2</td>
-            <td>2023-05-01</td>
-            </tr>
-            <tr>
-            <td>label3</td>
-            <td>value3</td>
-            <td>comment3</td>
-            <td>2023-05-01</td>
-            </tr>
-        </tbody>
-        </table><!-- End System Settings Details table -->
-
-    </div>
+        <div class="card card-body system_overview border-gray" style="overflow-x: auto;">
+            <!-- System Settings Details table -->
+            <h5 class="card-title">System Parameters</h5>
+            <table class="display nowrap custom_datatable1" id="system_paramter_table">
+                <thead>
+                    <tr>
+                        <th>Label</th>
+                        <th>Value</th>
+                        <th>Comment</th>
+                        <th>Last Modified</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            <tbody>
+            
+            </tbody>
+            </table><!-- End System Settings Details table -->
+            <button class="btn btn-primary" style="width: 7rem;" data-bs-toggle="modal" data-bs-target="#systemParamerterModal">Add</button>
+        </div>
+        
     </div><!-- End Right Overview -->
-
+    <div class="modal fade" id="systemParamerterModal" tabindex="-1" aria-labelledby="systemParamerterModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="systemParamerterModalLabel">Add System Paramerter</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Label:</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" placeholder="systemParamerter name" value="" id="adding_systemParamerter_label">
+                </div>
+              </div>
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Value:</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" placeholder="systemParamerter value" value="" id="adding_systemParamerter_value">
+                </div>
+              </div>
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Comment:</label>
+                <div class="col-md-8">
+                  <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="adding_systemParamerter_comment"></textarea>
+                </div>
+              </div>
+            
+             
+             
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}

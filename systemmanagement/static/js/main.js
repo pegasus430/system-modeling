@@ -364,6 +364,40 @@ $(document).ready(function() {
           )
       }
     }
+
+    if(document.getElementById('system_parameters')){
+  
+      var system_parameters = JSON.parse(document.getElementById('system_parameters').textContent)
+      
+      var tableData = []
+      if(system_parameters.length){
+          system_parameters.forEach(element => {
+             tableData.push({
+              'label': element.label ,
+              'value': element.value,
+              'comment': element.comment,
+              'last_modified': element.modified_at,
+              'action': '<div class="inner-flex">\
+                <span class="bi bi-pencil p-1" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#systemParamerterModal"></span> \
+                <span class="bi bi-trash p-1" style="cursor:pointer"></span> \
+                </div>'
+             })
+          })
+          
+          $('#system_paramter_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'label' },
+              { data: 'value' },
+              { data: 'comment' },
+              { data: 'last_modified' },
+              { data: 'action'}
+            ]}
+          )
+      }
+    }
+    
 });
 
 (function() {

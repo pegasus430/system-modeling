@@ -267,3 +267,14 @@ class ConnectionState(models.Model):
     class Meta:
         managed = False
         db_table = 'all_connection_state'
+
+class SystemSetting(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    label = models.TextField()
+    value = models.TextField()
+    comment = models.TextField()
+    modified_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'all_system_settings'

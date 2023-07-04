@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting
 from django.db import connection
 import datetime
 import json
@@ -277,11 +277,13 @@ def connections(request):
 
 def definitions(request):
     page = 'definitions'
+    system_parameters = list(SystemSetting.objects.values())
     sidebar_title = 'system_parameters'
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title,
+        'system_parameters': system_parameters,
     }
     
     return render(request, 'definitions_system_parameters.html', context=context)
@@ -363,16 +365,16 @@ def definitions_connection_types(request):
     
     return render(request, 'definitions_connection_types.html', context=context)
 
-def definitions_property_data_types(request):
+def definitions_target_systems(request):
     page = 'definitions'
-    sidebar_title = 'property_data_types'
+    sidebar_title = 'target_systems'
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title
     }
     
-    return render(request, 'definitions_property_data_types.html', context=context)
+    return render(request, 'definitions_target_systems.html', context=context)
 
 def definitions_possible_equipment_connection_states(request):
     page = 'definitions'

@@ -31,14 +31,10 @@ class EquipmentType(models.Model):
     description = models.TextField()
     comment = models.TextField()
     is_approved = models.BooleanField()
-    hierarchy_valid = models.BooleanField()
-    reference_valid = models.BooleanField()
-    resource_exist_valid = models.BooleanField()
-    property_exist_valid = models.BooleanField()
-    interface_exist_valid = models.BooleanField()
+    used = models.BooleanField()
     class Meta:
         managed = False
-        db_table = 'view_report_equipment_type'
+        db_table = 'all_equipment_type'
 
 class Resource(models.Model):
     id = models.BigIntegerField(primary_key=True)
@@ -126,11 +122,11 @@ class ConnectionType(models.Model):
     description = models.TextField()
     comment = models.TextField()
     is_approved = models.BooleanField()
-    hierarchy_valid = models.BooleanField()
-    reference_valid = models.BooleanField()
+    used = models.BooleanField()
+    
     class Meta:
         managed = False
-        db_table = 'view_report_connection_type'
+        db_table = 'all_connection_type'
 
 class PurchasingEquipmentType(models.Model):
     type_path = LTreeField(unique=True, primary_key=True)

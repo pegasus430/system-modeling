@@ -5,11 +5,113 @@
 
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-    <div class="card card-body system_overview border-gray">
-        <!-- System Settings Details table -->
-        <h5 class="card-title">Equipment Interfaces</h5>
+        <div class="equipment_interface_page card card-body system_overview border-gray">
+            <div class="row">
+                <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
+                    <div class="card info-card left_object_hierarchy border-gray">
+                      <div class="treeview-animated border mx-2 my-2">
+                        <h6 class="pt-3 pl-3">Interfaces</h6>
+                        <hr>
+                        <ul class="treeview-animated-list mb-3" id="equipment_interface_tree">
+                          
+                        </ul>
+                      </div>  
+                    </div>
+                </div> 
+                <!-- End Left Object Hierarchy -->
+                <!-- right Overview -->
+                <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
+                <div class="card card-body right_overview border-gray">
+                    <!-- Equipments Form -->
+                    <form class="row g-3">
+                    
+                    <h5 class="card-title nav-tabs-bordered">Interface Detail</h5>
+                    <input style="display: none;" id="equipment_interface_id" value=""></input>
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Identifer:</label>
+                        <div class="col-md-8">
+                        <input type="text" class="form-control" placeholder="Identifer" value="" id="equipment_interface_identifier">
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Description:</label>
+                        <div class="col-md-8">
+                        <textarea class="form-control" placeholder="Description" style="height: 60px;" id="equipment_interface_description"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Interface Class Label :</label>
+                        <div class="col-md-8">
+                        <select class="form-select" id="equipment_interface_interface_class_label">
+                            
+                        </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Connecting Class Label :</label>
+                        <div class="col-md-8">
+                        <select class="form-select" id="equipment_interface_connecting_class_label">
+                            
+                        </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Default Value:</label>
+                        <div class="col-md-8">
+                        <input type="text" class="form-control" placeholder="Modifier" value="" id="equipment_interface_default_value">
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Comment:</label>
+                        <div class="col-md-8">
+                        <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="equipment_interface_comment"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input form-control" type="checkbox" id="equipment_interface_is_intermediate">
+                                <label class="form-check-label">Intermediate</label>
+                            </div>
+                        </div>  
+                    </div>
+                    
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input form-control" type="checkbox" id="equipment_interface_used" readonly>
+                                <label class="form-check-label">Used</label>
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="row mt-3 p-2 pl-4" style="float: right;">
+                        <div class="col-md-2">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#equipmentInterfaceModal">
+                            Add
+                        </button>
+                        </div>
+                        <div class="col-md-2">
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#equipmentInterfaceModal">
+                            Update
+                        </button>
+                        </div>
+                        <div class="col-md-2">
+                        <button type="button" id="btn_equipment_delete" class="btn btn-danger">
+                            Delete
+                        </button>
+                        </div>
+                        
+                    </div>
+                    </form><!-- End Equipments Form -->
 
-    </div>
+                </div>
+                </div><!-- End right Overview -->
+            </div>
+           
+        </div>
     </div><!-- End Right Overview -->
 
 {% endblock %}

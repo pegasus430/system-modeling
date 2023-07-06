@@ -5,11 +5,139 @@
 
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-    <div class="card card-body system_overview border-gray">
-        <!-- System Settings Details table -->
-        <h5 class="card-title">Equipment Properties</h5>
+        <div class="equipment_property_page card card-body system_overview border-gray">
+            <div class="row">
+                <div class="col-xxl-3 col-lg-3 col-md-6 p-0">
+                    <div class="card info-card left_object_hierarchy border-gray">
+                      <div class="treeview-animated border mx-2 my-2">
+                        <h6 class="pt-3 pl-3">Properties</h6>
+                        <hr>
+                        <ul class="treeview-animated-list mb-3" id="all_resource_property_tree">
+                          
+                        </ul>
+                      </div>  
+                    </div>
+                </div> 
+                <!-- End Left Object Hierarchy -->
+                <!-- right Overview -->
+                <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
+                <div class="card card-body right_overview border-gray">
+                    <!-- Equipments Form -->
+                    <form class="row g-3">
+                    
+                    <h5 class="card-title nav-tabs-bordered">Property Detail</h5>
+                    <input style="display: none;" id="resource_property_id" value=""></input>
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Modifier:</label>
+                        <div class="col-md-8">
+                        <input type="text" class="form-control" placeholder="Modifier" value="" id="resource_property_modifier">
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Description:</label>
+                        <div class="col-md-8">
+                        <textarea class="form-control" placeholder="Description" style="height: 60px;" id="resource_property_description"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Default Value:</label>
+                        <div class="col-md-8">
+                        <input type="text" class="form-control" placeholder="Modifier" value="" id="resource_property_default_value">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Default Datatype Label:</label>
+                        <div class="col-md-8">
+                        <select class="form-select" id="resource_property_default_datatype">
+                            
+                        </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label class="col-md-3 col-form-label text-secondary">Comment:</label>
+                        <div class="col-md-8">
+                        <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="resource_property_comment"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input form-control" type="checkbox" id="resource_property_is_reportable">
+                                <label class="form-check-label">Reportable</label>
+                            </div>
+                        </div>  
+                    </div>
+                    
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input form-control" type="checkbox" id="resource_property_used" readonly>
+                                <label class="form-check-label">Used</label>
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="row mt-3 p-2 pl-4" style="float: right;">
+                        <div class="col-md-2">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
+                            Add Property
+                        </button>
+                        </div>
+                        <div class="col-md-2">
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
+                            Update
+                        </button>
+                        </div>
+                        <div class="col-md-2">
+                        <button type="button" id="btn_equipment_delete" class="btn btn-danger">
+                            Delete
+                        </button>
+                        </div>
+                        
+                    </div>
+                    </form><!-- End Equipments Form -->
+    
+                    <hr/>
+    
+                    <div class="row">
+                        <!-- Equipment Details table -->
+                        <h5 class="card-title">Resources using this property</h5>
+                        <table class="table table-bordered text-center" id="resource_property_table">
+                            <thead style="background-color: #000; color: white; border: solid 1px;">
+                                <tr>
+                                    <th style="display: none;">id</th>
+                                    <th>Resource</th>
+                                    <th scope="col" >Datatype In Resource</th>
+                                    <th scope="col">Value In Resource</th>
+                                    <th scope="col" >comment</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resource_property_attribute">
+                                <tr style="border: solid 1px">
+                                    <td style="display: none;"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table><!-- End Equipment Details table -->
 
-    </div>
+                    </div>
+                    
+                    <!-- Buttons Section -->
+                    <div class="col-xxl-12 col-lg-12 col-md-12">
+                        <div class="card-body buttons_section">
+                        <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
+                        <button type="button" class="btn btn-outline-primary" id='commit'>Commit</button>
+                        </div>
+                    </div><!-- End Buttons Section -->
+                </div>
+                </div><!-- End right Overview -->
+            </div>
+           
+        </div>
     </div><!-- End Right Overview -->
 
 {% endblock %}

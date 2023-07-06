@@ -5,11 +5,76 @@
 
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
-    <div class="card card-body system_overview border-gray">
-        <!-- System Settings Details table -->
-        <h5 class="card-title">Target Systems</h5>
-
-    </div>
+        <div class="target_systems card card-body system_overview border-gray">
+            <div class="row">
+                <!-- Equipment Details table -->
+                <h5 class="card-title">Target Systems</h5>
+                <table class="table table-bordered text-center" id="target_systems_table">
+                    <thead style="background-color: #000; color: white; border: solid 1px;">
+                        <tr>
+                           
+                            <th scope="col" >Label</th>
+                            <th scope="col">Description</th>
+                            <th scope="col" >comment</th>
+                        </tr>
+                    </thead>
+                    <tbody id="equipment_type_resouce_attribute">
+                        <tr style="border: solid 1px">
+                            
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table><!-- End Equipment Details table -->
+                <!-- Buttons Section -->
+                <div class="col-xxl-12 col-lg-12 col-md-12">
+                    <div class="card-body buttons_section">
+                    <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
+                    <button type="button" class="btn btn-outline-primary" id='commit'>Commit</button>
+                    </div>
+                </div><!-- End Buttons Section -->
+            </div>
+            <div class="row">
+                <!-- Equipment Details table -->
+                <h5 class="card-title">Available Datatypes for Properties</h5>
+                <table class="table table-bordered text-center">
+                    <thead style="background-color: #000; color: white; border: solid 1px;">
+                        <tr>
+                            <th scope="col" >Label</th>
+                            <th scope="col" >Description</th>
+                            <th scope="col" >Scada_1</th>
+                            <th scope="col" >Scada_2</th>
+                            <th scope="col" >Scada_3</th>
+                            <th scope="col" >Scada_4</th>
+                            <th scope="col" >Scada_5</th>
+                            <th scope="col" >control_1</th>
+                            <th scope="col" >control_2</th>
+                            <th scope="col" >control_3</th>
+                            <th scope="col" >control_4</th>
+                            <th scope="col" >control_5</th>
+                            <th scope="col" >Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody id="equipment_type_interface_attribute">
+                        <tr style="border: solid 1px">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table><!-- End Equipment Details table -->
+                 <!-- Buttons Section -->
+                 <div class="col-xxl-12 col-lg-12 col-md-12">
+                    <div class="card-body buttons_section">
+                    <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
+                    <button type="button" class="btn btn-outline-primary" id='commit'>Commit</button>
+                    </div>
+                </div><!-- End Buttons Section -->
+            </div>
+        </div>
     </div><!-- End Right Overview -->
 
 {% endblock %}

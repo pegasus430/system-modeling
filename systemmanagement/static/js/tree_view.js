@@ -858,5 +858,79 @@ $(function() {
 
   })
 
+  $(".equipment_type_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
+    
+    allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
+    
+    $("#equipment_type_parent_path").find('option').remove()
+
+    selectedtypeId = $(this).attr("data-typeid")
+    selectedTypeElement = allEquipmentTypes.filter( d=> d.id == selectedtypeId )
+    
+    $('#equipment_type_id').val(selectedtypeId)
+    $('#equipment_type_label').val(selectedTypeElement[0].label)
+    $('#equipment_type_description').val(selectedTypeElement[0].description)
+    $('#equipment_type_modifier').val(selectedTypeElement[0].modifier)
+    $('#equipment_type_manufacturer').val(selectedTypeElement[0].manufacturer)
+    $('#equipment_type_model').val(selectedTypeElement[0].model)
+    $('#equipment_type_comment').val(selectedTypeElement[0].comment)
+    $('#equipment_type_last_modified').val(selectedTypeElement[0].modified_at)
+    if(selectedTypeElement[0]['is_approved']){
+      $('#equipment_type_is_approved').prop('checked' , true)
+    }else{
+      $('#equipment_type_is_approved').prop('checked' , false)
+    }
+    allEquipmentTypeExceptSelectedOne = allEquipmentTypes.filter( d => d.id != selectedtypeId)
+        
+    // display parent and location path
+      var p = new Option('none' , '', undefined, false);
+      $(p).html('none');
+      $("#equipment_type_parent_path").append(p);
+
+    allEquipmentTypeExceptSelectedOne.forEach( element => {
+      element_path = element.path.join('.')
+      
+      selected_element_parent_path = selectedTypeElement[0]['path']
+      selected_element_parent_path = selected_element_parent_path.join('.')
+      selected_element_parent_path = selected_element_parent_path.substr(0, selected_element_parent_path.lastIndexOf('.'))
+      
+      var selected = element_path === selected_element_parent_path ? true : false ;
+      var o = new Option(element.label, element_path, undefined, selected);
+      $(o).html(element.label);
+      $("#equipment_type_parent_path").append(o);
+    })
+    console.log(selectedtypeId)
+    $.ajax({
+      type: "GET",
+      url: '/getEquipmentTypesAttributes',
+      data: {
+        selectedtypeId: selectedtypeId
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+      
+        associatedResource = jsonData['associatedResource']
+       
+        var html = ''
+        if(associatedResource.length){
+          associatedResource.forEach(resource => {
+            html += '<tr> \
+              <td style="display: none">'+ resource.type_id + '</td> \
+              <td style="display: none">'+ resource.resource_id + '</td>  \
+              <td>'+ resource.modifier +'</td> \
+              <td>'+ resource.description +'</td> \
+              <td>'+ resource.comment +'</td> \
+            </tr>'
+          })
+          $('#equipment_type_resouce_attribute').html(html)
+        }
+      }
+    })
+    
+  }); 
+
+  $('#equipment_type_resource_table tbody').on('click', function(){
+    console.log('tr clicked')
+  })
 
 }); 

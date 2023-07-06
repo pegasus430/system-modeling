@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeResource
 from django.db import connection
 import datetime
 import json
@@ -302,10 +302,12 @@ def definitions_system_users(request):
 def definitions_equipment_types(request):
     page = 'definitions'
     sidebar_title = 'equipment_types'
+    all_equipment_types = list(EquipmentType.objects.order_by('path').values())
     context = {
         'title': 'Definitions',
         'page': page,
-        'sidebar_title': sidebar_title
+        'sidebar_title': sidebar_title,
+        'all_equipment_types': all_equipment_types,
     }
     
     return render(request, 'definitions_equipment_types.html', context=context)
@@ -467,7 +469,24 @@ def update_equipment_detail(request):
         )
         return HttpResponse(data)
         
-
+def getEquipmentTypesAttributes(request):
+    if request.method == 'GET':
+        selectedtypeId = request.GET['selectedtypeId']
+        raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
+            left join all_resource B on A.resource_id = B.id \
+            where type_id = " + selectedtypeId
+        
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        associatedResource = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
+    
+    data = json.dumps(
+            {
+                'associatedResource': associatedResource,
+            } 
+        )
+    return HttpResponse(data)
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

@@ -29,4 +29,5 @@ urlpatterns = [
     path(r'getEquipmentStateDetail', views.get_equipment_state_detail, name='get_equipment_state_detail'),
     path(r'getConnectionStateDetail', views.get_connection_state_detail, name='get_connection_state_detail'),
     path(r'updateEquipmentDetail', views.update_equipment_detail, name='update_equipment_detail'),
+    path(r'getEquipmentTypesAttributes', views.getEquipmentTypesAttributes, name= 'get_equipment_types_attributes')
 ]

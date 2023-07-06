@@ -32,6 +32,7 @@ class EquipmentType(models.Model):
     comment = models.TextField()
     is_approved = models.BooleanField()
     used = models.BooleanField()
+    modified_at = models.DateTimeField()
     class Meta:
         managed = False
         db_table = 'all_equipment_type'
@@ -274,3 +275,27 @@ class SystemSetting(models.Model):
     class Meta:
         managed = False
         db_table = 'all_system_settings'
+
+class TypeResource(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    type_id = models.BigIntegerField()
+    type_path = LTreeField()
+    definition_type_id = models.BigIntegerField()
+    resource_id = models.BigIntegerField()
+    comment = models.TextField()
+    class Meta:
+        managed = False
+        db_table = 'all_type_resource'
+
+class TypeInterface(models.Model):
+    type_id = models.BigIntegerField()
+    resouce_id = models.BigIntegerField()
+    type_interface_comment = models.TextField()
+    type_interface_is_active = models.BooleanField()
+    interface_identifer = models.TextField()
+    interface_description = models.TextField()
+    interface_class_label = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'type_interface_detail'

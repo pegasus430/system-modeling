@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeResource
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface
 from django.db import connection
 import datetime
 import json
@@ -462,7 +462,6 @@ def update_equipment_detail(request):
         
         data = json.dumps(
             {
-                
                 'equipment_list': all_equipment,
             }, 
             cls=DateTimeEncoder
@@ -487,6 +486,26 @@ def getEquipmentTypesAttributes(request):
             } 
         )
     return HttpResponse(data)
+
+def getEquipmentTypesInterface(request):
+    if request.method == 'GET':
+        selectedTypeId =  request.GET['selectedTypeId']
+        selectedResourceId =  request.GET['selectedResourceId']
+        typeInterfacedb = TypeInterface.objects.extra(
+            where=[
+                "type_id = " + selectedTypeId + " and resource_id = " + selectedResourceId
+            ]
+        )
+
+        typeInterfaceList = list(typeInterfacedb.values())
+        data = json.dumps(
+            {
+                'typeInterfaceList': typeInterfaceList,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+        
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

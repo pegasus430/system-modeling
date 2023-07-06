@@ -899,7 +899,7 @@ $(function() {
       $(o).html(element.label);
       $("#equipment_type_parent_path").append(o);
     })
-    console.log(selectedtypeId)
+    
     $.ajax({
       type: "GET",
       url: '/getEquipmentTypesAttributes',
@@ -922,15 +922,69 @@ $(function() {
               <td>'+ resource.comment +'</td> \
             </tr>'
           })
-          $('#equipment_type_resouce_attribute').html(html)
+          
+        }else{
+            html += '<tr> \
+            <td style="display:none"></td> \
+            <td style="display:none"></td> \
+            <td></td> \
+            <td></td> \
+            <td></td> \
+            </tr>'
         }
-      }
+        $('#equipment_type_resouce_attribute').html(html)
+        html = '<tr> \
+            <td></td> \
+            <td></td> \
+            <td></td> \
+            <td></td> \
+            <td></td> \
+          </tr>'
+        
+      $('#equipment_type_interface_attribute').html(html)
+          }
     })
     
   }); 
 
-  $('#equipment_type_resource_table tbody').on('click', function(){
-    console.log('tr clicked')
+  $('#equipment_type_resource_table').on('click', 'tbody tr', function(){
+    var selectedTypeId = $(this).find('td').eq(0).text()
+    var selectedResourceId = $(this).find('td').eq(1).text()
+    $.ajax({
+      type: "GET",
+      url: '/getEquipmentTypesInterface',
+      data: {
+        selectedTypeId: selectedTypeId,
+        selectedResourceId: selectedResourceId
+      },
+      success: function (data){
+        jsonData = JSON.parse(data)
+        typeInterfaceList = jsonData['typeInterfaceList']
+        var html = ''
+        if(typeInterfaceList.length){
+          typeInterfaceList.forEach(interface => {
+            html += '<tr> \
+              <td >'+ interface.interface_identifier + '</td> \
+              <td >'+ interface.interface_description + '</td>  \
+              <td>'+ interface.interface_class_label +'</td> \
+              <td>'+ interface.type_interface_comment +'</td> \
+              <td>'+ interface.type_interface_is_active+'</td> \
+            </tr>'
+          })
+          
+        }else{
+            html += '<tr> \
+              <td></td> \
+              <td></td> \
+              <td></td> \
+              <td></td> \
+              <td></td> \
+            </tr>'
+        }
+        $('#equipment_type_interface_attribute').html(html)
+      }
+    })
+
   })
 
 }); 

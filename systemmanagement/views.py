@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource
 from django.db import connection
 import datetime
 import json
@@ -326,10 +326,12 @@ def definitions_equipment_properties(request):
 def definitions_equipment_resources(request):
     page = 'definitions'
     sidebar_title = 'equipment_resources'
+    all_resources = list(Resource.objects.order_by('group_label').values())
     context = {
         'title': 'Definitions',
         'page': page,
-        'sidebar_title': sidebar_title
+        'sidebar_title': sidebar_title,
+        'all_resources': all_resources
     }
     
     return render(request, 'definitions_equipment_resources.html', context=context)

@@ -255,7 +255,6 @@ $(function() {
                     <td>None</td> \
                   </tr>'
                   }
-
               })
              
             }else{
@@ -268,11 +267,8 @@ $(function() {
             $('#equipment_attribute').html( html )
           }
         })
-
       }
     })
-    
-    
     }); 
 
   // Selected Level for left tree on connecction page
@@ -985,6 +981,43 @@ $(function() {
       }
     })
 
+  })
+
+  $('.equipment_resource_page .treeview-li .treeview-title').on('click', function(){
+    selectedResourceGroupId = $(this).attr("data-group_id")
+    
+    all_resources = JSON.parse(document.getElementById('all_resources').textContent)
+    
+    // display resource group detail
+    selectedResource = all_resources.find(element => element.group_id == selectedResourceGroupId)
+    $('#resource_group_id').val(selectedResourceGroupId)
+    $('#resource_group_label').val(selectedResource.group_label)
+    $('#resource_group_description').val(selectedResource.group_description)
+    if(selectedResource['group_is_reportable']){
+      $('#resource_group_is_reportable').prop('checked' , true)
+    }else{
+      $('#resource_group_is_reportable').prop('checked' , false)
+    }
+    $('#resource_group_comment').val(selectedResource.group_comment)
+    if(selectedResource['is_used']){
+      $('#resource_group_used').prop('checked' , true)
+    }else{
+      $('#resource_group_used').prop('checked' , false)
+    }
+
+    // display included resources
+    includedResources = all_resources.filter(element => element.group_id == selectedResourceGroupId)
+    var html = ''
+
+    includedResources.forEach(resource => {
+       html += '<tr> \
+          <td style="display: none">'+ resource.id +'</td>\
+          <td>'+ resource.modifier +'</td>\
+          <td>'+ resource.description +'</td>\
+          <td>'+ resource.comment +'</td>\
+        </tr>'
+    })
+    $('#resource_group_attribute').html(html)
   })
 
 }); 

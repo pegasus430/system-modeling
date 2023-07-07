@@ -39,17 +39,18 @@ class EquipmentType(models.Model):
 
 class Resource(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    resource_group_id = models.BigIntegerField()
     modifier = models.TextField()
     description = models.TextField()
     comment = models.TextField()
-    used_valid = models.BooleanField()
-    property_exist_valid = models.BooleanField()
-    interface_exist_valid = models.BooleanField()
-
+    group_id = models.BigIntegerField()
+    group_label = models.TextField()
+    group_description = models.TextField()
+    group_comment = models.TextField()
+    group_is_reportable = models.BooleanField()
+    is_used = models.BooleanField()
     class Meta:
         managed = False
-        db_table = 'view_report_resource'
+        db_table = 'all_resource'
 
 class Interface(models.Model):
     id = models.BigIntegerField(primary_key=True)
@@ -299,3 +300,4 @@ class TypeInterface(models.Model):
     class Meta:
         managed = False
         db_table = 'type_interface_detail'
+

@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource , ResouceProperty, DataType, InterfaceClass
 from django.db import connection
 import datetime
 import json
@@ -315,10 +315,14 @@ def definitions_equipment_types(request):
 def definitions_equipment_properties(request):
     page = 'definitions'
     sidebar_title = 'equipment_properties'
+    resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+    all_datatype = list(DataType.objects.values())
     context = {
         'title': 'Definitions',
         'page': page,
-        'sidebar_title': sidebar_title
+        'sidebar_title': sidebar_title,
+        'resourceProperty': resourceProperty,
+        'all_datatype': all_datatype,
     }
     
     return render(request, 'definitions_equipment_properties.html', context=context)
@@ -339,10 +343,14 @@ def definitions_equipment_resources(request):
 def definitions_equipment_interfaces(request):
     page = 'definitions'
     sidebar_title = 'equipment_interfaces'
+    all_interfaces = list(Interface.objects.order_by('identifier').values())
+    all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
     context = {
         'title': 'Definitions',
         'page': page,
-        'sidebar_title': sidebar_title
+        'sidebar_title': sidebar_title,
+        'all_interfaces': all_interfaces,
+        'all_interface_classes': all_interface_classes,
     }
     
     return render(request, 'definitions_equipment_interfaces.html', context=context)
@@ -350,10 +358,12 @@ def definitions_equipment_interfaces(request):
 def definitions_equipment_interface_classes(request):
     page = 'definitions'
     sidebar_title = 'equipment_interface_classes'
+    all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title,
+        'all_interface_classes': all_interface_classes,
     }
     
     return render(request, 'definitions_equipment_interface_classes.html', context=context)

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block maincontent %}
-
+{{all_interface_classes | json_script:'all_interface_classes'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_interface_class_page card card-body system_overview border-gray">
@@ -84,5 +84,20 @@
            
         </div>
     </div><!-- End Right Overview -->
+    <script>
+        all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+        
+        var html = ''
+        var interface_classid_list = []
+        all_interface_classes.forEach(n => {
+            if(!interface_classid_list.includes(n.id)){
+                interface_classid_list.push(n.id)
+                html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
+                ' + n.label + '  (' + n.description +')</li>'
+            }
+        });
+    
+        document.getElementById('equipment_interface_class_tree').innerHTML = html
+    </script>
 
 {% endblock %}

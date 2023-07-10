@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block maincontent %}
-
+{{all_interfaces | json_script:'all_interfaces'}}
+{{all_interface_classes | json_script:'all_interface_classes'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_interface_page card card-body system_overview border-gray">
@@ -56,13 +57,7 @@
                         </select>
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <label class="col-md-3 col-form-label text-secondary">Default Value:</label>
-                        <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="Modifier" value="" id="equipment_interface_default_value">
-                        </div>
-                    </div>
-                    
+                   
                     <div class="row mt-3">
                         <label class="col-md-3 col-form-label text-secondary">Comment:</label>
                         <div class="col-md-8">
@@ -113,5 +108,19 @@
            
         </div>
     </div><!-- End Right Overview -->
-
+    <script>
+        all_interfaces = JSON.parse(document.getElementById('all_interfaces').textContent)
+        
+        var html = ''
+        var interface_id_list = []
+        all_interfaces.forEach(n => {
+            if(!interface_id_list.includes(n.id)){
+                interface_id_list.push(n.id)
+                html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
+                ' + n.identifier + '  (' + n.description +')</li>'
+            }
+        });
+    
+        document.getElementById('equipment_interface_tree').innerHTML = html
+    </script>
 {% endblock %}

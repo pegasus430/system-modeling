@@ -924,7 +924,7 @@ $(function() {
             <td style="display:none"></td> \
             <td style="display:none"></td> \
             <td></td> \
-            <td></td> \
+            <td> No Data</td> \
             <td></td> \
             </tr>'
         }
@@ -1018,6 +1018,114 @@ $(function() {
         </tr>'
     })
     $('#resource_group_attribute').html(html)
+  })
+
+  $('.equipment_property_page .treeview-li .treeview-title').on('click', function(){
+    selectedPropertyId = $(this).attr("data-propertyId")
+    resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
+    all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+    // display resource group detail
+    selectedProperty= resourceProperty.find(element => element.id == selectedPropertyId)
+    $("#resource_property_default_datatype").find('option').remove()
+    
+    $('#resource_property_id').val(selectedPropertyId)
+    $('#resource_property_modifier').val(selectedProperty.modifier)
+    $('#resource_property_description').val(selectedProperty.description)
+    if(selectedProperty['resource_property_is_reportable']){
+      $('#resource_property_is_reportable').prop('checked' , true)
+    }else{
+      $('#resource_property_is_reportable').prop('checked' , false)
+    }
+    $('#resource_property_comment').val(selectedProperty.comment)
+    if(selectedProperty['property_is_used']){
+      $('#resource_property_used').prop('checked' , true)
+    }else{
+      $('#resource_property_used').prop('checked' , false)
+    }
+    $('#resource_property_default_value').val(selectedProperty.default_value)
+
+    all_datatype.forEach(element => {
+      var selected = element.id === selectedProperty.default_datatype_id ? true: false
+      var p = new Option(element.label, element.id,  undefined, selected)
+      $(p).html(element.label)
+      $('#resource_property_default_datatype').append(p)
+    })
+
+    // display resources using this property
+    resources = resourceProperty.filter(element => element.id == selectedPropertyId)
+    var html = ''
+
+    resources.forEach(resource => {
+       html += '<tr> \
+          <td style="display: none">'+ resource.resource_id +'</td>\
+          <td>'+ resource.resource_modifier + '(' + resource.resource_description + ') </td>\
+          <td>'+ resource.resource_property_default_datatype_label + '(' + resource.resource_property_default_datatype_comment + ')</td>\
+          <td>'+ resource.resource_property_default_value +'</td>\
+          <td>'+ resource.resource_property_comment +'</td>\
+        </tr>'
+    })
+    $('#resource_property_attribute').html(html)
+  
+  })
+
+  $('.equipment_interface_page .treeview-li .treeview-title').on('click', function(){
+    selectedInterfaceId = $(this).attr("data-interfaceId")
+    all_interfaces = JSON.parse(document.getElementById('all_interfaces').textContent)
+    all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+    $("#equipment_interface_interface_class_label").find('option').remove()
+    $("#equipment_interface_connecting_class_label").find('option').remove()
+    
+    selectedInterface = all_interfaces.find(element => element.id == selectedInterfaceId)
+    
+    $('#equipment_interface_id').val(selectedInterfaceId)
+    $('#equipment_interface_identifier').val(selectedInterface.identifier)
+    $('#equipment_interface_description').val(selectedInterface.description)
+    $('#equipment_interface_comment').val(selectedInterface.comment)
+    if(selectedInterface['is_intermediate']){
+      $('#equipment_interface_is_intermediate').prop('checked' , true)
+    }else{
+      $('#equipment_interface_is_intermediate').prop('checked' , false)
+    }
+  
+    if(selectedInterface['is_used']){
+      $('#equipment_interface_used').prop('checked' , true)
+    }else{
+      $('#equipment_interface_used').prop('checked' , false)
+    }
+    
+
+    all_interface_classes.forEach(element => {
+      var selected = element.id === selectedInterface.interface_class_id ? true: false
+      var p = new Option(element.label, element.id,  undefined, selected)
+      $(p).html(element.label + ' (' + element.description + ')')
+      $('#equipment_interface_interface_class_label').append(p)
+    })
+  
+    all_interface_classes.forEach(element => {
+      var selected = element.id === selectedInterface.connecting_interface_class_id ? true: false
+      var p = new Option(element.label, element.id,  undefined, selected)
+      $(p).html(element.label + ' (' + element.description + ')')
+      $('#equipment_interface_connecting_class_label').append(p)
+    })
+  })
+
+  $('.equipment_interface_class_page .treeview-li .treeview-title').on('click', function(){
+    selectedInterfaceClassId = $(this).attr("data-interfaceClassId")    
+    all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+    
+    
+    selectedInterfaceClass = all_interface_classes.find(element => element.id == selectedInterfaceClassId)
+    
+    $('#equipment_interface_class_id').val(selectedInterfaceClassId)
+    $('#equipment_interface_class_label').val(selectedInterfaceClass.label)
+    $('#equipment_interface_class_description').val(selectedInterfaceClass.description)
+    $('#equipment_interface_class_comment').val(selectedInterfaceClass.comment)
+    if(selectedInterfaceClass['is_used']){
+      $('#equipment_interface_class_used').prop('checked' , true)
+    }else{
+      $('#equipment_interface_class_used').prop('checked' , false)
+    }
+
   })
 
 }); 

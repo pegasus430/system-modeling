@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block maincontent %}
-
+{{resourceProperty | json_script:'resourceProperty'}}
+{{all_datatype | json_script:'all_datatype'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_property_page card card-body system_overview border-gray">
@@ -30,7 +31,7 @@
                     <div class="row mt-3">
                         <label class="col-md-3 col-form-label text-secondary">Modifier:</label>
                         <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="Modifier" value="" id="resource_property_modifier">
+                            <input type="text" class="form-control" placeholder="Modifier" value="" id="resource_property_modifier">
                         </div>
                     </div>
                     
@@ -43,7 +44,7 @@
                     <div class="row mt-3">
                         <label class="col-md-3 col-form-label text-secondary">Default Value:</label>
                         <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="Modifier" value="" id="resource_property_default_value">
+                        <input type="text" class="form-control" placeholder="default value" value="" id="resource_property_default_value">
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -81,7 +82,7 @@
                     <div class="row mt-3 p-2 pl-4" style="float: right;">
                         <div class="col-md-2">
                         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
-                            Add Property
+                            Add
                         </button>
                         </div>
                         <div class="col-md-2">
@@ -139,5 +140,20 @@
            
         </div>
     </div><!-- End Right Overview -->
-
+    <script>
+        resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
+        
+        var html = ''
+        var resource_id_list = []
+        resourceProperty.forEach(n => {
+            if(!resource_id_list.includes(n.id)){
+                resource_id_list.push(n.id)
+                html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                ' + n.modifier + '  (' + n.description +')</li>'
+            }
+        });
+    
+        document.getElementById('all_resource_property_tree').innerHTML = html
+    </script>
+    
 {% endblock %}

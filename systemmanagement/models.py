@@ -55,15 +55,21 @@ class Resource(models.Model):
 class Interface(models.Model):
     id = models.BigIntegerField(primary_key=True)
     interface_class_id = models.BigIntegerField()
+    interface_class_label = models.TextField()
+    interface_class_description = models.TextField()
+    interface_class_comment = models.TextField()
     connecting_interface_class_id = models.BigIntegerField()
+    connecting_interface_class_label = models.TextField()
+    connecting_interface_class_description = models.TextField()
+    connecting_interface_class_comment = models.TextField()
     identifier = models.TextField()
     description = models.TextField()
     comment = models.TextField()
     is_intermediate = models.BooleanField()
-    used_valid = models.BooleanField()
+    is_used = models.BooleanField()
     class Meta:
         managed = False
-        db_table = 'view_report_interface'
+        db_table = 'all_interface'
 
 class EquipmentResource(models.Model):
     equipment_id = models.BigIntegerField()
@@ -301,3 +307,54 @@ class TypeInterface(models.Model):
         managed = False
         db_table = 'type_interface_detail'
 
+class ResouceProperty(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    modifier = models.TextField()
+    description = models.TextField()
+    default_value = models.TextField()
+    default_datatype_id = models.BigIntegerField()
+    default_datatype_label = models.TextField()
+    default_datatype_comment = models.TextField()
+    is_reportable = models.BooleanField()
+    comment = models.TextField()
+    property_is_used = models.BooleanField()
+    resource_id = models.BigIntegerField()
+    resource_modifier = models.TextField()
+    resource_description = models.TextField()
+    resource_property_default_value = models.TextField()
+    resource_property_default_datatype_id = models.BigIntegerField()
+    resource_property_default_datatype_label = models.TextField()
+    resource_property_default_datatype_comment = models.TextField()
+    resource_property_comment = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'all_resource_property'
+
+class DataType(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    label = models.TextField()
+    scada_1 = models.TextField()
+    scada_2 = models.TextField()
+    scada_3 = models.TextField()
+    scada_4 = models.TextField()
+    scada_5 = models.TextField()
+    control_1 = models.TextField()
+    control_2 = models.TextField()
+    control_3 = models.TextField()
+    control_4 = models.TextField()
+    control_5 = models.TextField()
+    comment = models.TextField()
+    class Meta:
+        managed = False
+        db_table = 'all_datatype'
+
+class InterfaceClass(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    label = models.TextField()
+    description = models.TextField()
+    comment = models.TextField()
+    is_used = models.BooleanField()
+    class Meta:
+        managed = False
+        db_table = 'all_interface_class'

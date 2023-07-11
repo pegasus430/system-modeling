@@ -1009,6 +1009,22 @@ $(function() {
 
     // display included resources
     includedResources = all_resources.filter(element => element.group_id == selectedResourceGroupId)
+    
+    includedResources.sort((a, b) => {
+      const valueA = a.modifer == null ? '': a.modifier.toLowerCase(); // Get the value to compare in object A (converted to lowercase for case-insensitive sorting)
+      const valueB = b.modifer == null ? '': b.modifier.toLowerCase(); // Get the value to compare in object B (converted to lowercase for case-insensitive sorting)
+      
+      if (valueA < valueB) {
+        return -1; // Return negative value if A should come before B
+      }
+    
+      if (valueA > valueB) {
+        return 1; // Return positive value if A should come after B
+      }
+    
+      return 0; // Return 0 if values are equal
+    });
+    
     var html = ''
 
     includedResources.forEach(resource => {
@@ -1055,6 +1071,20 @@ $(function() {
 
     // display resources using this property
     resources = resourceProperty.filter(element => element.id == selectedPropertyId)
+    resources.sort((a, b) => {
+      const valueA = a.resource_modifier == null ? '': a.resource_modifier.toLowerCase(); // Get the value to compare in object A (converted to lowercase for case-insensitive sorting)
+      const valueB = b.resource_modifier == null ? '': b.resource_modifier.toLowerCase(); // Get the value to compare in object B (converted to lowercase for case-insensitive sorting)
+      
+      if (valueA < valueB) {
+        return -1; // Return negative value if A should come before B
+      }
+    
+      if (valueA > valueB) {
+        return 1; // Return positive value if A should come after B
+      }
+    
+      return 0; // Return 0 if values are equal
+    });
     var html = ''
 
     resources.forEach(resource => {

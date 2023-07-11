@@ -491,7 +491,7 @@ def getEquipmentTypesAttributes(request):
         selectedtypeId = request.GET['selectedtypeId']
         raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
             left join all_resource B on A.resource_id = B.id \
-            where type_id = " + selectedtypeId
+            where type_id = " + selectedtypeId + " order by B.modifier"
         
         with connection.cursor() as cursor:
             cursor.execute(raw_query)
@@ -513,7 +513,7 @@ def getEquipmentTypesInterface(request):
             where=[
                 "type_id = " + selectedTypeId + " and resource_id = " + selectedResourceId
             ]
-        )
+        ).order_by('interface_identifier')
 
         typeInterfaceList = list(typeInterfacedb.values())
         data = json.dumps(

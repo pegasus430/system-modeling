@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource , ResouceProperty, DataType, InterfaceClass
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource , ResouceProperty, DataType, InterfaceClass, TargetSystem
 from django.db import connection
 import datetime
 import json
@@ -371,10 +371,12 @@ def definitions_equipment_interface_classes(request):
 def definitions_connection_types(request):
     page = 'definitions'
     sidebar_title = 'connection_types'
+    all_connection_types = list(ConnectionType.objects.order_by('path').values())
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title,
+        'all_connection_types': all_connection_types,
     }
     
     return render(request, 'definitions_connection_types.html', context=context)
@@ -382,10 +384,14 @@ def definitions_connection_types(request):
 def definitions_target_systems(request):
     page = 'definitions'
     sidebar_title = 'target_systems'
+    target_systems = list(TargetSystem.objects.order_by('label').values())
+    all_datatype = list(DataType.objects.values())
     context = {
         'title': 'Definitions',
         'page': page,
-        'sidebar_title': sidebar_title
+        'sidebar_title': sidebar_title,
+        'target_systems': target_systems,
+        'all_datatype': all_datatype,
     }
     
     return render(request, 'definitions_target_systems.html', context=context)

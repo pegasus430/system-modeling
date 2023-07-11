@@ -8,6 +8,7 @@
 // Treeview Initialization
 $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
+
     // display purchasing_overview_table as default
     var tableData = []
     var stateFunction = function(data) {
@@ -397,6 +398,39 @@ $(document).ready(function() {
           )
       }
     }
+
+    if(document.getElementById('target_systems')){
+      target_systems = JSON.parse(document.getElementById('target_systems').textContent)
+      if(target_systems.length){
+        target_systems.forEach(element => {
+              tableData.push({
+              'label': element.type_label ,
+              'description': element.value,
+              'comment' : element.comment,
+         
+              })
+          })
+     
+          $('#target_systems_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            autoWidth: false,
+            columns: [
+              { data: 'label' },
+              { data: 'description' },
+              { data: 'comment' },
+            
+            ]}
+          )
+      }else{
+          var html = '<tr> \
+            <td></td> \
+            <td>No data</td> \
+            <td></td> \
+            </tr>'
+          $('#target_systems_table tbody').html(html)
+      }
+    }
     
 });
 
@@ -730,6 +764,7 @@ $(document).ready(function() {
       }
     })
   } 
+  var baseUrl = window.location.origin;
 
   if(select('.equipment_page #commit'))
   {
@@ -746,7 +781,7 @@ $(document).ready(function() {
          console.log(equipment_location_path)
          $.ajax({
           type: "GET",
-          url: '/updateEquipmentDetail',
+          url: baseUrl + '/updateEquipmentDetail',
           data: {
             equipment_id: equipment_id,
             equipment_local_identifier: equipment_local_identifier,  

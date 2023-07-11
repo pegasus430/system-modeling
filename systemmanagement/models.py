@@ -358,3 +358,31 @@ class InterfaceClass(models.Model):
     class Meta:
         managed = False
         db_table = 'all_interface_class'
+
+class TargetSystem(models.Model):
+    system_settings_id = models.BigIntegerField(primary_key=True)
+    label = models.TextField()
+    value = models.TextField()
+    comment = models.TextField()
+    class Meta:
+        managed = False
+        db_table = 'all_target_system'
+
+class PossibleState(models.Model):
+    state_id = models.BigIntegerField(primary_key=True)
+    state_label = models.TextField()
+    state_description = models.TextField()
+    valid_for_connection = models.BooleanField()
+    valid_for_equipment = models.BooleanField()
+    state_comment = models.TextField()
+    authority_id = models.BigIntegerField()
+    authority_label = models.TextField()
+    authority_description = models.TextField()
+    authority_comment = models.TextField()
+    state_is_editable = models.BooleanField()
+    state_modified_at = models.DateTimeField()
+    authority_modified_at = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'all_possible_state'
+

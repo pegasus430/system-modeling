@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block maincontent %}
-
+{{all_connection_types | json_script:'all_connection_types'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="connection_type_page card card-body system_overview border-gray">
@@ -115,5 +115,55 @@
            
         </div>
     </div><!-- End Right Overview -->
-
+    <script type="text/javascript">
+        
+        all_connection_types = JSON.parse(document.getElementById('all_connection_types').textContent)
+        
+        function createTree(data) {
+          const nodeWithParent = []
+          
+          //make the path as string from list
+          data.forEach(element => {
+            path = element.path.join('.')
+            element.path = path        
+          })
+    
+          //Find the parent for each element
+          data.forEach(element => {
+            const parent = element.path.includes('.')? element.path.substr(0, element.path.lastIndexOf('.')):null
+            nodeWithParent.push({...element, parent})
+          });
+    
+          //Recursive function to create HTML out of node
+          function getNodeHtml(n) {
+            let html = ''
+            const children = nodeWithParent.filter(d => d.parent === n.path)
+                      
+            if(children.length > 0) {
+              html += '<li class="treeview-animated-items treeview-li"> \
+                          <a class="closed"> \
+                            <i class="fas fa-angle-right"></i> \
+                            <span class="ml-1 treeview-title" data-typeid="'+ n.id +'" data-typepath="'+ n.path +'">'+ n.label + '  (' + n.description + ')</span> \
+                          </a> \
+                          <ul class="nested">' 
+                + children.map( getNodeHtml).join('')
+                + '</ul></li>'
+            }
+            else{
+              html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-typeid="'+n.id+'" data-typepath="'+ n.path + '"> \
+              '+n.label + '  (' + n.description +')</li>'
+            }
+            return html
+          }
+    
+          // Get all root nodes (without parent)
+          const root = nodeWithParent.filter(d => d.parent === null)
+    
+          return root.map(getNodeHtml).join('')
+        }
+    
+        const html = createTree(all_connection_types)
+        document.getElementById('connection_type_tree').innerHTML = html
+    
+      </script>
 {% endblock %}

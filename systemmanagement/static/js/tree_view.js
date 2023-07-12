@@ -2,8 +2,6 @@ $(function() {
     // Treeview Initialization
     
   let gChildEquipments
-  var baseUrl = window.location.origin;
-
 
   var stateFunction = function(data) {
     if(data == true)
@@ -116,7 +114,7 @@ $(function() {
     
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getEquipmentChildElements',
+      url: 'getEquipmentChildElements',
       data: {
         selectedEquipmentPath: selectedEquipmentPath
       },
@@ -196,7 +194,7 @@ $(function() {
         // display Equipment Attributes tables
         $.ajax({
           type: "GET",
-          url: baseUrl + '/getEquipmentDetailsTableData',
+          url: 'getEquipmentDetailsTableData',
           data: {
             selectedEquipmentId: selectedEquipmentId
           },
@@ -287,7 +285,7 @@ $(function() {
     
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getConnectionChildElements',
+      url: 'getConnectionChildElements',
       data: {
         selectedConnectionPath: selectedConnectionPath
       },
@@ -404,7 +402,7 @@ $(function() {
     selectedTypePath = $(this).attr("data-typepath")
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getEquipmentTypePurchasingOverview',
+      url: 'getEquipmentTypePurchasingOverview',
       data: {
         selectedTypePath: selectedTypePath
       },
@@ -453,7 +451,7 @@ $(function() {
     
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getConnectionTypePurchasingOverview',
+      url: 'getConnectionTypePurchasingOverview',
       data: {
         selectedTypePath: selectedTypePath
       },
@@ -497,7 +495,7 @@ $(function() {
     selectedTypePath = $(this).attr("data-typepath")
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getEquipmentTypePurchasingDetail',
+      url: 'getEquipmentTypePurchasingDetail',
       data: {
         selectedTypePath: selectedTypePath
       },
@@ -547,7 +545,7 @@ $(function() {
     
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getConnectionTypePurchasingDetail',
+      url: 'getConnectionTypePurchasingDetail',
       data: {
         selectedTypePath: selectedTypePath
       },
@@ -593,7 +591,7 @@ $(function() {
     selectedTypePath = $(this).attr("data-typepath")
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getEquipmentTypePurchasingDetail',
+      url: 'getEquipmentTypePurchasingDetail',
       data: {
         selectedTypePath: selectedTypePath
       },
@@ -644,7 +642,7 @@ $(function() {
     
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getConnectionTypePurchasingDetail',
+      url: 'getConnectionTypePurchasingDetail',
       data: {
         selectedTypePath: selectedTypePath
       },
@@ -693,7 +691,7 @@ $(function() {
   
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getEquipmentStateDetail',
+      url: 'getEquipmentStateDetail',
       data: {
         selectedEquipmentPath: selectedEquipmentPath
       },
@@ -780,7 +778,7 @@ $(function() {
     
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getConnectionStateDetail',
+      url: 'getConnectionStateDetail',
       data: {
         selectedConnectionPath: selectedConnectionPath
       },
@@ -900,7 +898,7 @@ $(function() {
     
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getEquipmentTypesAttributes',
+      url: 'getEquipmentTypesAttributes',
       data: {
         selectedtypeId: selectedtypeId
       },
@@ -950,7 +948,7 @@ $(function() {
     var selectedResourceId = $(this).find('td').eq(1).text()
     $.ajax({
       type: "GET",
-      url: baseUrl + '/getEquipmentTypesInterface',
+      url: 'getEquipmentTypesInterface',
       data: {
         selectedTypeId: selectedTypeId,
         selectedResourceId: selectedResourceId

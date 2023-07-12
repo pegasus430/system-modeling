@@ -8,6 +8,7 @@
 // Treeview Initialization
 $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
+  $('#version').html('1.0.13 (13/07/2023)')
 
     // display purchasing_overview_table as default
     var tableData = []
@@ -438,8 +439,14 @@ $(document).ready(function() {
             'control_5': target_systems.find(element => element.label ==='control_5')? target_systems.find(element => element.label ==='control_5').value :'',
           }
 
-          var columnHeaders = Object.values(columnHeaderMatch)
-          columnHeaders = columnHeaders.filter(element => element !== '')
+          columnHeaderMatch = Object.fromEntries(
+            Object.entries(columnHeaderMatch).filter(([key, value]) => value !== '')
+          );
+          
+          
+          var columnHeadersKeys = Object.keys(columnHeaderMatch)
+          var columnHeaders = Object.values(columnHeaderMatch)      
+         
           
           var html = '<thead style="background-color: #000; color: white; border: solid 1px;"><tr class="text-center">'
           html += '<th>Label</th><th>Description</th>'
@@ -460,9 +467,18 @@ $(document).ready(function() {
 
           console.log(all_datatype)
           if(all_datatype.length){
-
+            html = '<tr>'
+            all_datatype.forEach(element => {
+              html += '<td>'+ element.label +'</td>'
+              html += '<td>'+ 'description' +'</td>'
+              columnHeadersKeys.forEach(headerkey => {
+                html += '<td>'+ element[headerkey] +'</td>'
+              })
+              html += '<td>'+ element.comment +'</td>'
+            })
+            $('#system_datatype_table tbody').html(html)
           }else{
-            var html  = '<tr><td>No data</td></tr>'
+            var html  = 'No data'
             $('#system_datatype_table tbody').html(html)
           }
 
@@ -822,7 +838,7 @@ $(document).ready(function() {
       }
     })
   } 
-  var baseUrl = window.location.origin;
+  
 
   if(select('.equipment_page #commit'))
   {
@@ -839,7 +855,7 @@ $(document).ready(function() {
          console.log(equipment_location_path)
          $.ajax({
           type: "GET",
-          url: baseUrl + '/updateEquipmentDetail',
+          url: 'updateEquipmentDetail',
           data: {
             equipment_id: equipment_id,
             equipment_local_identifier: equipment_local_identifier,  

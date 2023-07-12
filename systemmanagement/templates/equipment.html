@@ -283,8 +283,12 @@
       
       //make the equipment_path as string from list
       data.forEach(element => {
-        path = element.equipment_path.join('.')
-        element.equipment_path = path        
+        if(element.equipment_path){
+          path = element.equipment_path.join('.')
+          element.equipment_path = path        
+        }else{
+          element.equipment_path = ''
+        }     
       })
 
       //Find the parent for each element

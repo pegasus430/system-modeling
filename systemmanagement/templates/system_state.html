@@ -200,8 +200,13 @@
       
       //make the equipment_path as string from list
       data.forEach(element => {
-        path = element.equipment_path.join('.')
-        element.equipment_path = path        
+        if(element.equipment_path){
+          path = element.equipment_path.join('.')
+          element.equipment_path = path        
+        }else{
+          element.equipment_path = ''
+        }
+        
       })
 
       //Find the parent for each element
@@ -243,8 +248,13 @@
       
       //make the equipment_path as string from list
       data.forEach(element => {
-        path = element.connection_path.join('.')
-        element.connection_path = path        
+        if(element.connection_path){
+          path = element.connection_path.join('.')
+          element.connection_path = path       
+        }else{
+          element.connection_path = ''
+        }
+         
       })
 
       //Find the parent for each element

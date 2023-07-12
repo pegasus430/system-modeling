@@ -196,8 +196,13 @@
       
       //make the type_path as string from list
       data.forEach(element => {
-        path = element.type_path.join('.')
-        element.type_path = path        
+        if(element.type_path){
+          path = element.type_path.join('.')
+          element.type_path = path     
+        }else{
+          element.type_path = ''
+        }
+           
       })
 
     

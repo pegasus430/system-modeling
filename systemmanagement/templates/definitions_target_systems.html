@@ -2,23 +2,23 @@
 {% load static %}
 
 {% block maincontent %}
-
+{{target_systems | json_script:'target_systems'}}
+{{all_datatype | json_script:'all_datatype'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="target_systems card card-body system_overview border-gray">
             <div class="row">
                 <!-- Equipment Details table -->
                 <h5 class="card-title">Target Systems</h5>
-                <table class="table table-bordered text-center" id="target_systems_table">
+                <table class="nowrap table table-bordered text-center" id="target_systems_table">
                     <thead style="background-color: #000; color: white; border: solid 1px;">
-                        <tr>
-                           
-                            <th scope="col" >Label</th>
-                            <th scope="col">Description</th>
-                            <th scope="col" >comment</th>
+                        <tr class="text-center">
+                            <th scope="col" class="text-center">Label</th>
+                            <th scope="col" class="text-center">Description</th>
+                            <th scope="col" class="text-center" >comment</th>
                         </tr>
                     </thead>
-                    <tbody id="equipment_type_resouce_attribute">
+                    <tbody>
                         <tr style="border: solid 1px">
                             
                             <td></td>
@@ -38,33 +38,8 @@
             <div class="row">
                 <!-- Equipment Details table -->
                 <h5 class="card-title">Available Datatypes for Properties</h5>
-                <table class="table table-bordered text-center">
-                    <thead style="background-color: #000; color: white; border: solid 1px;">
-                        <tr>
-                            <th scope="col" >Label</th>
-                            <th scope="col" >Description</th>
-                            <th scope="col" >Scada_1</th>
-                            <th scope="col" >Scada_2</th>
-                            <th scope="col" >Scada_3</th>
-                            <th scope="col" >Scada_4</th>
-                            <th scope="col" >Scada_5</th>
-                            <th scope="col" >control_1</th>
-                            <th scope="col" >control_2</th>
-                            <th scope="col" >control_3</th>
-                            <th scope="col" >control_4</th>
-                            <th scope="col" >control_5</th>
-                            <th scope="col" >Comment</th>
-                        </tr>
-                    </thead>
-                    <tbody id="equipment_type_interface_attribute">
-                        <tr style="border: solid 1px">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
+                <table class="table table-bordered text-center" id="system_datatype_table">
+ 
                 </table><!-- End Equipment Details table -->
                  <!-- Buttons Section -->
                  <div class="col-xxl-12 col-lg-12 col-md-12">
@@ -76,5 +51,6 @@
             </div>
         </div>
     </div><!-- End Right Overview -->
+
 
 {% endblock %}

@@ -401,10 +401,12 @@ $(document).ready(function() {
 
     if(document.getElementById('target_systems')){
       target_systems = JSON.parse(document.getElementById('target_systems').textContent)
+      all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+    
       if(target_systems.length){
         target_systems.forEach(element => {
               tableData.push({
-              'label': element.type_label ,
+              'label': element.label ,
               'description': element.value,
               'comment' : element.comment,
          
@@ -422,13 +424,69 @@ $(document).ready(function() {
             
             ]}
           )
+
+          var columnHeaderMatch = {
+            'scada_1': target_systems.find(element => element.label ==='scada_1')? target_systems.find(element => element.label ==='scada_1').value :'',
+            'scada_2': target_systems.find(element => element.label ==='scada_2')? target_systems.find(element => element.label ==='scada_2').value :'',
+            'scada_3': target_systems.find(element => element.label ==='scada_3')? target_systems.find(element => element.label ==='scada_3').value :'',
+            'scada_4': target_systems.find(element => element.label ==='scada_4')? target_systems.find(element => element.label ==='scada_4').value :'',
+            'scada_5': target_systems.find(element => element.label ==='scada_5')? target_systems.find(element => element.label ==='scada_5').value :'',
+            'control_1': target_systems.find(element => element.label ==='control_1')? target_systems.find(element => element.label ==='control_1').value :'',
+            'control_2': target_systems.find(element => element.label ==='control_2')? target_systems.find(element => element.label ==='control_2').value :'',
+            'control_3': target_systems.find(element => element.label ==='control_3')? target_systems.find(element => element.label ==='control_3').value :'',
+            'control_4': target_systems.find(element => element.label ==='control_4')? target_systems.find(element => element.label ==='control_4').value :'',
+            'control_5': target_systems.find(element => element.label ==='control_5')? target_systems.find(element => element.label ==='control_5').value :'',
+          }
+
+          var columnHeaders = Object.values(columnHeaderMatch)
+          columnHeaders = columnHeaders.filter(element => element !== '')
+          
+          var html = '<thead style="background-color: #000; color: white; border: solid 1px;"><tr class="text-center">'
+          html += '<th>Label</th><th>Description</th>'
+          columnHeaders.forEach(element =>{
+            html += '<th scope="col" class="text-center">'+ element +'</th>'
+          })
+          html += '<th>Comment</th>'
+                    
+          html += '</tr></thead><tbody><tr style="border: solid 1px">'
+          html += '<td></td><td></td>'
+          columnHeaders.forEach(element =>{
+            html += '<td></td>'
+          })
+          html += '<td></td>'
+          html += '</tr></tbody>'
+            
+          $('#system_datatype_table').html(html)
+
+          console.log(all_datatype)
+          if(all_datatype.length){
+
+          }else{
+            var html  = '<tr><td>No data</td></tr>'
+            $('#system_datatype_table tbody').html(html)
+          }
+
+
       }else{
           var html = '<tr> \
-            <td></td> \
-            <td>No data</td> \
-            <td></td> \
-            </tr>'
-          $('#target_systems_table tbody').html(html)
+              <td></td> \
+              <td>No data</td> \
+              <td></td> \
+              </tr>'
+            $('#target_systems_table tbody').html(html)
+
+            var html = '<thead style="background-color: #000; color: white; border: solid 1px;"> \
+                            <tr class="text-center"> \
+                                <th scope="col" class="text-center">Undefined System</th> \
+                            </tr> \
+                        </thead> \
+                        <tbody> \
+                            <tr style="border: solid 1px"> \
+                                <td></td> \
+                            </tr> \
+                        </tbody>'
+            
+            $('#system_datatype_table').html(html)
       }
     }
     

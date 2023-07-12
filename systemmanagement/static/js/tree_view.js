@@ -1006,6 +1006,7 @@ $(function() {
     }else{
       $('#resource_group_used').prop('checked' , false)
     }
+    $('#resource_group_used').prop('disabled' , true)
 
     // display included resources
     includedResources = all_resources.filter(element => element.group_id == selectedResourceGroupId)
@@ -1060,6 +1061,7 @@ $(function() {
     }else{
       $('#resource_property_used').prop('checked' , false)
     }
+    $('#resource_property_used').prop('disabled' , true)
     $('#resource_property_default_value').val(selectedProperty.default_value)
 
     all_datatype.forEach(element => {
@@ -1121,8 +1123,10 @@ $(function() {
   
     if(selectedInterface['is_used']){
       $('#equipment_interface_used').prop('checked' , true)
+      $('#equipment_interface_used').prop('disabled', true)
     }else{
       $('#equipment_interface_used').prop('checked' , false)
+      $('#equipment_interface_used').prop('disabled', true)
     }
     
 
@@ -1157,6 +1161,7 @@ $(function() {
     }else{
       $('#equipment_interface_class_used').prop('checked' , false)
     }
+    $('#equipment_interface_class_used').prop('disabled' , true)
 
   })
 
@@ -1188,6 +1193,7 @@ $(function() {
     }else{
       $('#connection_type_used').prop('checked' , false)
     }
+    $('#connection_type_used').prop('disabled' , true)
 
     allEquipmentTypeExceptSelectedOne = allConnectionTypes.filter( d => d.id != selectedtypeId)
         

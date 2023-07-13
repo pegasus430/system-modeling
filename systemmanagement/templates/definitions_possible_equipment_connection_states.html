@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block maincontent %}
+{{all_possible_state | json_script:'all_possible_state'}}
+{{all_authority | json_script:'all_authority'}}
 
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
@@ -9,9 +11,10 @@
             <div class="row">
                 <!-- Equipment Details table -->
                 <h5 class="card-title">Defined Equipment and Connection States</h5>
-                <table class="table table-bordered text-center" id="equipment_type_resource_table">
+                <table class="table table-bordered text-center" id="possible_state_table">
                     <thead style="background-color: #000; color: white; border: solid 1px;">
                         <tr>
+                            <th scope="col" style="display: none;">id</th>
                             <th scope="col" >Label</th>
                             <th scope="col">Description</th>
                             <th scope="col">Equipment State</th>
@@ -19,8 +22,9 @@
                             <th scope="col">Authority Label</th>
                         </tr>
                     </thead>
-                    <tbody id="equipment_type_resouce_attribute">
+                    <tbody>
                         <tr style="border: solid 1px">
+                            <td style="display: none;"></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -51,18 +55,20 @@
             </div>
             <div class="row">
                 <!-- Equipment Details table -->
-                <h5 class="card-title">Available Datatypes for Properties</h5>
-                <table class="table table-bordered text-center">
+                <h5 class="card-title">State Transition Authorities</h5>
+                <table class="table table-bordered text-center" id="authority_table">
                     <thead style="background-color: #000; color: white; border: solid 1px;">
                         <tr>
-                            <th scope="col" >Label</th>
-                            <th scope="col" >Description</th>
-                            <th scope="col" >Comment</th>
+                            <th scope="col" style="display: none;">
+                            <th scope="col" class="text-center">Label</th>
+                            <th scope="col" class="text-center">Description</th>
+                            <th scope="col" class="text-center">Comment</th>
                             
                         </tr>
                     </thead>
-                    <tbody id="equipment_type_interface_attribute">
+                    <tbody>
                         <tr style="border: solid 1px">
+                            <td style="display: none;"></td>
                             <td></td>
                             <td></td>
                             <td></td>

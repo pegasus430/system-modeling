@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource , ResouceProperty, DataType, InterfaceClass, TargetSystem
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource , ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority
 from django.db import connection
 import datetime
 import json
@@ -399,10 +399,14 @@ def definitions_target_systems(request):
 def definitions_possible_equipment_connection_states(request):
     page = 'definitions'
     sidebar_title = 'possible_equipment_connection_states'
+    all_possible_state = list(PossibleState.objects.order_by('state_label').values())
+    all_authority = list(Authority.objects.order_by('authority_label').values())
     context = {
         'title': 'Definitions',
         'page': page,
-        'sidebar_title': sidebar_title
+        'sidebar_title': sidebar_title,
+        'all_possible_state': all_possible_state,
+        'all_authority': all_authority,
     }
     
     return render(request, 'definitions_possible_equipment_connection_states.html', context=context)

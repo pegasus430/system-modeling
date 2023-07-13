@@ -334,6 +334,7 @@ class ResouceProperty(models.Model):
 class DataType(models.Model):
     id = models.BigIntegerField(primary_key=True)
     label = models.TextField()
+    description = models.TextField()
     scada_1 = models.TextField()
     scada_2 = models.TextField()
     scada_3 = models.TextField()
@@ -386,3 +387,12 @@ class PossibleState(models.Model):
         managed = False
         db_table = 'all_possible_state'
 
+class Authority(models.Model):
+    authority_id = models.BigIntegerField(primary_key=True)
+    authority_label = models.TextField()
+    authority_description = models.TextField()
+    authority_comment = models.TextField()
+    authority_modified_at = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'all_authority'

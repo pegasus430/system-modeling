@@ -8,7 +8,7 @@
 // Treeview Initialization
 $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
-  $('#version').html('1.0.13 (13/07/2023)')
+  $('#version').html('1.0.14 (14/07/2023)')
 
     // display purchasing_overview_table as default
     var tableData = []
@@ -465,16 +465,17 @@ $(document).ready(function() {
             
           $('#system_datatype_table').html(html)
 
-          console.log(all_datatype)
+          
           if(all_datatype.length){
             html = '<tr>'
             all_datatype.forEach(element => {
               html += '<td>'+ element.label +'</td>'
-              html += '<td>'+ 'description' +'</td>'
+              html += '<td>'+ element.description +'</td>'
               columnHeadersKeys.forEach(headerkey => {
                 html += '<td>'+ element[headerkey] +'</td>'
               })
-              html += '<td>'+ element.comment +'</td>'
+              html += '<td>'+ element.comment +'</td></tr>'
+
             })
             $('#system_datatype_table tbody').html(html)
           }else{
@@ -503,6 +504,107 @@ $(document).ready(function() {
                         </tbody>'
             
             $('#system_datatype_table').html(html)
+      }
+    }
+
+    if(document.getElementById('all_authority')){
+  
+      var all_authority = JSON.parse(document.getElementById('all_authority').textContent)
+      
+      var tableData = []
+      if(all_authority.length){
+        all_authority.forEach(element => {
+             tableData.push({
+              'id': element.authority_id,
+              'label': element.authority_label ,
+              'description': element.authority_description,
+              'comment': element.authority_comment,
+             
+             })
+          })
+          
+          $('#authority_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'id' },
+              { data: 'label' },
+              { data: 'description' },
+              { data: 'comment' },
+            ],
+            columnDefs: [
+              {
+                targets: [0], 
+                visible: false 
+              }
+            ]
+          }
+          )
+      }else{
+        html = '<tr><td style="display:none"></td><td></td><td>No data</td><td></td></tr>'
+        $('#authority_table tbody').html(html)
+      }
+    }
+
+    if(document.getElementById('all_possible_state')){
+      var all_possible_state = JSON.parse(document.getElementById('all_possible_state').textContent)
+      var all_authority = JSON.parse(document.getElementById('all_authority').textContent)
+
+      
+      
+      var tableData = []
+      if(all_possible_state.length){
+        all_possible_state.forEach(element => {
+
+             tableData.push({
+              'id': element.state_id,
+              'label': element.state_label ,
+              'description': element.state_description,
+              'comment': element.authority_comment,
+              'equipment_state': element.valid_for_equipment,
+              'connection_state': element.valid_for_connection,
+              'authority_label': element.authority_label
+             })
+          })
+          
+          $('#possible_state_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'id' },
+              { data: 'label' },
+              { data: 'description' },
+              { data: 'equipment_state'},
+              { data: 'connection_state'},
+              { 
+                data: 'authority_label' ,
+                render: function (data){
+                  var selectOptions = all_authority.map(option => {
+                    if(option.authority_label === data){
+                        return  `<option value="${option.authority_label}" selected>${option.authority_label}</option>`
+                    }
+                    else{
+                        return  `<option value="${option.authority_label}">${option.authority_label}</option>`
+                    }
+                  }
+                  ).join('');
+                  return `<select style="width: 100%">${selectOptions}</select>`;
+                
+                }
+              },
+              
+            ],
+            columnDefs: [
+              {
+                targets: [0], 
+                visible: false 
+              }
+            ]
+          }
+          )
+      }else{
+        html = 'No data'
+        $('#possible_state_table tbody').html(html)
       }
     }
     

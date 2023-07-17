@@ -8,7 +8,7 @@
 // Treeview Initialization
 $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
-  $('#version').html('1.0.14 (14/07/2023)')
+  $('#version').html('1.0.17 (17/07/2023)')
 
     // display purchasing_overview_table as default
     var tableData = []
@@ -954,13 +954,15 @@ $(document).ready(function() {
          var equipment_type_id = $('#all_equipment_types_select').val()
          var equipment_comment = $('#equipment_comment').val()
          var equipment_is_approved = $('#equipment_is_approved').prop('checked')
-         console.log(equipment_location_path)
+         var equipment_use_parent_identifier = $('#equipment_use_parent_identifier').prop('checked')
+     
          $.ajax({
           type: "GET",
           url: 'updateEquipmentDetail',
           data: {
             equipment_id: equipment_id,
             equipment_local_identifier: equipment_local_identifier,  
+            equipment_use_parent_identifier: equipment_use_parent_identifier,
             equipment_parent_path: equipment_parent_path,
             equipment_description: equipment_description,
             equipment_location_path: equipment_location_path,
@@ -969,7 +971,20 @@ $(document).ready(function() {
             equipment_is_approved: equipment_is_approved          
           },
           success: function (data){
-            console.log(data)
+            data = JSON.parse(data)
+            var result = data['result']
+            var equipment_list = data['equipment_list']
+            if(result){
+              $.toast({
+                heading: 'Success',
+                text: 'The equipment has been updated successfully!',
+                icon: 'info',              
+                bgColor : '#2cc947',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+              
+            }
 
           }
          })

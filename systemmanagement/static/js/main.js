@@ -983,7 +983,59 @@ $(document).ready(function() {
                 showHideTransition : 'slide',
                 position : 'top-right'
               })
-              
+
+              function createEquipmentTree(data) {
+                const nodeWithParent = []
+                
+                //make the equipment_path as string from list
+                data.forEach(element => {
+                  if(element.equipment_path){
+                    path = element.equipment_path.join('.')
+                    element.equipment_path = path        
+                  }else{
+                    element.equipment_path = ''
+                  }     
+                })
+          
+                //Find the parent for each element
+                data.forEach(element => {
+                  const parent = element.equipment_path.includes('.')? element.equipment_path.substr(0, element.equipment_path.lastIndexOf('.')):null
+                  nodeWithParent.push({...element, parent})
+                });
+          
+                //Recursive function to create HTML out of node
+                function getNodeHtml(n) {
+                  let html = ''
+                  const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
+                            
+                  if(children.length > 0) {
+                    html += '<li class="treeview-animated-items treeview-li"> \
+                                <a class="closed"> \
+                                  <i class="fas fa-angle-right"></i> \
+                                  <span class="ml-1 treeview-title" data-equipmentpath="'+ n.equipment_path +'">'+ n.equipment_full_identifier + '  (' + n.equipment_description + ')</span> \
+                                </a> \
+                                <ul class="nested">' 
+                      + children.map( getNodeHtml).join('')
+                      + '</ul></li>'
+                  }
+                  else{
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-equipmentpath="'+ n.equipment_path + '"> \
+                    '+n.equipment_full_identifier + '  (' + n.equipment_description +')</li>'
+                  }
+                  return html
+                }
+          
+                // Get all root nodes (without parent)
+                const root = nodeWithParent.filter(d => d.parent === null)
+          
+                return root.map(getNodeHtml).join('')
+              }
+          
+              const html = createEquipmentTree(equipment_list)
+              document.getElementById('all_equipment_tree').innerHTML = html
+              $('.treeview-animated').mdbTreeview();
+
+
             }
 
           }

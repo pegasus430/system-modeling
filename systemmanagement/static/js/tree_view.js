@@ -1,4 +1,4 @@
-$(function() {
+$(document).ready(function() {
     // Treeview Initialization
     
   let gChildEquipments
@@ -104,7 +104,7 @@ $(function() {
   }
 
   // Selected Level for left tree on Equipment page
-  $(".equipment_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
+  $(".equipment_page .left_object_hierarchy").on("click", ".treeview-li .treeview-title", function() {
     
     $("#location_path").find('option').remove()
     $("#parent_path").find('option').remove()
@@ -272,7 +272,7 @@ $(function() {
     }); 
 
   // Selected Level for left tree on connecction page
-  $(".connection_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
+  $(".connection_page .left_object_hierarchy").on("click", '.treeview-li .treeview-title', function() {
       
     $("#connection_parent_path").find('option').remove()
     $("#start_equipment").find('option').remove()
@@ -398,7 +398,7 @@ $(function() {
     })
     }); 
 
-  $('.equipment-type-purchase-overview .treeview-li .treeview-title').on('click', function(){
+  $('.equipment-type-purchase-overview').on('click', '.treeview-li .treeview-title', function(){
     selectedTypePath = $(this).attr("data-typepath")
     $.ajax({
       type: "GET",
@@ -446,7 +446,7 @@ $(function() {
 
   })
 
-  $('.connection-type-purchase-overview .treeview-li .treeview-title').on('click', function(){
+  $('.connection-type-purchase-overview').on('click', '.treeview-li .treeview-title',function(){
     selectedTypePath = $(this).attr("data-typepath")
     
     $.ajax({
@@ -491,7 +491,7 @@ $(function() {
 
   })
 
-  $('.equipment-type-purchase-detail .treeview-li .treeview-title').on('click', function(){
+  $('.equipment-type-purchase-detail').on('click', '.treeview-li .treeview-title', function(){
     selectedTypePath = $(this).attr("data-typepath")
     $.ajax({
       type: "GET",
@@ -540,7 +540,7 @@ $(function() {
 
   })
 
-  $('.connection-type-purchase-detail .treeview-li .treeview-title').on('click', function(){
+  $('.connection-type-purchase-detail').on('click', '.treeview-li .treeview-title', function(){
     selectedTypePath = $(this).attr("data-typepath")
     
     $.ajax({
@@ -587,7 +587,7 @@ $(function() {
 
   })
 
-  $('.delivery-equipment .treeview-li .treeview-title').on('click', function(){
+  $('.delivery-equipment').on('click', '.treeview-li .treeview-title', function(){
     selectedTypePath = $(this).attr("data-typepath")
     $.ajax({
       type: "GET",
@@ -637,7 +637,7 @@ $(function() {
 
   })
 
-  $('.delivery-connection .treeview-li .treeview-title').on('click', function(){
+  $('.delivery-connection').on('click', '.treeview-li .treeview-title',function(){
     selectedTypePath = $(this).attr("data-typepath")
     
     $.ajax({
@@ -686,7 +686,7 @@ $(function() {
 
   })
 
-  $('.state-equipment .treeview-li .treeview-title').on('click', function(){
+  $('.state-equipment').on('click', '.treeview-li .treeview-title',function(){
     selectedEquipmentPath = $(this).attr("data-equipmentpath")
   
     $.ajax({
@@ -773,7 +773,7 @@ $(function() {
 
   })
 
-  $('.state-connection .treeview-li .treeview-title').on('click', function(){
+  $('.state-connection').on('click', '.treeview-li .treeview-title',function(){
     selectedConnectionPath = $(this).attr("data-connectionpath")
     
     $.ajax({
@@ -854,7 +854,7 @@ $(function() {
 
   })
 
-  $(".equipment_type_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
+  $(".equipment_type_page .left_object_hierarchy").on("click", '.treeview-li .treeview-title', function() {
     
     allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
     
@@ -983,7 +983,7 @@ $(function() {
 
   })
 
-  $('.equipment_resource_page .treeview-li .treeview-title').on('click', function(){
+  $('.equipment_resource_page').on('click', '.treeview-li .treeview-title',function(){
     selectedResourceGroupId = $(this).attr("data-group_id")
     
     all_resources = JSON.parse(document.getElementById('all_resources').textContent)
@@ -1037,7 +1037,7 @@ $(function() {
     $('#resource_group_attribute').html(html)
   })
 
-  $('.equipment_property_page .treeview-li .treeview-title').on('click', function(){
+  $('.equipment_property_page').on('click','.treeview-li .treeview-title', function(){
     selectedPropertyId = $(this).attr("data-propertyId")
     resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
     all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
@@ -1100,7 +1100,7 @@ $(function() {
   
   })
 
-  $('.equipment_interface_page .treeview-li .treeview-title').on('click', function(){
+  $('.equipment_interface_page').on('click', '.treeview-li .treeview-title', function(){
     selectedInterfaceId = $(this).attr("data-interfaceId")
     all_interfaces = JSON.parse(document.getElementById('all_interfaces').textContent)
     all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
@@ -1143,7 +1143,7 @@ $(function() {
     })
   })
 
-  $('.equipment_interface_class_page .treeview-li .treeview-title').on('click', function(){
+  $('.equipment_interface_class_page ').on('click', '.treeview-li .treeview-title',function(){
     selectedInterfaceClassId = $(this).attr("data-interfaceClassId")    
     all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
     
@@ -1163,7 +1163,7 @@ $(function() {
 
   })
 
-  $(".connection_type_page .left_object_hierarchy .treeview-li .treeview-title").on("click",  function() {
+  $(".connection_type_page .left_object_hierarchy").on("click",  '.treeview-li .treeview-title', function() {
     
     allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
     console.log(allConnectionTypes)

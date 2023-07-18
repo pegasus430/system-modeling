@@ -923,6 +923,53 @@ $(document).ready(function() {
     }, 200);
   }
 
+  function createEquipmentTree(data) {
+    const nodeWithParent = []
+    
+    //make the equipment_path as string from list
+    data.forEach(element => {
+      if(element.equipment_path){
+        path = element.equipment_path.join('.')
+        element.equipment_path = path        
+      }else{
+        element.equipment_path = ''
+      }     
+    })
+
+    //Find the parent for each element
+    data.forEach(element => {
+      const parent = element.equipment_path.includes('.')? element.equipment_path.substr(0, element.equipment_path.lastIndexOf('.')):null
+      nodeWithParent.push({...element, parent})
+    });
+
+    //Recursive function to create HTML out of node
+    function getNodeHtml(n) {
+      let html = ''
+      const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
+                
+      if(children.length > 0) {
+        html += '<li class="treeview-animated-items treeview-li"> \
+                    <a class="closed"> \
+                      <i class="fas fa-angle-right"></i> \
+                      <span class="ml-1 treeview-title" data-equipmentpath="'+ n.equipment_path +'">'+ n.equipment_full_identifier + '  (' + n.equipment_description + ')</span> \
+                    </a> \
+                    <ul class="nested">' 
+          + children.map( getNodeHtml).join('')
+          + '</ul></li>'
+      }
+      else{
+        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-equipmentpath="'+ n.equipment_path + '"> \
+        '+n.equipment_full_identifier + '  (' + n.equipment_description +')</li>'
+      }
+      return html
+    }
+
+    // Get all root nodes (without parent)
+    const root = nodeWithParent.filter(d => d.parent === null)
+
+    return root.map(getNodeHtml).join('')
+  }
+
   if(select('#btn_equipment_delete')){
     on('click','#btn_equipment_delete' , function(){
       if(confirm('Are you sure to remove the equipment?')){
@@ -931,6 +978,156 @@ $(document).ready(function() {
       }
     })
   }
+
+  // when clicking the add same equipment btn for modal
+  if(select('#btn_equipment_add_same')){
+    on('click','#btn_equipment_add_same' , function(){
+      // make  all dropdown list empty
+      $("#adding_parent_path").find('option').remove()
+      $("#adding_location_path").find('option').remove()
+      $("#adding_equipment_type").find('option').remove()
+
+       var selectedEquipmentId = $('#equipment_id').val()
+       if(selectedEquipmentId){
+          
+          allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+          allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
+
+          selectedEquipment = allEquipment.filter(element => element.equipment_id == parseInt(selectedEquipmentId))
+
+          // display parent path and location path
+          var p = new Option('none' , '', undefined, false);
+          $(p).html('none');
+          $("#adding_location_path").append(p);
+
+          var o = new Option('none' , '', undefined, false);
+          $(o).html('none');
+          $("#adding_parent_path").append(o);
+
+          allEquipment.forEach( element => {
+
+            element_equipment_path = element.equipment_path.join('.')
+            var selected_element_path = selectedEquipment[0]['equipment_path']
+            selected_element_path = selected_element_path.join('.')
+           
+            if(selected_element_path.indexOf('.'))
+              selected_element_parent_path = selected_element_path.substr(0, selected_element_path.lastIndexOf('.'))
+            else
+              selected_element_parent_path = ''
+            
+            var selected = element_equipment_path === selected_element_parent_path ? true : false ;
+            var o = new Option(element.equipment_full_identifier, element.equipment_path, undefined, selected);
+            $(o).html(element.equipment_full_identifier);
+            $("#adding_parent_path").append(o);
+  
+            
+            var p = new Option(element.equipment_full_identifier, element.equipment_path, undefined, undefined);
+            $(p).html(element.equipment_full_identifier);
+            $("#adding_location_path").append(p);
+  
+          })
+  
+          // display type drop down 
+          allEquipmentTypes.forEach( element => {
+            var t = new Option(element.label, element.id, undefined, undefined);
+            $(t).html(element.label);
+            $("#adding_equipment_type").append(t);
+          })
+
+       }
+       else{
+          $.toast({
+            heading: 'Error',
+            text: 'You have to select the equipment to be same!',
+            icon: 'error',              
+            bgColor : '#red',  
+            showHideTransition : 'slide',
+            position : 'top-right'
+          })
+       }
+    })
+  }
+  
+  // add same euqipment
+  on('click', '#equipmentModal .btn-primary', function(){
+    var addingEquipmentIdentifier = $('#adding_equipment_identifier').val()
+    // console.log(addingEquipmentIdentifier)
+    if(addingEquipmentIdentifier){
+      if(confirm('Are you sure to add this equpment?')){
+          var addingEquipmentDescription = $('#adding_equipment_description').val()
+          var addingEquipmentParentPath = $('#adding_parent_path').val()
+          addingEquipmentParentPath =  addingEquipmentParentPath.replaceAll(',', '.')
+          var addingEquipmentLocationPath = $('#adding_location_path').val()
+          addingEquipmentLocationPath = addingEquipmentLocationPath.replaceAll(',', '.')
+          var addingEquipmentIncludeParentFlag = $('#adding_equipment_use_parent_identifier').prop('checked')
+          var addingEquipmentTypeId = $('#adding_equipment_type').val()
+          var addingEquipmentComment = $('#adding_equipment_comment').val()
+          var addingEquipmentApproved = $('#adding_equipment_approved').prop('checked')
+          // console.log(addingEquipmentDescription, addingEquipmentParentPath , addingEquipmentLocationPath, addingEquipmentIncludeParentFlag, addingEquipmentTypeId, addingEquipmentComment,  addingEquipmentApproved)
+
+          $.ajax({
+            type: "GET",
+            url: 'addEquipment',
+            data: {
+              equipment_local_identifier: addingEquipmentIdentifier,  
+              equipment_use_parent_identifier: addingEquipmentIncludeParentFlag,
+              equipment_parent_path: addingEquipmentParentPath,
+              equipment_description: addingEquipmentDescription,
+              equipment_location_path: addingEquipmentLocationPath,
+              equipment_type_id: addingEquipmentTypeId,
+              equipment_comment: addingEquipmentComment,
+              equipment_is_approved: addingEquipmentApproved          
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']
+              var equipment_list = data['equipment_list']
+              if(result){
+
+                $.toast({
+                  heading: 'Success',
+                  text: 'The equipment has been inserted successfully!',
+                  icon: 'info',              
+                  bgColor : '#2cc947',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+
+                $('#adding_equipment_identifier').val('')
+                $('#adding_equipment_description').val('')
+                $('#adding_parent_path').find('option').remove()
+                $('#adding_location_path').find('option').remove()
+                $('#adding_equipment_use_parent_identifier').prop('checked', false)
+                $('#adding_equipment_type').find('option').remove()
+                $('#adding_equipment_comment').val('')
+                $('#adding_equipment_approved').prop('checked', false)
+
+                $("#equipmentModal").modal('hide');
+
+                if(equipment_list){
+                  const html = createEquipmentTree(equipment_list)
+                  document.getElementById('all_equipment_tree').innerHTML = html
+                  $('.treeview-animated').mdbTreeview();
+                }
+  
+              }
+            }
+           })
+      }
+      
+    }else{
+      $.toast({
+        heading: 'Error',
+        text: 'You have to put the new equipment identifier.',
+        icon: 'error',              
+        bgColor : '#red',  
+        showHideTransition : 'slide',
+        position : 'top-right'
+      })
+      
+    }
+    
+  })
 
   if(select('#btn_connection_delete')){
     on('click','#btn_connection_delete' , function(){
@@ -941,7 +1138,7 @@ $(document).ready(function() {
     })
   } 
   
-
+  // update equipment
   if(select('.equipment_page #commit'))
   {
     on('click', '.equipment_page #commit', function(){
@@ -984,60 +1181,28 @@ $(document).ready(function() {
                 position : 'top-right'
               })
 
-              function createEquipmentTree(data) {
-                const nodeWithParent = []
-                
-                //make the equipment_path as string from list
-                data.forEach(element => {
-                  if(element.equipment_path){
-                    path = element.equipment_path.join('.')
-                    element.equipment_path = path        
-                  }else{
-                    element.equipment_path = ''
-                  }     
-                })
-          
-                //Find the parent for each element
-                data.forEach(element => {
-                  const parent = element.equipment_path.includes('.')? element.equipment_path.substr(0, element.equipment_path.lastIndexOf('.')):null
-                  nodeWithParent.push({...element, parent})
-                });
-          
-                //Recursive function to create HTML out of node
-                function getNodeHtml(n) {
-                  let html = ''
-                  const children = nodeWithParent.filter(d => d.parent === n.equipment_path)
-                            
-                  if(children.length > 0) {
-                    html += '<li class="treeview-animated-items treeview-li"> \
-                                <a class="closed"> \
-                                  <i class="fas fa-angle-right"></i> \
-                                  <span class="ml-1 treeview-title" data-equipmentpath="'+ n.equipment_path +'">'+ n.equipment_full_identifier + '  (' + n.equipment_description + ')</span> \
-                                </a> \
-                                <ul class="nested">' 
-                      + children.map( getNodeHtml).join('')
-                      + '</ul></li>'
-                  }
-                  else{
-                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-equipmentpath="'+ n.equipment_path + '"> \
-                    '+n.equipment_full_identifier + '  (' + n.equipment_description +')</li>'
-                  }
-                  return html
-                }
-          
-                // Get all root nodes (without parent)
-                const root = nodeWithParent.filter(d => d.parent === null)
-          
-                return root.map(getNodeHtml).join('')
-              }
-          
               const html = createEquipmentTree(equipment_list)
               document.getElementById('all_equipment_tree').innerHTML = html
               $('.treeview-animated').mdbTreeview();
 
+              $("#location_path").find('option').remove()
+              $("#parent_path").find('option').remove()
+              $('#all_equipment_types_select').find('option').remove()
+
+              $('#equipment_id').val('')
+              $('#equipment_full_identifier').val('')
+              $('#equipment_local_identifier').val('')
+              
+              $('#equipment_use_parent_identifier').prop('checked' , false)
+              
+              $('#equipment_description').val('')
+              $('#equipment_comment').val('')
+              $('#basic-full-identifier').val('')
+              
+              $('#equipment_is_approved').prop('checked' , false)
+              
 
             }
-
           }
          })
 

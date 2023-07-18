@@ -529,6 +529,51 @@ def update_equipment_detail(request):
         )
         return HttpResponse(data)
        
+def add_equipment_detail(request):
+     if request.method == 'GET':
+        equipment_local_identifier = request.GET['equipment_local_identifier']
+        equipment_parent_path =  request.GET['equipment_parent_path']
+        equipment_use_parent_identifier = request.GET['equipment_use_parent_identifier']        
+        equipment_description =  request.GET['equipment_description']
+        equipment_location_path =  request.GET['equipment_location_path']
+        equipment_type_id =  request.GET['equipment_type_id']
+        equipment_comment =  request.GET['equipment_comment']
+        equipment_is_approved = request.GET['equipment_is_approved'] 
+
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        equipment_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        
+        query  = 'SELECT max(equipment_id) FROM all_equipment'
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+            
+        maximun_id = result[0]
+        new_equipment_id = maximun_id + 1
+        equipment_path = equipment_parent_path + '.' + str(new_equipment_id)
+        
+        
+        raw_query = "SELECT  fn_add_equipment(" + str(new_equipment_id) + " , '" + equipment_path + "' , " +  \
+              equipment_use_parent_identifier +" , '"+ equipment_location_path + "', " + equipment_type_id + ", '" \
+            + equipment_local_identifier + "', '" + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
+            + equipment_modified_at + "')" 
+
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
+        
+        data = json.dumps(
+            {
+                'result': True,
+                'equipment_list': all_equipment,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

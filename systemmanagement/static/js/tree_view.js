@@ -158,6 +158,11 @@ $(document).ready(function() {
           $(p).html('none');
           $("#location_path").append(p);
 
+          var o = new Option('none' , '', undefined, false);
+          $(o).html('none');
+          $("#parent_path").append(o);
+         
+
         allEquipmentExceptSelectedOne.forEach( element => {
           element_equipment_path = element.equipment_path.join('.')
           

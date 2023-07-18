@@ -130,7 +130,7 @@
                             </div>
                             <div class="row mt-3 p-2 pl-4">
                               <div class="col-md-4">
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#equipmentModal">
+                                <button type="button" class="btn btn-success" id="btn_equipment_add_same" data-bs-toggle="modal" data-bs-target="#equipmentModal">
                                     Add Same
                                 </button>
                               </div>
@@ -216,9 +216,15 @@
           </div>
           <div class="modal-body">
             <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Full Name:</label>
+              <label class="col-md-3 col-form-label text-secondary">Identifier:</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" placeholder="Equipment name" value="" id="adding_equipment_full_identifier">
+                <input type="text" class="form-control" placeholder="Equipment name" value="" id="adding_equipment_identifier" required>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <label class="col-md-3 col-form-label text-secondary">Include Parent Identifier</label>
+              <div class="col-md-8 form-check form-switch ml-3 pt-3">
+                <input class="form-check-input form-control" type="checkbox" id="adding_equipment_use_parent_identifier">
               </div>
             </div>
             <div class="row mt-3">
@@ -268,7 +274,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-primary"  >Save</button>
           </div>
         </div>
       </div>

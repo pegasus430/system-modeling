@@ -972,10 +972,68 @@ $(document).ready(function() {
 
   if(select('#btn_equipment_delete')){
     on('click','#btn_equipment_delete' , function(){
-      if(confirm('Are you sure to remove the equipment?')){
-        allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
-        
+      var selectedEquipmentId = $('#equipment_id').val()
+      if(selectedEquipmentId){
+        console.log(selectedEquipmentId)
+        if(confirm('Are you sure to remove the equipment?')){
+          $.ajax({
+            type: "GET",
+            url: 'removeEquipment',
+            data: {
+              equipment_id: selectedEquipmentId    
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']
+              var equipment_list = data['equipment_list']
+              if(result){
+
+                $.toast({
+                  heading: 'Success',
+                  text: 'The equipment has been  removed successfully!',
+                  icon: 'info',              
+                  bgColor : '#2cc947',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+
+                $("#location_path").find('option').remove()
+                $("#parent_path").find('option').remove()
+                $('#all_equipment_types_select').find('option').remove()
+  
+                $('#equipment_id').val('')
+                $('#equipment_full_identifier').val('')
+                $('#equipment_local_identifier').val('')
+                
+                $('#equipment_use_parent_identifier').prop('checked' , false)
+                
+                $('#equipment_description').val('')
+                $('#equipment_comment').val('')
+                $('#basic-full-identifier').val('')
+                
+                $('#equipment_is_approved').prop('checked' , false)
+
+                if(equipment_list){
+                  const html = createEquipmentTree(equipment_list)
+                  document.getElementById('all_equipment_tree').innerHTML = html
+                  $('.treeview-animated').mdbTreeview();
+                }
+  
+              }
+            }
+           })
+        }
+      }else{
+        $.toast({
+          heading: 'Error',
+          text: 'You need to select the equipment!',
+          icon: 'error',              
+          bgColor : '#red',  
+          showHideTransition : 'slide',
+          position : 'top-right'
+        })
       }
+      
     })
   }
 

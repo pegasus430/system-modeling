@@ -30,6 +30,7 @@ urlpatterns = [
     path(r'system/getConnectionStateDetail', views.get_connection_state_detail, name='get_connection_state_detail'),
     path(r'equipment/updateEquipmentDetail', views.update_equipment_detail, name='update_equipment_detail'),
     path(r'equipment/addEquipment', views.add_equipment_detail, name='add_equipment_detail'),
+    path(r'equipment/removeEquipment', views.remove_equipment, name='remove_equipment'),
     path(r'definitions/getEquipmentTypesAttributes', views.getEquipmentTypesAttributes, name= 'get_equipment_types_attributes'),
     path(r'definitions/getEquipmentTypesInterface', views.getEquipmentTypesInterface, name='getEquipmentTypesInterface')
 ]

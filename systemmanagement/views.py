@@ -530,7 +530,7 @@ def update_equipment_detail(request):
         return HttpResponse(data)
        
 def add_equipment_detail(request):
-     if request.method == 'GET':
+    if request.method == 'GET':
         equipment_local_identifier = request.GET['equipment_local_identifier']
         equipment_parent_path =  request.GET['equipment_parent_path']
         equipment_use_parent_identifier = request.GET['equipment_use_parent_identifier']        
@@ -574,6 +574,25 @@ def add_equipment_detail(request):
         )
         return HttpResponse(data)
 
+def remove_equipment(request):
+    if request.method == 'GET':
+        equipment_id = request.GET['equipment_id']
+        
+        raw_query = "SELECt fn_remove_equipment("+ str(equipment_id) +")" 
+
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
+        
+        data = json.dumps(
+            {
+                'result': True,
+                'equipment_list': all_equipment,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

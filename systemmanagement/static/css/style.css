@@ -1331,3 +1331,18 @@ a.nav-link.active {
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link{
   color: black
 }
+
+.form-control{
+  padding: 0 0.75rem !important
+}
+.form-select{
+  padding: 0 0.75rem !important
+}
+table.table th, table.table td {
+  padding-top: 0.3rem !important;
+  padding-bottom: 0.3rem !important;
+}
+table.dataTable tbody th, table.dataTable tbody td {
+  padding-top: 0.3rem !important;
+  padding-bottom: 0.3rem !important;
+}

@@ -240,7 +240,7 @@ def get_equipmentdetail_tabledata(request):
             results = cursor.fetchall()
         equipment_interfaces_list = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
 
-        raw_query = "select resource_id, property_modifier, property_description, datatype_label \
+        raw_query = "select resource_id, property_modifier, property_description, property_value \
             from all_equipment_property where equipment_id = " + selectedEquipmentId + " order by property_modifier"
         
         with connection.cursor() as cursor:
@@ -493,7 +493,10 @@ def update_equipment_detail(request):
         equipment_local_identifier = request.GET['equipment_local_identifier']
         equipment_parent_path =  request.GET['equipment_parent_path']
         equipment_use_parent_identifier = request.GET['equipment_use_parent_identifier']
-        equipment_path = equipment_parent_path.replace(',', '.') + '.' + equipment_id
+        if equipment_parent_path:
+            equipment_path = equipment_parent_path.replace(',', '.') + '.' + equipment_id
+        else:
+            equipment_path =  equipment_id
         
         equipment_description =  request.GET['equipment_description']
         equipment_location_path =  request.GET['equipment_location_path']
@@ -552,7 +555,10 @@ def add_equipment_detail(request):
             
         maximun_id = result[0]
         new_equipment_id = maximun_id + 1
-        equipment_path = equipment_parent_path + '.' + str(new_equipment_id)
+        if equipment_parent_path:
+            equipment_path = equipment_parent_path + '.' + str(new_equipment_id)
+        else:
+            equipment_path = str(new_equipment_id)
         
         
         raw_query = "SELECT  fn_add_equipment(" + str(new_equipment_id) + " , '" + equipment_path + "' , " +  \

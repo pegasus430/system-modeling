@@ -134,6 +134,7 @@ $(document).ready(function() {
         allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
         selectedEquipmentId = selectedEquipment[0]['equipment_id']
 
+        // displaying the detailed information of the equipment
         $('#equipment_id').val(selectedEquipmentId)
         $('#equipment_full_identifier').val(selectedEquipment[0]['equipment_full_identifier'])
         $('#equipment_local_identifier').val(selectedEquipment[0]['equipment_local_identifier'])
@@ -184,7 +185,10 @@ $(document).ready(function() {
         })
 
         // display type drop down 
-        typeLabelDescription = ''
+        var t = new Option('none' , '', undefined, false);
+        $(t).html('none');
+        $("#all_equipment_types_select").append(t);
+
         allEquipmentTypes.forEach( element => {
           var selected = element.id === selectedEquipment[0]['type_id'] ? true : false ;
           if(element.id === selectedEquipment[0]['type_id'] ){
@@ -194,7 +198,7 @@ $(document).ready(function() {
           $(t).html(element.label);
           $("#all_equipment_types_select").append(t);
         })
-        $('#type_label').val(typeLabelDescription)
+        
 
         // display Equipment Attributes tables
         $.ajax({
@@ -220,6 +224,7 @@ $(document).ready(function() {
                     </tr>'
                   resource_interface = interfaceList.filter(interface => interface.resource_id == resource.resource_id)
                   
+                  // show interface details per selected resource
                   if(resource_interface.length){
                     resource_interface.forEach(interface =>{
                       html += '  <tr style=" border-left: 1px; border-right: 1px;"> \
@@ -236,7 +241,7 @@ $(document).ready(function() {
                   </tr>'
                   }
                  
-
+                  // show property details per selected resource
                   html += '<tr style=" background-color: #eee ;border-left: 1px; border-right: 1px;"> \
                     <td></td> \
                     <td>Property</td> \
@@ -248,7 +253,7 @@ $(document).ready(function() {
                       html += '<tr style=" border-left: 1px; border-right: 1px;"> \
                       <td></td> \
                       <td></td> \
-                      <td>'+ property.property_modifier + ' ('+ property.property_description + ' - ' + property.datatype_label +')</td> \
+                      <td>'+ property.property_modifier + ' ('+ property.property_description + ' - ' + property.property_value +')</td> \
                     </tr>'
                     })
                       
@@ -300,16 +305,16 @@ $(document).ready(function() {
         const html = createConnectionChildElementTree(childConnection)
         document.getElementById('child_connection_tree').innerHTML = html
         
-        // $('.child-treeview').mdbTreeview();
-        // $('.child-treeview a').trigger('click');
         selectedConnection = childConnection.filter(d=> d.connection_path === selectedConnectionPath)
         allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
         allInterface = JSON.parse(document.getElementById('all_interface').textContent)
         allConnection = JSON.parse(document.getElementById('all_connection').textContent)
-        
         allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
+        
         selectedConnectionId = selectedConnection[0]['connection_id']
         
+        //displaying the detailed information of the selected connection
+        $('#connection_id').val(selectedConnectionId)
         $('#connection_full_identifier').val(selectedConnection[0]['connection_identifier'])
         $('#connection_identifier').val(selectedConnection[0]['connection_local_identifier'])
         if(selectedConnection[0]['connection_use_parent_identifier']){
@@ -330,6 +335,10 @@ $(document).ready(function() {
         allConnectionExceptSelectedone = allConnection.filter( d => d.connection_id !== selectedConnectionId)
         
         // display parent  path lists
+        var o = new Option('none' , '', undefined, false);
+        $(o).html('none');
+        $("#connection_parent_path").append(o);
+
         allConnectionExceptSelectedone.forEach( element => {
           element_connection_path = element.connection_path.join('.')
           
@@ -343,6 +352,14 @@ $(document).ready(function() {
         })
 
         //display start and End equipment dropdown lists
+        var p = new Option('none' , '', undefined, false);
+        $(p).html('none');
+        $("#start_equipment").append(p);
+
+        var t = new Option('none' , '', undefined, false);
+        $(t).html('none');
+        $("#end_equipment").append(t);
+
         allEquipment.forEach(element => {
           var selected = element.equipment_id === selectedConnection[0]['start_equipment_id'] ? true: false
           var p = new Option(element.equipment_full_identifier, element.equipment_full_identifier,  undefined, selected)
@@ -357,6 +374,14 @@ $(document).ready(function() {
         })
 
         //display start and end interface with dropdown lists
+        var p = new Option('none' , '', undefined, false);
+        $(p).html('none');
+        $("#start_interface").append(p);
+
+        var t = new Option('none' , '', undefined, false);
+        $(t).html('none');
+        $("#end_interface").append(t);
+
         allInterface.forEach(element => {
           var selected = element.id === selectedConnection[0]['start_interface_id'] ? true: false
           var p = new Option(element.identifier, element.id,  undefined, selected)
@@ -371,6 +396,11 @@ $(document).ready(function() {
         })
 
         //diplay connection type dropdown lists
+
+        var t = new Option('none' , '', undefined, false);
+        $(t).html('none');
+        $("#all_connection_type").append(t);
+
         allConnectionTypes.forEach( element => {
           var selected = selectedConnection[0]['connection_type_id'] === element.id ? true : false ;
           var o = new Option(element.label, element.label, undefined, selected);

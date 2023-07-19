@@ -970,11 +970,12 @@ $(document).ready(function() {
     return root.map(getNodeHtml).join('')
   }
 
+  // remove equipment
   if(select('#btn_equipment_delete')){
     on('click','#btn_equipment_delete' , function(){
       var selectedEquipmentId = $('#equipment_id').val()
       if(selectedEquipmentId){
-        console.log(selectedEquipmentId)
+        
         if(confirm('Are you sure to remove the equipment?')){
           $.ajax({
             type: "GET",
@@ -1105,7 +1106,71 @@ $(document).ready(function() {
        }
     })
   }
+
+  // when clicking the add child equipment btn 
+  if(select('#btn_equipment_add_child')){
+    on('click','#btn_equipment_add_child' , function(){
+      // make  all dropdown list empty
+      $("#adding_parent_path").find('option').remove()
+      $("#adding_location_path").find('option').remove()
+      $("#adding_equipment_type").find('option').remove()
+
+       var selectedEquipmentId = $('#equipment_id').val()
+       if(selectedEquipmentId){
+          
+          allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+          allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
+
+          selectedEquipment = allEquipment.filter(element => element.equipment_id == parseInt(selectedEquipmentId))
+
+          // display parent path and location path
+          var p = new Option('none' , '', undefined, false);
+          $(p).html('none');
+          $("#adding_location_path").append(p);
+
+          var o = new Option('none' , '', undefined, false);
+          $(o).html('none');
+          $("#adding_parent_path").append(o);
+
+          allEquipment.forEach( element => {
+
+            element_equipment_path = element.equipment_path.join('.')
+            var selected_element_path = selectedEquipment[0]['equipment_path']
+            selected_element_path = selected_element_path.join('.')
+
+            var selected = element_equipment_path === selected_element_path ? true : false ;
+            var o = new Option(element.equipment_full_identifier, element.equipment_path, undefined, selected);
+            $(o).html(element.equipment_full_identifier);
+            $("#adding_parent_path").append(o);
   
+            
+            var p = new Option(element.equipment_full_identifier, element.equipment_path, undefined, undefined);
+            $(p).html(element.equipment_full_identifier);
+            $("#adding_location_path").append(p);
+  
+          })
+  
+          // display type drop down 
+          allEquipmentTypes.forEach( element => {
+            var t = new Option(element.label, element.id, undefined, undefined);
+            $(t).html(element.label);
+            $("#adding_equipment_type").append(t);
+          })
+
+       }
+       else{
+          $.toast({
+            heading: 'Error',
+            text: 'You have to select the equipment to be same!',
+            icon: 'error',              
+            bgColor : '#red',  
+            showHideTransition : 'slide',
+            position : 'top-right'
+          })
+       }
+    })
+  }
+
   // add same euqipment
   on('click', '#equipmentModal .btn-primary', function(){
     var addingEquipmentIdentifier = $('#adding_equipment_identifier').val()

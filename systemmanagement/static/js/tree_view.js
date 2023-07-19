@@ -220,7 +220,7 @@ $(document).ready(function() {
                   html +='<tr style="background-color: #eee ;border-top: solid 3px; border-left: 1px; border-right: 1px;"> \
                     <td>'+ (resource.modifier !== null ? resource.modifier :'' )+ ' (' + resource.description + ')' + '</td> \
                     <td>Interface</td> \
-                    <td>Details</td> \
+                    <td>Used</td> \
                     </tr>'
                   resource_interface = interfaceList.filter(interface => interface.resource_id == resource.resource_id)
                   
@@ -229,15 +229,15 @@ $(document).ready(function() {
                     resource_interface.forEach(interface =>{
                       html += '  <tr style=" border-left: 1px; border-right: 1px;"> \
                       <td></td> \
-                      <td></td> \
-                      <td>'+ interface.interface_full_identifier + ' (' + interface.interface_description + ') - '+ interface.used +'</td> \
+                      <td>'+ interface.interface_identifier + ' (' + interface.interface_description + ')</td> \
+                      <td>'+ interface.used +'</td> \
                     </tr>'
                     })
                   }else{
                     html += '<tr style=" border-left: 1px; border-right: 1px;"> \
                     <td></td> \
-                    <td></td> \
                     <td>None</td> \
+                    <td></td> \
                   </tr>'
                   }
                  
@@ -245,15 +245,15 @@ $(document).ready(function() {
                   html += '<tr style=" background-color: #eee ;border-left: 1px; border-right: 1px;"> \
                     <td></td> \
                     <td>Property</td> \
-                    <td>Details</td></tr>'
+                    <td>Value</td></tr>'
 
                   resource_property = propertyList.filter(property => property.resource_id == resource.resource_id)
                   if(resource_property.length){
                     resource_property.forEach(property => {
                       html += '<tr style=" border-left: 1px; border-right: 1px;"> \
                       <td></td> \
-                      <td></td> \
-                      <td>'+ property.property_modifier + ' ('+ property.property_description + ' - ' + property.property_value +')</td> \
+                      <td>' + property.property_modifier + ' ('+ property.property_description + ')</td> \
+                      <td>'+ property.property_value +'</td> \
                     </tr>'
                     })
                       
@@ -261,8 +261,8 @@ $(document).ready(function() {
                   else{
                     html += '<tr style=" border-left: 1px; border-right: 1px;"> \
                     <td></td> \
-                    <td></td> \
                     <td>None</td> \
+                    <td></td> \
                   </tr>'
                   }
               })

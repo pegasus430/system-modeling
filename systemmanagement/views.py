@@ -224,7 +224,7 @@ def get_equipmentdetail_tabledata(request):
         equipment_resource_list = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
 
         # get equipment interfaces per selected equipment
-        raw_query = "select interface_id, resource_id, interface_full_identifier, interface_description,  \
+        raw_query = "select interface_id, resource_id, interface_identifier, interface_description,  \
             (select CASE  WHEN count(*) > 0 THEN 'Used' ELSE 'Not used' END as used from all_connection_interface  \
             where (start_equipment_id = "+ selectedEquipmentId +" and start_interface_id = interface_id) or(end_equipment_id = "+ selectedEquipmentId +" and end_interface_id = interface_id)) \
             from all_equipment_interface \
@@ -233,7 +233,7 @@ def get_equipmentdetail_tabledata(request):
                 SELECT A.resource_id FROM public.all_equipment_resource as A  \
                 inner join resource B on A.resource_id = B.id \
                 where equipment_id = "+ selectedEquipmentId +") \
-            order by interface_full_identifier"
+            order by interface_identifier"
         
         with connection.cursor() as cursor:
             cursor.execute(raw_query)

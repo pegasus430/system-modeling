@@ -230,9 +230,10 @@ $(document).ready(function() {
                       html += '  <tr style=" border-left: 1px; border-right: 1px;"> \
                       <td></td> \
                       <td>'+ interface.interface_identifier + ' (' + interface.interface_description + ')</td> \
-                      <td>'+ interface.used +'</td> \
+                      <td>'+ (interface.used === "Not used"? '': '<span class="bi bi-check" style="font-size: 1rem; color: rgb(0, 255, 0);"></span>') +'</td> \
                     </tr>'
-                    })
+                    }
+                    )
                   }else{
                     html += '<tr style=" border-left: 1px; border-right: 1px;"> \
                     <td></td> \

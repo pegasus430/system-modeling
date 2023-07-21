@@ -720,6 +720,24 @@ def add_connection(request):
         )
         return HttpResponse(data)
 
+def remove_connection(request):
+    if request.method == 'GET':
+        connection_id = request.GET['connection_id']
+        raw_query = "SELECt fn_remove_connection("+ str(connection_id) +")" 
+
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
+        
+        data = json.dumps(
+            {
+                'result': True,
+                'connection_list': all_connection,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

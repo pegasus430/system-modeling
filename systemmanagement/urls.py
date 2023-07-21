@@ -23,6 +23,7 @@ urlpatterns = [
     path(r'connections/getConnectionChildElements', views.get_connection_child_elements, name="get_connection_child_elements"),
     path(r'connections/updateConnectionDetail', views.update_connection_detail, name='update_connection_detail'),
     path(r'connections/addConnection', views.add_connection, name='add_connection'),
+    path(r'connections/removeConnection', views.remove_connection, name='remove_connection'),
     path(r'equipment/getEquipmentDetailsTableData', views.get_equipmentdetail_tabledata, name='get_equipmentdetail_tabledata'),
     path(r'system/getConnectionTypePurchasingOverview', views.get_ConnectionType_purchasing_overview, name='get_ConnectionType_purchasing_overview'),
     path(r'system/getEquipmentTypePurchasingOverview', views.get_EquipmentType_purchasing_overview, name='get_EquipmentType_purchasing_overview'),

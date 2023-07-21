@@ -1302,14 +1302,7 @@ $(document).ready(function() {
       
     })
   }
-
-  if(select('#btn_connection_delete')){
-    on('click','#btn_connection_delete' , function(){
-      if(confirm('Are you sure to remove the connection?')){
-        
-      }
-    })
-  } 
+ 
   
   // update equipment
   if(select('.equipment_page #commit'))
@@ -1693,6 +1686,73 @@ $(document).ready(function() {
         
       }
       
+    })
+  }
+
+  //remove connection
+  if(select('#btn_connection_delete')){
+    on('click','#btn_connection_delete' , function(){
+      var selectedConnectionId = $('#connection_id').val()
+      if(selectedConnectionId){
+        
+        if(confirm('Are you sure to remove this connection?')){
+          $.ajax({
+            type: "GET",
+            url: 'removeConnection',
+            data: {
+              connection_id: selectedConnectionId    
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']
+              var connection_list = data['connection_list']
+              if(result){
+
+                $.toast({
+                  heading: 'Success',
+                  text: 'The connection has been removed successfully!',
+                  icon: 'info',              
+                  bgColor : '#2cc947',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+
+                $("#connection_parent_path").find('option').remove()
+                $("#all_connection_type").find('option').remove()
+                $('#start_equipment').find('option').remove()
+                $('#end_equipment').find('option').remove()
+                $('#start_interface').find('option').remove()
+                $('#end_interface').find('option').remove()
+                $('#connection_id').val('')
+                $('#connection_length').val('')
+                $('#connection_identifier').val('')
+                $('#connection_full_identifier').val('')
+                $('#connection_use_parent_identifier').prop('checked' , false)
+                $('#connection_description').val('')
+                $('#connection_comment').val('')
+                $('#basic-full-identifier').val('')
+                $('#connection_is_approved').prop('checked' , false)
+
+                if(connection_list){
+                  const html = createConnectionTree(connection_list)
+                  document.getElementById('all_connection_tree').innerHTML = html
+                  $('.treeview-animated').mdbTreeview();
+                }
+  
+              }
+            }
+           })
+        }
+      }else{
+        $.toast({
+          heading: 'Error',
+          text: 'You need to select the connection!',
+          icon: 'error',              
+          bgColor : '#red',  
+          showHideTransition : 'slide',
+          position : 'top-right'
+        })
+      }
     })
   }
 

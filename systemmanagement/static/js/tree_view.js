@@ -347,7 +347,7 @@ $(document).ready(function() {
           selected_element_parent_path = selected_element_parent_path.substr(0, selected_element_parent_path.lastIndexOf('.'))
           
           var selected = element_connection_path === selected_element_parent_path ? true : false ;
-          var o = new Option(element.connection_identifier, element.connection_identifier, undefined, selected);
+          var o = new Option(element.connection_identifier, element.connection_path, undefined, selected);
           $(o).html(element.connection_identifier);
           $("#connection_parent_path").append(o);
         })
@@ -363,12 +363,12 @@ $(document).ready(function() {
 
         allEquipment.forEach(element => {
           var selected = element.equipment_id === selectedConnection[0]['start_equipment_id'] ? true: false
-          var p = new Option(element.equipment_full_identifier, element.equipment_full_identifier,  undefined, selected)
+          var p = new Option(element.equipment_full_identifier, element.equipment_id,  undefined, selected)
           $(p).html(element.equipment_full_identifier)
           $('#start_equipment').append(p)
 
           selected = element.equipment_id === selectedConnection[0]['end_equipment_id'] ? true: false
-          var t = new Option(element.equipment_full_identifier, element.equipment_full_identifier,  undefined, selected)
+          var t = new Option(element.equipment_full_identifier, element.equipment_id,  undefined, selected)
           $(t).html(element.equipment_full_identifier)
           $('#end_equipment').append(t)
 
@@ -404,7 +404,7 @@ $(document).ready(function() {
 
         allConnectionTypes.forEach( element => {
           var selected = selectedConnection[0]['connection_type_id'] === element.id ? true : false ;
-          var o = new Option(element.label, element.label, undefined, selected);
+          var o = new Option(element.label, element.id, undefined, selected);
           $(o).html(element.label);
           $("#all_connection_type").append(o);
         })

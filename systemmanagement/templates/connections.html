@@ -73,7 +73,7 @@
                             </div>
                             <div class="row mt-1">
                               <label class="col-md-3 col-form-label text-secondary">Include Parent Identifier</label>
-                              <div class="col-md-8 form-check form-switch ml-3 pt-3">
+                              <div class="col-md-8 form-check form-switch ml-3 pt-1">
                                 <input class="form-check-input form-control" type="checkbox" id="connection_use_parent_identifier">
                               </div>
                             </div>
@@ -163,12 +163,12 @@
                             </div>
                             <div class="row mt-1 p-2 pl-4">
                               <div class="col-md-4">
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#connectionModal">
+                                <button type="button" class="btn btn-success" id="btn_connection_add_same" data-bs-toggle="modal" data-bs-target="#connectionModal">
                                     Add Same
                                 </button>
                               </div>
                               <div class="col-md-4">
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#connectionModal">
+                                <button type="button" class="btn btn-info" id="btn_connection_add_child" data-bs-toggle="modal" data-bs-target="#connectionModal">
                                     Add Child
                                 </button>
                               </div>
@@ -206,7 +206,7 @@
                             <div class="card">
                               <div class="card-body buttons_section">
                                 <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
-                                <button type="button" class="btn btn-outline-primary">Commit</button>
+                                <button type="button" class="btn btn-outline-primary" id="btn_connection_commit">Commit</button>
                               </div>
                             </div>
                           </div><!-- End Buttons Section -->
@@ -244,90 +244,90 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Identifier:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Identifier:</label>
+              <div class="col-md-7">
                 <input type="text" class="form-control" placeholder="component identifier" value="" id="adding_connection_identifier">
               </div>
             </div>
-            <div class="row mt-3">
+            <div class="row mt-1">
               
-                <label class="col-md-3 col-form-label text-secondary">Use Parent Identifier</label>
-                <div class="col-md-8 form-check form-switch ml-3 pt-2">
+                <label class="col-md-4 col-form-label text-secondary">Use Parent Identifier</label>
+                <div class="col-md-7 form-check form-switch ml-3 pt-2">
                   <input class="form-check-input form-control" type="checkbox" id="adding_connection_use_parent_identifier">
                 </div>
               
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Description:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Description:</label>
+              <div class="col-md-7">
                 <textarea class="form-control" placeholder="Description" style="height: 60px;" id="adding_connection_description"></textarea>
               </div>
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Parent Path:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Parent Path:</label>
+              <div class="col-md-7">
                 <select class="form-select" id="adding_connection_parent_path">
                   
                 </select>
               </div>
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Start Equipment:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Start Equipment:</label>
+              <div class="col-md-7">
                 <select class="form-select" id="adding_connection_start_equipment">
                   
                 </select>
               </div>
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">End Equipment:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">End Equipment:</label>
+              <div class="col-md-7">
                 <select class="form-select" id="adding_connection_end_equipment">
                   
                 </select>
               </div>
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Start Interface:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Start Interface:</label>
+              <div class="col-md-7">
                 <select class="form-select" id="adding_connection_start_interface">
                   
                 </select>
               </div>
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">End Interface:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">End Interface:</label>
+              <div class="col-md-7">
                 <select class="form-select" id="adding_connection_end_interface">
                   
                 </select>
               </div>
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Type:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Type:</label>
+              <div class="col-md-7">
                 <select class="form-select" id="adding_connection_type">
                   
                 </select>
               </div>
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Length:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Length:</label>
+              <div class="col-md-7">
                 <input type="text" class="form-control" placeholder="length" value="" id="adding_connection_length">
               </div>
             </div>
-            <div class="row mt-3">
-              <label class="col-md-3 col-form-label text-secondary">Comment:</label>
-              <div class="col-md-8">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Comment:</label>
+              <div class="col-md-7">
                 <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="adding_connection_comment"></textarea>
               </div>
             </div>
-            <div class="row mt-3">
+            <div class="row mt-1">
              
-                <label class="col-md-3 col-form-label text-secondary">Approved</label>
-                <div class="col-md-8 form-check form-switch ml-3 pt-2">
+                <label class="col-md-4 col-form-label text-secondary">Approved</label>
+                <div class="col-md-7 form-check form-switch ml-3 pt-2">
                   <input class="form-check-input form-control" type="checkbox" id="adding_connection_approved">
                 </div>
               

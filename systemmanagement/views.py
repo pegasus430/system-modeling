@@ -599,6 +599,127 @@ def remove_equipment(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
+
+def update_connection_detail(request):
+    if request.method == 'GET':
+        connection_id = request.GET['connection_id']
+        connection_identifier = request.GET['connection_identifier']
+        connection_parent_path =  request.GET['connection_parent_path']
+        connection_use_parent_identifier = request.GET['connection_use_parent_identifier']
+        if connection_parent_path:
+            connection_path = connection_parent_path.replace(',', '.') + '.' + connection_id
+        else:
+            connection_path =  connection_id
+        connection_description =  request.GET['connection_description']
+        connection_length = request.GET['connection_length']
+        connection_type_id =  request.GET['connection_type_id']
+        if connection_type_id == '':
+            connection_type_id = 0
+        connection_comment =  request.GET['connection_comment']
+        connection_is_approved = request.GET['connection_is_approved'] 
+        connection_start_equipment_id = request.GET['connection_start_equipment_id']
+        if connection_start_equipment_id == '':
+            connection_start_equipment_id = 0
+        connection_end_equipment_id = request.GET['connection_end_equipment_id']
+        if connection_end_equipment_id == '':
+            connection_end_equipment_id = 0
+        connection_start_interface_id = request.GET['connection_start_interface_id']
+        if connection_start_interface_id == '':
+            connection_start_interface_id = 0
+        connection_end_interface_id = request.GET['connection_end_interface_id']
+        if connection_end_interface_id == '':
+            connection_end_interface_id = 0
+
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        connection_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        
+        raw_query = "SELECT  fn_update_connection(" + connection_id + " , '" + connection_path + "' , " +  \
+            connection_use_parent_identifier + ", " +connection_type_id + ","+ connection_start_equipment_id \
+            + ","+ connection_end_equipment_id+ ","+ connection_start_interface_id+ ","+ connection_end_interface_id +",'"+ connection_identifier + "', '" \
+            + connection_description + "', '" + connection_comment + "'," + connection_length +" , " + connection_is_approved +" ,'"  \
+            + connection_modified_at + "')" 
+        
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+
+        all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
+        
+        data = json.dumps(
+            {
+                'result': True,
+                'connection_list': all_connection,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def add_connection(request):
+      if request.method == 'GET':
+        connection_local_identifier = request.GET['connection_local_identifier']
+        connection_parent_path =  request.GET['connection_parent_path']
+        connection_use_parent_identifier = request.GET['connection_use_parent_identifier']        
+        connection_description =  request.GET['connection_description']
+        connection_type_id =  request.GET['connection_type_id']
+        if connection_type_id == '':
+            connection_type_id = 0
+        connection_start_equipment_id = request.GET['connection_start_equipment']
+        if connection_start_equipment_id == '':
+            connection_start_equipment_id = 0
+        connection_end_equipment_id = request.GET['connection_end_equipment']
+        if connection_end_equipment_id == '':
+            connection_end_equipment_id = 0
+        connection_start_interface_id = request.GET['connection_start_interface']
+        if connection_start_interface_id == '':
+            connection_start_interface_id = 0
+        connection_end_interface_id = request.GET['connection_end_interface']
+        if connection_end_interface_id == '':
+            connection_end_interface_id = 0
+        connection_comment =  request.GET['connection_comment']
+        connection_is_approved = request.GET['connection_is_approved'] 
+        connection_length = request.GET['connection_length'] 
+        if connection_length == '':
+            connection_length = 0
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        connection_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        
+        query  = 'SELECT max(connection_id) FROM all_connection'
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+            
+        maximun_id = result[0]
+        new_connection_id = maximun_id + 1
+        if connection_parent_path:
+            connection_path = connection_parent_path + '.' + str(new_connection_id)
+        else:
+            connection_path = str(new_connection_id)
+        
+        
+        raw_query = "SELECT  fn_add_connection(" + str(new_connection_id) + " , '" + connection_path + "' , " +  \
+              connection_use_parent_identifier +" , " + str(connection_type_id) + ", " + str(connection_start_equipment_id) + "," \
+            + str(connection_end_equipment_id) + ", " + str(connection_start_interface_id) + ", " + str(connection_end_interface_id) + ", '" \
+            + connection_local_identifier + "', '" + connection_description + "', '" + connection_comment + "',"  \
+            + str(connection_length) + ", " + connection_is_approved + " , '" + connection_modified_at + "')" 
+
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+        all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
+        
+        data = json.dumps(
+            {
+                'result': True,
+                'connection_list': all_connection,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

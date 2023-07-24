@@ -240,7 +240,7 @@ def get_equipmentdetail_tabledata(request):
             results = cursor.fetchall()
         equipment_interfaces_list = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
 
-        raw_query = "select resource_id, property_modifier, property_description, property_value \
+        raw_query = "select resource_id, property_id, property_modifier, property_description, property_value \
             from all_equipment_property where equipment_id = " + selectedEquipmentId + " order by property_modifier"
         
         with connection.cursor() as cursor:
@@ -517,15 +517,19 @@ def update_equipment_detail(request):
             + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
             + equipment_modified_at + "')" 
         
-        
-        with connection.cursor() as cursor:
-            cursor.execute(raw_query)
-            results = cursor.fetchall()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+        except Exception as e:
+            print(result)
+            result = False
         all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
         
         data = json.dumps(
             {
-                'result': True,
+                'result': result,
                 'equipment_list': all_equipment,
             }, 
             cls=DateTimeEncoder
@@ -547,34 +551,93 @@ def add_equipment_detail(request):
         
         # Convert the current time to a timestamp with time zone
         equipment_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        
-        query  = 'SELECT max(equipment_id) FROM all_equipment'
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            result = cursor.fetchone()
-            
-        maximun_id = result[0]
-        new_equipment_id = maximun_id + 1
-        if equipment_parent_path:
-            equipment_path = equipment_parent_path + '.' + str(new_equipment_id)
-        else:
-            equipment_path = str(new_equipment_id)
-        
-        
-        raw_query = "SELECT  fn_add_equipment(" + str(new_equipment_id) + " , '" + equipment_path + "' , " +  \
-              equipment_use_parent_identifier +" , '"+ equipment_location_path + "', " + equipment_type_id + ", '" \
-            + equipment_local_identifier + "', '" + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
-            + equipment_modified_at + "')" 
 
-        with connection.cursor() as cursor:
-            cursor.execute(raw_query)
-            results = cursor.fetchall()
+        try:
+            query  = 'SELECT max(equipment_id) FROM all_equipment'
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+                result = cursor.fetchone()
+                
+            maximun_id = result[0]
+            new_equipment_id = maximun_id + 1
+            if equipment_parent_path:
+                equipment_path = equipment_parent_path + '.' + str(new_equipment_id)
+            else:
+                equipment_path = str(new_equipment_id)
+            
+            
+            raw_query = "SELECT  fn_add_equipment(" + str(new_equipment_id) + " , '" + equipment_path + "' , " +  \
+                equipment_use_parent_identifier +" , '"+ equipment_location_path + "', " + equipment_type_id + ", '" \
+                + equipment_local_identifier + "', '" + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
+                + equipment_modified_at + "')" 
+
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            return_result = True
+        except Exception as e:
+            print(e)
+            return_result = False
         all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
         
         data = json.dumps(
             {
-                'result': True,
+                'result': return_result,
                 'equipment_list': all_equipment,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def update_equipment_property_value(request):
+     if request.method == 'GET':
+        equipment_id = request.GET['equipment_id']
+        resource_id = request.GET['resource_id']
+        property_id =  request.GET['property_id']
+        value = request.GET['value']
+        
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+       
+        raw_query = "SELECT id FROM resource_property WHERE resource_id = {} and property_id = {}".format(resource_id, property_id) 
+        
+        try:
+
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                result = cursor.fetchone()
+                if result:   # there is id in resource_property for selected resource and property
+                    resource_property_id = result[0] 
+                    
+                    raw_query = "SELECT id FROM property_value WHERE resource_property_id = {}".format(resource_property_id)
+                    
+                    cursor.execute(raw_query)
+                    result = cursor.fetchone()
+                    if result:   # there is id in property_value for selected resource_property
+                        id = result[0] 
+                        query = "SELECT fn_update_property_value({}, {}, {}, '{}', {}, '{}', '{}')".format(id, equipment_id, resource_property_id, value, 0, '', modified_at )    
+                    else:
+                        query = "SELECT fn_add_property_value({}, {}, '{}', {}, '{}', '{}')".format(equipment_id, resource_property_id, value, 0, '', modified_at)
+                    
+                    cursor.execute(query)
+                else:   # there is no id in resource_property, property_value. so need to add them
+                    query = "SELECT fn_add_resource_property({}, {}, '{}', {}, '{}', '{}')".format(resource_id, property_id, '', 0, '', modified_at)
+                    cursor.execute(query)
+                    result = cursor.fetchone()
+                    new_resource_property_id = result[0]
+
+                    query = "SELECT fn_add_property_value({}, {}, '{}', {}, '{}', '{}')".format(equipment_id, new_resource_property_id, value, 0, '', modified_at)
+                    cursor.execute(query)
+            result = True
+        except Exception as e: 
+            print(e)
+            result = False
+        
+        data = json.dumps(
+            {
+                'result': result,
             }, 
             cls=DateTimeEncoder
         )
@@ -586,14 +649,20 @@ def remove_equipment(request):
         
         raw_query = "SELECt fn_remove_equipment("+ str(equipment_id) +")" 
 
-        with connection.cursor() as cursor:
-            cursor.execute(raw_query)
-            results = cursor.fetchall()
+        try:
+            result = True
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+        except Exception as e:
+            print(e)
+            result = False
+        
         all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
         
         data = json.dumps(
             {
-                'result': True,
+                'result': result,
                 'equipment_list': all_equipment,
             }, 
             cls=DateTimeEncoder
@@ -634,22 +703,28 @@ def update_connection_detail(request):
         
         # Convert the current time to a timestamp with time zone
         connection_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        try:
         
-        raw_query = "SELECT  fn_update_connection(" + connection_id + " , '" + connection_path + "' , " +  \
-            connection_use_parent_identifier + ", " +connection_type_id + ","+ connection_start_equipment_id \
-            + ","+ connection_end_equipment_id+ ","+ connection_start_interface_id+ ","+ connection_end_interface_id +",'"+ connection_identifier + "', '" \
-            + connection_description + "', '" + connection_comment + "'," + connection_length +" , " + connection_is_approved +" ,'"  \
-            + connection_modified_at + "')" 
-        
-        with connection.cursor() as cursor:
-            cursor.execute(raw_query)
-            results = cursor.fetchall()
+            raw_query = "SELECT  fn_update_connection(" + connection_id + " , '" + connection_path + "' , " +  \
+                connection_use_parent_identifier + ", " + str(connection_type_id) + ","+ str(connection_start_equipment_id) \
+                + ","+ str(connection_end_equipment_id)+ ","+ str(connection_start_interface_id)+ ","+ str(connection_end_interface_id) +",'"+ connection_identifier + "', '" \
+                + connection_description + "', '" + connection_comment + "'," + str(connection_length) +" , " + connection_is_approved +" ,'"  \
+                + connection_modified_at + "')" 
+            
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
 
         all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
         
         data = json.dumps(
             {
-                'result': True,
+                'result': result,
                 'connection_list': all_connection,
             }, 
             cls=DateTimeEncoder
@@ -687,33 +762,38 @@ def add_connection(request):
         # Convert the current time to a timestamp with time zone
         connection_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
         
-        query  = 'SELECT max(connection_id) FROM all_connection'
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            result = cursor.fetchone()
+        try:
+            query  = 'SELECT max(connection_id) FROM all_connection'
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+                result = cursor.fetchone()
+                
+            maximun_id = result[0]
+            new_connection_id = maximun_id + 1
+            if connection_parent_path:
+                connection_path = connection_parent_path + '.' + str(new_connection_id)
+            else:
+                connection_path = str(new_connection_id)
             
-        maximun_id = result[0]
-        new_connection_id = maximun_id + 1
-        if connection_parent_path:
-            connection_path = connection_parent_path + '.' + str(new_connection_id)
-        else:
-            connection_path = str(new_connection_id)
-        
-        
-        raw_query = "SELECT  fn_add_connection(" + str(new_connection_id) + " , '" + connection_path + "' , " +  \
-              connection_use_parent_identifier +" , " + str(connection_type_id) + ", " + str(connection_start_equipment_id) + "," \
-            + str(connection_end_equipment_id) + ", " + str(connection_start_interface_id) + ", " + str(connection_end_interface_id) + ", '" \
-            + connection_local_identifier + "', '" + connection_description + "', '" + connection_comment + "',"  \
-            + str(connection_length) + ", " + connection_is_approved + " , '" + connection_modified_at + "')" 
+            
+            raw_query = "SELECT  fn_add_connection(" + str(new_connection_id) + " , '" + connection_path + "' , " +  \
+                connection_use_parent_identifier +" , " + str(connection_type_id) + ", " + str(connection_start_equipment_id) + "," \
+                + str(connection_end_equipment_id) + ", " + str(connection_start_interface_id) + ", " + str(connection_end_interface_id) + ", '" \
+                + connection_local_identifier + "', '" + connection_description + "', '" + connection_comment + "',"  \
+                + str(connection_length) + ", " + connection_is_approved + " , '" + connection_modified_at + "')" 
 
-        with connection.cursor() as cursor:
-            cursor.execute(raw_query)
-            results = cursor.fetchall()
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            return_result = True
+        except Exception as e:
+            print(e)
+            return_result = False
         all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
         
         data = json.dumps(
             {
-                'result': True,
+                'result': return_result,
                 'connection_list': all_connection,
             }, 
             cls=DateTimeEncoder
@@ -725,14 +805,19 @@ def remove_connection(request):
         connection_id = request.GET['connection_id']
         raw_query = "SELECt fn_remove_connection("+ str(connection_id) +")" 
 
-        with connection.cursor() as cursor:
-            cursor.execute(raw_query)
-            results = cursor.fetchall()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
         all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
         
         data = json.dumps(
             {
-                'result': True,
+                'result': result,
                 'connection_list': all_connection,
             }, 
             cls=DateTimeEncoder

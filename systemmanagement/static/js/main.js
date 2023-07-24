@@ -8,7 +8,7 @@
 // Treeview Initialization
 $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
-  $('#version').html('1.0.21 (21/07/2023)')
+  $('#version').html('1.0.24 (24/07/2023)')
 
     // display purchasing_overview_table as default
     var tableData = []
@@ -607,7 +607,6 @@ $(document).ready(function() {
         $('#possible_state_table tbody').html(html)
       }
     }
-    
 });
 
 (function() {
@@ -1069,6 +1068,16 @@ $(document).ready(function() {
                 }
   
               }
+              else{
+                $.toast({
+                  heading: 'Error',
+                  text: 'The error happend while removing the equipment!',
+                  icon: 'error',              
+                  bgColor : '#red',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+              }
             }
            })
         }
@@ -1284,6 +1293,16 @@ $(document).ready(function() {
                   }
     
                 }
+                else{
+                  $.toast({
+                    heading: 'Error',
+                    text: 'The error has happend while adding the equipment',
+                    icon: 'error',              
+                    bgColor : '#red',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+                }
               }
             })
         }
@@ -1370,6 +1389,18 @@ $(document).ready(function() {
                
  
              }
+             else{
+              
+                $.toast({
+                  heading: 'Error',
+                  text: 'The error has happend while updating the equipment information',
+                  icon: 'error',              
+                  bgColor : '#red',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+              
+             }
            }
           })
  
@@ -1387,7 +1418,52 @@ $(document).ready(function() {
       
     })
   }
-  
+
+  // update equipment attribute's property value
+  $("#equipment_attribute").on("blur", 'td[contenteditable="true"]', function() {
+    var currentValue = $(this).text();
+    var sibTds = $(this).siblings('td')
+    var selectedEquipmentId = sibTds.eq(0).text()
+    var selectedResourceId = sibTds.eq(1).text()
+    var selectedPropertyId = sibTds.eq(2).text()
+    // console.log(selectedEquipmentId, selectedResourceId, selectedPropertyId , currentValue);
+    $.ajax({
+        type: "GET",
+        url: 'updateEquipmentPropertyValue',
+        data: {
+          equipment_id: selectedEquipmentId,
+          resource_id: selectedResourceId,
+          property_id: selectedPropertyId,
+          value: currentValue
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          console.log(data)
+          var result = data['result']
+          if(result){
+            $.toast({
+              heading: 'Success',
+              text: 'The value has been updated successfully!',
+              icon: 'info',              
+              bgColor : '#2cc947',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+          }else{
+            $.toast({
+              heading: 'Error',
+              text: 'The error has happend while saving the information',
+              icon: 'error',              
+              bgColor : '#red',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+          }
+        }
+       }
+    )
+  });
+
   // update connection
   if(select('#btn_connection_commit'))
    {
@@ -1463,6 +1539,16 @@ $(document).ready(function() {
                $('#connection_is_approved').prop('checked' , false)
                
              }
+             else{
+              $.toast({
+                heading: 'Error',
+                text: 'The error happend while updating the connection!',
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+            }
            }
           })
  
@@ -1593,7 +1679,112 @@ $(document).ready(function() {
     })
   }
    
-  // add euqipment in the modal
+  // when click the add child connection btn for modal
+  if(select('#btn_connection_add_child')){
+    on('click','#btn_connection_add_child' , function(){
+      // make  all dropdown list empty
+      $("#adding_connection_parent_path").find('option').remove()
+      $("#adding_connection_start_equipment").find('option').remove()
+      $("#adding_connection_end_equipment").find('option').remove()
+      $("#adding_connection_start_interface").find('option').remove()
+      $("#adding_connection_end_interface").find('option').remove()
+      $("#adding_connection_type").find('option').remove()
+
+       var selectedConnectionId = $('#connection_id').val()
+       if(selectedConnectionId){
+          
+          allConnection = JSON.parse(document.getElementById('all_connection').textContent)
+          allEquipment = JSON.parse(document.getElementById('all_equipment').textContent)
+          allInterface = JSON.parse(document.getElementById('all_interface').textContent)
+          allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
+
+          selectedConnection = allConnection.filter(element => element.connection_id == parseInt(selectedConnectionId))
+
+          // display parent path
+          var p = new Option('none' , '', undefined, false);
+          $(p).html('none');
+          $("#adding_connection_parent_path").append(p);
+
+          allConnection.forEach( element => {
+            
+            element_connection_path = element.connection_path.join('.')
+            var selected_connection_path = selectedConnection[0]['connection_path']
+            selected_connection_path = selected_connection_path.join('.')
+           
+            var selected = element_connection_path === selected_connection_path ? true : false ;
+            var o = new Option(element.connection_identifier, element.connection_path, undefined, selected);
+            $(o).html(element.connection_identifier);
+            $("#adding_connection_parent_path").append(o);
+
+          })
+
+          //display start and End equipment dropdown lists
+          var p = new Option('none' , '', undefined, false);
+          $(p).html('none');
+          $("#adding_connection_start_equipment").append(p);
+
+          var t = new Option('none' , '', undefined, false);
+          $(t).html('none');
+          $("#adding_connection_end_equipment").append(t);
+
+          allEquipment.forEach(element => {
+            
+            var p = new Option(element.equipment_full_identifier, element.equipment_id,  undefined, undefined)
+            $(p).html(element.equipment_full_identifier)
+            $('#adding_connection_start_equipment').append(p)
+
+            
+            var t = new Option(element.equipment_full_identifier, element.equipment_id,  undefined, undefined)
+            $(t).html(element.equipment_full_identifier)
+            $('#adding_connection_end_equipment').append(t)
+
+          })
+
+          //display start and end interface with dropdown lists
+          var p = new Option('none' , '', undefined, false);
+          $(p).html('none');
+          $("#adding_connection_start_interface").append(p);
+
+          var t = new Option('none' , '', undefined, false);
+          $(t).html('none');
+          $("#adding_connection_end_interface").append(t);
+
+          allInterface.forEach( element => {
+            
+            var p = new Option(element.identifier, element.id,  undefined, undefined)
+            $(p).html(element.identifer)
+            $('#adding_connection_start_interface').append(p)
+            
+            var t = new Option(element.identifier, element.id,  undefined, undefined)
+            $(t).html(element.identifier)
+            $('#adding_connection_end_interface').append(t)
+
+          })
+
+          // display type drop down 
+          var t = new Option('none' , '', undefined, false);
+          $(t).html('none');
+          $("#adding_connection_type").append(t);
+          allConnectionTypes.forEach( element => {
+            var t = new Option(element.label, element.id, undefined, undefined);
+            $(t).html(element.label);
+            $("#adding_connection_type").append(t);
+          })
+
+       }
+       else{
+          $.toast({
+            heading: 'Error',
+            text: 'You have to select the connection to be child!',
+            icon: 'error',              
+            bgColor : '#red',  
+            showHideTransition : 'slide',
+            position : 'top-right'
+          })
+       }
+    })
+  }
+  // add connection in the modal
   if(select('#connectionModal .btn-primary'))
   {
     on('click', '#connectionModal .btn-primary', function(){
@@ -1670,6 +1861,16 @@ $(document).ready(function() {
                   }
     
                 }
+                else{
+                  $.toast({
+                    heading: 'Error',
+                    text: 'The error happend while adding the connection!',
+                    icon: 'error',              
+                    bgColor : '#red',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+                }
               }
             })
         }
@@ -1739,6 +1940,16 @@ $(document).ready(function() {
                   $('.treeview-animated').mdbTreeview();
                 }
   
+              }
+              else{
+                $.toast({
+                  heading: 'Error',
+                  text: 'The error happend while removing the connection!',
+                  icon: 'error',              
+                  bgColor : '#red',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
               }
             }
            })

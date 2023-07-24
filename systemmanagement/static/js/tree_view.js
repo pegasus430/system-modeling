@@ -252,9 +252,12 @@ $(document).ready(function() {
                   if(resource_property.length){
                     resource_property.forEach(property => {
                       html += '<tr style=" border-left: 1px; border-right: 1px;"> \
+                      <td style="display: none">'+ selectedEquipmentId +'</td> \
+                      <td style="display: none">'+ property.resource_id +'</td> \
+                      <td style="display: none">'+ property.property_id +'</td> \
                       <td></td> \
                       <td>' + property.property_modifier + ' ('+ property.property_description + ')</td> \
-                      <td>'+ property.property_value +'</td> \
+                      <td contenteditable="true">'+ property.property_value +'</td> \
                     </tr>'
                     })
                       

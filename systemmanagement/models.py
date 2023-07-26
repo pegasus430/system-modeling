@@ -178,7 +178,8 @@ class PurchasingConnectionType(models.Model):
         db_table = 'connection_type_purchasing'
 
 class PurchasingEquipmentTypeDetail(models.Model):
-    type_path = LTreeField(unique=True, primary_key=True)
+    equipment_commercial_id = models.BigIntegerField(primary_key=True)
+    type_path = LTreeField(unique=True)
     type_modifier = models.CharField(max_length=255)
     type_description = models.TextField()
     type_label = models.CharField(max_length=255)
@@ -199,7 +200,8 @@ class PurchasingEquipmentTypeDetail(models.Model):
         db_table = 'equipment_purchasing_detail'
 
 class PurchasingConnectionTypeDetail(models.Model):
-    connection_type_path = LTreeField(unique=True, primary_key=True)
+    connection_commercial_id = models.BigIntegerField(primary_key=True)
+    connection_type_path = LTreeField(unique=True)
     connection_type_modifier = models.CharField(max_length=255)
     connection_type_description = models.TextField()
     connection_type_label = models.CharField(max_length=255)

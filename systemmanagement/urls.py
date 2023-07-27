@@ -36,5 +36,6 @@ urlpatterns = [
     path(r'equipment/updateEquipmentPropertyValue', views.update_equipment_property_value, name='update_equipment_property_value'),
     path(r'equipment/removeEquipment', views.remove_equipment, name='remove_equipment'),
     path(r'definitions/getEquipmentTypesAttributes', views.getEquipmentTypesAttributes, name= 'get_equipment_types_attributes'),
-    path(r'definitions/getEquipmentTypesInterface', views.getEquipmentTypesInterface, name='getEquipmentTypesInterface')
+    path(r'definitions/getEquipmentTypesInterface', views.getEquipmentTypesInterface, name='getEquipmentTypesInterface'),
+    path(r'system/updateEquipmentTypePurchaseDetail', views.updateEquipmentTypePurchaseDetail, name= 'updateEquipmentTypePurchaseDetail'),
 ]

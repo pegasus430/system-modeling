@@ -19,7 +19,16 @@ $(document).ready(function() {
         return '<span class="bi bi-x" style="font-size: 1.5rem; color: rgb(255, 0, 0);"></span>'
       else
         return ''
-  }
+    }
+    function isValidDateFormat(dateString) {
+      const regex = /^(\d{4}-\d{2}-\d{2})?$/;
+      return regex.test(dateString);
+    }
+    function validateNumber(value) {
+      return /^\d+$/.test(value);
+    }
+    
+    
     if(document.getElementById('purchasing_overview_equipment')){
       purchasing_overview_equipment = JSON.parse(document.getElementById('purchasing_overview_equipment').textContent)
       if(purchasing_overview_equipment.length){
@@ -90,8 +99,10 @@ $(document).ready(function() {
       purchasing_detail_equipment = JSON.parse(document.getElementById('purchasing_detail_equipment').textContent)
       
       if(purchasing_detail_equipment.length){
+        
         purchasing_detail_equipment.forEach(element => {
              tableData.push({
+              'equipment_commercial_id': element.equipment_commercial_id,
               'full_identifier': element.equipment_full_identifier ,
               'description': element.equipment_description,
               'manufacturer' : element.manufacturer,
@@ -103,11 +114,46 @@ $(document).ready(function() {
               'due_date': element.due_date,
              })
           })
-          
+        
+          var equipmentEditor = new DataTable.Editor({
+            
+            idSrc:  'description',
+            fields: [
+              {
+                label: 'equipment_commercial_id',
+                name: 'equipment_commercial_id'
+              },
+              
+              {
+                label: 'Quote Reference',
+                name: 'quote_reference'
+              },
+              {
+                label: 'Leadtime(Days)',
+                name: 'leadtime'
+              },
+              {
+                label: 'Po Date',
+                name: 'po_date'
+              },
+              {
+                label: 'Po Reference',
+                name: 'po_reference'
+              },
+              {
+                label: 'Due Date',
+                name: 'due_date'
+              },
+            ],
+            table: '#purchasing_detail_equipment_type_table'
+          })
+
           $('#purchasing_detail_equipment_type_table').DataTable({
             data:  tableData ,
             destroy: true,
+            dom: 'Bfrtip',
             columns: [
+              { data: 'equipment_commercial_id' },
               { data: 'full_identifier' },
               { data: 'description' },
               { data: 'manufacturer' },
@@ -117,8 +163,106 @@ $(document).ready(function() {
               { data: 'po_date' },
               { data: 'po_reference' },
               { data: 'due_date' }
-            ]}
+            ],
+            columnDefs: [
+              { "visible": false, "targets": 0 } // Target the first column to hide it
+            ]
+          }
           )
+          $('#purchasing_detail_equipment_type_table').on('click', 'td:nth-child(n+5):nth-child(-n+9)',function (){
+            equipmentEditor.inline(this)
+          })
+          equipmentEditor.on('edit', function(e, datatable, cell) {
+            p_id = cell.equipment_commercial_id
+            selectedObj = purchasing_detail_equipment.find( element => element.equipment_commercial_id === p_id) 
+            p_due_date = cell.due_date
+            if(p_due_date == null) p_due_date = ""
+            if(!isValidDateFormat(p_due_date)){
+              $.toast({
+                heading: 'Error',
+                text: 'Due Date format error! You should input the date as YYYY-MM-DD.',
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+              return
+            }
+            p_leadtime = cell.leadtime
+            if(!validateNumber(p_leadtime)){
+              $.toast({
+                heading: 'Error',
+                text: 'Leadtime(Days) format error! You should input the date as the number',
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+              return
+            }
+            p_po_date = cell.po_date
+            if(p_po_date == null) p_po_date = ""
+            if(!isValidDateFormat(p_po_date)){
+              $.toast({
+                heading: 'Error',
+                text: 'Po Date format error! You should input the date as YYYY-MM-DD.',
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+              return
+            }
+            p_po_reference = cell.po_reference
+            p_quote_reference = cell.quote_reference
+            p_location = selectedObj.location
+            p_received_date = selectedObj.received_date
+            
+            p_unique_code = selectedObj.unique_code
+           
+            $.ajax({
+              type: "GET",
+              url: 'updateEquipmentTypePurchaseDetail',
+              data: {
+                p_id: p_id,
+                p_due_date: p_due_date,
+                p_leadtime: p_leadtime,
+                p_po_date: p_po_date,
+                p_po_reference: p_po_reference,
+                p_quote_reference: p_quote_reference,
+                p_location: p_location,
+                p_received_date: p_received_date,
+                p_unique_code: p_unique_code
+              },
+              success: function (data){
+                data = JSON.parse(data)
+                var result = data['result']
+                
+                if(result){
+                  $.toast({
+                    heading: 'Success',
+                    text: 'The purchased equipment has been  removed successfully!',
+                    icon: 'info',              
+                    bgColor : '#2cc947',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+                }
+                else{
+                  $.toast({
+                    heading: 'Error',
+                    text: 'The error happend while updating the purchased equipment!',
+                    icon: 'error',              
+                    bgColor : '#red',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+                }
+              }
+            })
+
+          });
+  
       }
     }
     if(document.getElementById('purchasing_detail_connection')){
@@ -129,6 +273,7 @@ $(document).ready(function() {
         if(purchasing_connection.length){
           purchasing_connection.forEach(element => {
                tableData.push({
+                'connection_commercial_id': element.connection_commercial_id,
                 'location_identifier': element.connection_location_identifier ,
                 'description': element.connection_description,
                 'quote_reference': element.quote_reference,
@@ -139,10 +284,45 @@ $(document).ready(function() {
                })
             })
             
+            var editor = new DataTable.Editor({
+            
+              idSrc:  'connection_commercial_id',
+              fields: [
+                {
+                  label: 'connection_commercial_id',
+                  name: 'connection_commercial_id'
+                },
+                
+                {
+                  label: 'Quote Reference',
+                  name: 'quote_reference'
+                },
+                {
+                  label: 'Leadtime(Days)',
+                  name: 'leadtime'
+                },
+                {
+                  label: 'Po Date',
+                  name: 'po_date'
+                },
+                {
+                  label: 'Po Reference',
+                  name: 'po_reference'
+                },
+                {
+                  label: 'Due Date',
+                  name: 'due_date'
+                },
+              ],
+              table: '#purchasing_detail_connection_type_table'
+            })
+
             $('#purchasing_detail_connection_type_table').DataTable({
               data:  tableData ,
               destroy: true,
+              dom: 'Bfrtip',
               columns: [
+                { data: 'connection_commercial_id' },
                 { data: 'location_identifier' },
                 { data: 'description' },
                 { data: 'quote_reference' },
@@ -150,8 +330,18 @@ $(document).ready(function() {
                 { data: 'po_date' },
                 { data: 'po_reference' },
                 { data: 'due_date' }
-              ]}
-            )
+              ],
+              columnDefs: [
+                { "visible": false, "targets": 0 } // Target the first column to hide it
+              ]
+            })
+
+            $('#purchasing_detail_connection_type_table').on('click', 'td:nth-child(n+3):nth-child(-n+7)',function (){
+              editor.inline(this)
+            })
+            editor.on('edit', function(e, datatable, cell) {
+              console.log( cell)
+            });
         }
     }
     if(document.getElementById('purchasing_delivery_equipment')){

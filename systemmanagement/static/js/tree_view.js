@@ -916,6 +916,7 @@ $(document).ready(function() {
         if(child_purchasing_equipment_type.length){
           child_purchasing_equipment_type.forEach(element => {
                tableData.push({
+                'equipment_commercial_id': element.equipment_commercial_id,
                 'full_identifier': element.equipment_full_identifier ,
                 'description': element.equipment_description,
                 'manufacturer' : element.manufacturer,
@@ -928,10 +929,42 @@ $(document).ready(function() {
                })
             })
             
+            var equipmentEditor = new DataTable.Editor({ 
+              idSrc:  'equipment_commercial_id',
+              fields: [
+                {
+                  label: 'equipment_commercial_id',
+                  name: 'equipment_commercial_id'
+                },
+                {
+                  label: 'Due Date',
+                  name: 'due_date'
+                },
+                {
+                  label: 'Received Date',
+                  name: 'received_date'
+                },
+                {
+                  label: 'Serial Number',
+                  name: 'serial_number'
+                },
+                {
+                  label: 'Location',
+                  name: 'location'
+                },
+              
+                
+              ],
+              table: '#delivery_equipment_type_table'
+            })
+
+            
             $('#delivery_equipment_type_table').DataTable({
               data:  tableData ,
+              dom: 'Bfrtip',
               destroy: true,
               columns: [
+                { data: 'equipment_commercial_id'},
                 { data: 'full_identifier' },
                 { data: 'description' },
                 { data: 'manufacturer' },
@@ -941,8 +974,103 @@ $(document).ready(function() {
                 { data: 'received_data' },
                 { data: 'serial_number' },
                 { data: 'location' },
+              ],
+              columnDefs: [
+                { "visible": false, "targets": 0 } // Target the first column to hide it
               ]}
             )
+
+            $('#delivery_equipment_type_table').on('click', 'td:nth-child(n+6):nth-child(-n+9)',function (){
+              equipmentEditor.inline(this)
+            })
+  
+            equipmentEditor.on('edit', function(e, datatable, cell) {
+                p_id = cell.equipment_commercial_id
+                selectedObj = purchasing_delivery_equipment.find( element => element.equipment_commercial_id === p_id) 
+               
+                p_due_date = cell.due_date
+                if(p_due_date == null) p_due_date = ""
+                if(!isValidDateFormat(p_due_date)){
+                  $.toast({
+                    heading: 'Error',
+                    text: 'Due Date format error! You should input the date as YYYY-MM-DD.',
+                    icon: 'error',              
+                    bgColor : '#red',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+                  return
+                }
+                p_leadtime = selectedObj.lead_time_days
+                if(p_leadtime == '') p_leadtime = 0
+                p_po_date = selectedObj.purchase_order_date
+                if(p_po_date == null) p_po_date = ""
+               
+                p_po_reference = selectedObj.purchase_order_reference
+                p_quote_reference = selectedObj.quote_reference
+                
+                p_location = cell.location
+                if(p_location == null) p_location = ""
+                
+                p_received_date = cell.received_date
+                if(p_received_date == null) p_received_date = ""
+                if(!isValidDateFormat(p_received_date)){
+                  $.toast({
+                    heading: 'Error',
+                    text: 'Received Date format error! You should input the date as YYYY-MM-DD.',
+                    icon: 'error',              
+                    bgColor : '#red',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+                  return
+                }
+                p_unique_code = cell.serial_number
+                if(p_unique_code == null) p_unique_code = ""
+  
+                $.ajax({
+                  type: "GET",
+                  url: 'updateEquipmentTypePurchaseDetail',
+                  data: {
+                    p_id: p_id,
+                    p_due_date: p_due_date,
+                    p_leadtime: p_leadtime,
+                    p_po_date: p_po_date,
+                    p_po_reference: p_po_reference,
+                    p_quote_reference: p_quote_reference,
+                    p_location: p_location,
+                    p_received_date: p_received_date,
+                    p_unique_code: p_unique_code
+                  },
+                  success: function (data){
+                    data = JSON.parse(data)
+                    var result = data['result']
+                    
+                    if(result){
+                      $.toast({
+                        heading: 'Success',
+                        text: 'The purchased equipment has been  removed successfully!',
+                        icon: 'info',              
+                        bgColor : '#2cc947',  
+                        showHideTransition : 'slide',
+                        position : 'top-right'
+                      })
+                    }
+                    else{
+                      $.toast({
+                        heading: 'Error',
+                        text: 'The error happend while updating the purchased equipment!',
+                        icon: 'error',              
+                        bgColor : '#red',  
+                        showHideTransition : 'slide',
+                        position : 'top-right'
+                      })
+                    }
+                  }
+                })
+    
+              });
+      
         }
       }
     })

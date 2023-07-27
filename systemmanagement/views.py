@@ -876,7 +876,57 @@ def updateEquipmentTypePurchaseDetail(request):
         )
         return HttpResponse(data)
 
+def updateConnectionTypePurchaseDetail(request):
+     if request.method ==  'GET':
+        p_id = request.GET['p_id']
+        p_due_date = request.GET['p_due_date']
+        if p_due_date ==  '':
+            p_due_date = 'NULL'
+        else:
+            p_due_date = "'" + p_due_date + "'"
 
+        p_leadtime = request.GET['p_leadtime']
+        p_po_date = request.GET['p_po_date']
+        if p_po_date ==  '':
+            p_po_date = 'NULL'
+        else:
+            p_po_date = "'" + p_po_date + "'"
+
+        p_po_reference = request.GET['p_po_reference']
+        p_quote_reference = request.GET['p_quote_reference']
+        p_location = request.GET['p_location']
+        p_received_date = request.GET['p_received_date']
+        if p_received_date ==  '':
+            p_received_date = 'NULL'
+        else:
+            p_received_date = "'" + p_received_date + "'"
+
+        p_unique_code = request.GET['p_unique_code']
+
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        p_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_update_connection_commercial({}, '{}', {}, {}, {}, '{}', {}, '{}', '{}', '{}')".format(
+            p_id, p_quote_reference, p_leadtime, p_po_date, p_due_date, p_po_reference, p_received_date,p_unique_code, p_location, p_modified_at
+        )
+        print(raw_query)
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        
+        data = json.dumps(
+            {
+                'result': result,                
+            } 
+        )
+        return HttpResponse(data)
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

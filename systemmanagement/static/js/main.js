@@ -8,7 +8,7 @@
 // Treeview Initialization
 $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
-  $('#version').html('1.0.24 (24/07/2023)')
+  $('#version').html('1.0.27 (27/07/2023)')
 
     // display purchasing_overview_table as default
     var tableData = []
@@ -340,7 +340,93 @@ $(document).ready(function() {
               editor.inline(this)
             })
             editor.on('edit', function(e, datatable, cell) {
-              console.log( cell)
+              p_id = cell.connection_commercial_id
+              selectedObj = purchasing_connection.find( element => element.connection_commercial_id === p_id) 
+             
+              p_due_date = cell.due_date
+              if(p_due_date == null) p_due_date = ""
+              if(!isValidDateFormat(p_due_date)){
+                $.toast({
+                  heading: 'Error',
+                  text: 'Due Date format error! You should input the date as YYYY-MM-DD.',
+                  icon: 'error',              
+                  bgColor : '#red',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+                return
+              }
+              p_leadtime = cell.leadtime
+              if(!validateNumber(p_leadtime)){
+                $.toast({
+                  heading: 'Error',
+                  text: 'Leadtime(Days) format error! You should input the date as the number',
+                  icon: 'error',              
+                  bgColor : '#red',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+                return
+              }
+              p_po_date = cell.po_date
+              if(p_po_date == null) p_po_date = ""
+              if(!isValidDateFormat(p_po_date)){
+                $.toast({
+                  heading: 'Error',
+                  text: 'Po Date format error! You should input the date as YYYY-MM-DD.',
+                  icon: 'error',              
+                  bgColor : '#red',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+                return
+              }
+              p_po_reference = cell.po_reference
+              p_quote_reference = cell.quote_reference
+              p_location = selectedObj.location
+              p_received_date = selectedObj.received_date
+              p_unique_code = selectedObj.unique_code
+            
+              $.ajax({
+                type: "GET",
+                url: 'updateConnectionTypePurchaseDetail',
+                data: {
+                  p_id: p_id,
+                  p_due_date: p_due_date,
+                  p_leadtime: p_leadtime,
+                  p_po_date: p_po_date,
+                  p_po_reference: p_po_reference,
+                  p_quote_reference: p_quote_reference,
+                  p_location: p_location,
+                  p_received_date: p_received_date,
+                  p_unique_code: p_unique_code
+                },
+                success: function (data){
+                  data = JSON.parse(data)
+                  var result = data['result']
+                  
+                  if(result){
+                    $.toast({
+                      heading: 'Success',
+                      text: 'The purchased connection has been  removed successfully!',
+                      icon: 'info',              
+                      bgColor : '#2cc947',  
+                      showHideTransition : 'slide',
+                      position : 'top-right'
+                    })
+                  }
+                  else{
+                    $.toast({
+                      heading: 'Error',
+                      text: 'The error happend while updating the purchased connection!',
+                      icon: 'error',              
+                      bgColor : '#red',  
+                      showHideTransition : 'slide',
+                      position : 'top-right'
+                    })
+                  }
+                }
+              })
             });
         }
     }

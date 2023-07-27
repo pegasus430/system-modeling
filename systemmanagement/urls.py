@@ -38,4 +38,5 @@ urlpatterns = [
     path(r'definitions/getEquipmentTypesAttributes', views.getEquipmentTypesAttributes, name= 'get_equipment_types_attributes'),
     path(r'definitions/getEquipmentTypesInterface', views.getEquipmentTypesInterface, name='getEquipmentTypesInterface'),
     path(r'system/updateEquipmentTypePurchaseDetail', views.updateEquipmentTypePurchaseDetail, name= 'updateEquipmentTypePurchaseDetail'),
+    path(r'system/updateConnectionTypePurchaseDetail', views.updateConnectionTypePurchaseDetail, name = 'updateConnectionTypePurchaseDetail'),
 ]

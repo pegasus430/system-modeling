@@ -641,6 +641,7 @@ $(document).ready(function() {
                 return
               }
               p_leadtime = cell.leadtime
+              if(p_leadtime == '' || p_leadtime ==  null) p_leadtime = 0
               if(!validateNumber(p_leadtime)){
                 $.toast({
                   heading: 'Error',
@@ -822,6 +823,7 @@ $(document).ready(function() {
                 return
               }
               p_leadtime = cell.leadtime
+              if(p_leadtime == '' || p_leadtime ==  null) p_leadtime = 0
               if(!validateNumber(p_leadtime)){
                 $.toast({
                   heading: 'Error',
@@ -923,7 +925,7 @@ $(document).ready(function() {
                 'po_reference': element.purchase_order_reference,
                 'po_date': element.purchase_order_date,
                 'due_date': element.due_date,
-                'received_data': element.received_date,
+                'received_date': element.received_date,
                 'serial_number': element.unique_code,
                 'location': element.location
                })
@@ -971,7 +973,7 @@ $(document).ready(function() {
                 { data: 'po_reference' },
                 { data: 'po_date' },
                 { data: 'due_date' },
-                { data: 'received_data' },
+                { data: 'received_date' },
                 { data: 'serial_number' },
                 { data: 'location' },
               ],
@@ -1002,7 +1004,7 @@ $(document).ready(function() {
                   return
                 }
                 p_leadtime = selectedObj.lead_time_days
-                if(p_leadtime == '') p_leadtime = 0
+                if(p_leadtime == '' || p_leadtime ==  null) p_leadtime = 0
                 p_po_date = selectedObj.purchase_order_date
                 if(p_po_date == null) p_po_date = ""
                
@@ -1093,33 +1095,158 @@ $(document).ready(function() {
         child_purchasing_connection_type = jsonData['child_connectiontype']       
 
         if(child_purchasing_connection_type.length){
-            child_purchasing_connection_type.forEach(element => {
-               tableData.push({
-                'location_identifier': element.connection_location_identifier ,
-                'description': element.connection_description,
-                'po_reference': element.purchase_order_reference,
-                'po_date': element.purchase_order_date,
-                'due_date': element.due_date,
-                'received_data': element.received_date,
-                'serial_number': element.unique_code,
-                'location': element.location
-               })
+          child_purchasing_connection_type.forEach(element => {
+            tableData.push({
+             'connection_commercial_id': element.connection_commercial_id,
+             'location_identifier': element.connection_location_identifier ,
+             'description': element.connection_description,
+             'po_reference': element.purchase_order_reference,
+             'po_date': element.purchase_order_date,
+             'due_date': element.due_date,
+             'received_date': element.received_date,
+             'serial_number': element.unique_code,
+             'location': element.location
             })
-            
-            $('#delivery_connection_type_table').DataTable({
-              data:  tableData ,
-              destroy: true,
-              columns: [
-                { data: 'location_identifier' },
-                { data: 'description' },
-                { data: 'po_reference' },
-                { data: 'po_date' },
-                { data: 'due_date' },
-                { data: 'received_data' },
-                { data: 'serial_number' },
-                { data: 'location' },
-              ]}
-            )
+         })
+         var connectionEditor = new DataTable.Editor({ 
+           idSrc:  'connection_commercial_id',
+           fields: [
+             {
+               label: 'connection_commercial_id',
+               name: 'connection_commercial_id'
+             },
+             {
+               label: 'Due Date',
+               name: 'due_date'
+             },
+             {
+               label: 'Received Date',
+               name: 'received_date'
+             },
+             {
+               label: 'Serial Number',
+               name: 'serial_number'
+             },
+             {
+               label: 'Location',
+               name: 'location'
+             },
+           
+             
+           ],
+           table: '#delivery_connection_type_table'
+         })
+         $('#delivery_connection_type_table').DataTable({
+           data:  tableData ,
+           destroy: true,
+           dom: 'Bfrtip',
+           columns: [
+             { data: 'connection_commercial_id' },
+             { data: 'location_identifier' },
+             { data: 'description' },
+             { data: 'po_reference' },
+             { data: 'po_date' },
+             { data: 'due_date' },
+             { data: 'received_date' },
+             { data: 'serial_number' },
+             { data: 'location' },
+           ],
+           columnDefs: [
+             { "visible": false, "targets": 0 } // Target the first column to hide it
+           ]
+         }
+         )
+        //  $('#delivery_connection_type_table').on('click', 'td:nth-child(n+5):nth-child(-n+8)',function (){
+        //    connectionEditor.inline(this)
+        //  })
+        //  connectionEditor.on('edit', function(e, datatable, cell) {
+        //    p_id = cell.connection_commercial_id
+        //    selectedObj = child_purchasing_connection_type.find( element => element.connection_commercial_id === p_id) 
+        
+        //    p_due_date = cell.due_date
+        //    if(p_due_date == null) p_due_date = ""
+        //    if(!isValidDateFormat(p_due_date)){
+        //      $.toast({
+        //        heading: 'Error',
+        //        text: 'Due Date format error! You should input the date as YYYY-MM-DD.',
+        //        icon: 'error',              
+        //        bgColor : '#red',  
+        //        showHideTransition : 'slide',
+        //        position : 'top-right'
+        //      })
+        //      return
+        //    }
+        //    p_leadtime = selectedObj.lead_time_days
+           
+        //    if(p_leadtime == '' || p_leadtime ==  null) p_leadtime = 0
+           
+        //    p_po_date = selectedObj.purchase_order_date
+        //    if(p_po_date == null) p_po_date = ""
+          
+        //    p_po_reference = selectedObj.purchase_order_reference
+        //    p_quote_reference = selectedObj.quote_reference
+           
+        //    p_location = cell.location
+        //    if(p_location == null) p_location = ""
+           
+        //    p_received_date = cell.received_date
+        //    if(p_received_date == null) p_received_date = ""
+        //    if(!isValidDateFormat(p_received_date)){
+        //      $.toast({
+        //        heading: 'Error',
+        //        text: 'Received Date format error! You should input the date as YYYY-MM-DD.',
+        //        icon: 'error',              
+        //        bgColor : '#red',  
+        //        showHideTransition : 'slide',
+        //        position : 'top-right'
+        //      })
+        //      return
+        //    }
+        //    p_unique_code = cell.serial_number
+        //    if(p_unique_code == null) p_unique_code = ""
+
+        //    $.ajax({
+        //      type: "GET",
+        //      url: 'updateConnectionTypePurchaseDetail',
+        //      data: {
+        //        p_id: p_id,
+        //        p_due_date: p_due_date,
+        //        p_leadtime: p_leadtime,
+        //        p_po_date: p_po_date,
+        //        p_po_reference: p_po_reference,
+        //        p_quote_reference: p_quote_reference,
+        //        p_location: p_location,
+        //        p_received_date: p_received_date,
+        //        p_unique_code: p_unique_code
+        //      },
+        //      success: function (data){
+        //        data = JSON.parse(data)
+        //        var result = data['result']
+               
+        //        if(result){
+        //          $.toast({
+        //            heading: 'Success',
+        //            text: 'The purchased connection has been  removed successfully!',
+        //            icon: 'info',              
+        //            bgColor : '#2cc947',  
+        //            showHideTransition : 'slide',
+        //            position : 'top-right'
+        //          })
+        //        }
+        //        else{
+        //          $.toast({
+        //            heading: 'Error',
+        //            text: 'The error happend while updating the purchased connection!',
+        //            icon: 'error',              
+        //            bgColor : '#red',  
+        //            showHideTransition : 'slide',
+        //            position : 'top-right'
+        //          })
+        //        }
+        //      }
+        //    })
+
+        //  });
         }
       }
     })
@@ -1145,6 +1272,7 @@ $(document).ready(function() {
         if(state_equipment_detail.length){
           state_equipment_detail.forEach(element => {
                tableData.push({
+                'equipment_id': element.equipment_id,
                 'identifier': element.equipment_full_identifier ,
                 'description': element.equipment_description,
                 'quoted': element.quote_received,
@@ -1164,6 +1292,7 @@ $(document).ready(function() {
               data:  tableData ,
               destroy: true,
               columns: [
+                { data: 'equipment_id' },
                 { data: 'identifier' },
                 { data: 'description' },
                 { 
@@ -1205,8 +1334,12 @@ $(document).ready(function() {
                   data: 'in_warranty' ,
                   render: stateFunction
                 },
+              ],
+              columnDefs:[
+                { "visible": false, "targets": 0 }
               ]}
             )
+            
         }
       }
     })

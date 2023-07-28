@@ -834,6 +834,8 @@ def updateEquipmentTypePurchaseDetail(request):
             p_due_date = "'" + p_due_date + "'"
 
         p_leadtime = request.GET['p_leadtime']
+        if p_leadtime == '0':
+            p_leadtime = 'NULL'
         p_po_date = request.GET['p_po_date']
         if p_po_date ==  '':
             p_po_date = 'NULL'
@@ -859,7 +861,7 @@ def updateEquipmentTypePurchaseDetail(request):
         raw_query = "SELECT fn_update_equipment_commercial({}, '{}', {}, {}, {}, '{}', {}, '{}', '{}', '{}')".format(
             p_id, p_quote_reference, p_leadtime, p_po_date, p_due_date, p_po_reference, p_received_date,p_unique_code, p_location, p_modified_at
         )
-        
+        print(raw_query)
         try:
             with connection.cursor() as cursor:
                 cursor.execute(raw_query)
@@ -886,6 +888,8 @@ def updateConnectionTypePurchaseDetail(request):
             p_due_date = "'" + p_due_date + "'"
 
         p_leadtime = request.GET['p_leadtime']
+        if p_leadtime == 0:
+            p_leadtime = 'NULL'
         p_po_date = request.GET['p_po_date']
         if p_po_date ==  '':
             p_po_date = 'NULL'
@@ -911,7 +915,7 @@ def updateConnectionTypePurchaseDetail(request):
         raw_query = "SELECT fn_update_connection_commercial({}, '{}', {}, {}, {}, '{}', {}, '{}', '{}', '{}')".format(
             p_id, p_quote_reference, p_leadtime, p_po_date, p_due_date, p_po_reference, p_received_date,p_unique_code, p_location, p_modified_at
         )
-        print(raw_query)
+       
         try:
             with connection.cursor() as cursor:
                 cursor.execute(raw_query)

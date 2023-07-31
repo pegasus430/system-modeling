@@ -179,6 +179,7 @@ class PurchasingConnectionType(models.Model):
 
 class PurchasingEquipmentTypeDetail(models.Model):
     equipment_commercial_id = models.BigIntegerField(primary_key=True)
+    equipment_id = models.BigIntegerField()
     type_path = LTreeField(unique=True)
     type_modifier = models.CharField(max_length=255)
     type_description = models.TextField()
@@ -195,12 +196,19 @@ class PurchasingEquipmentTypeDetail(models.Model):
     received_date = models.DateField()
     location = models.TextField()
     unique_code = models.TextField()
+    ready_for_fat = models.DateField()
+    fat_complete = models.DateField()
+    sat_complete = models.DateField()
+    commissioning_complete = models.DateField()
+    installed_date = models.DateField()
+
     class Meta:
         managed = False
         db_table = 'equipment_purchasing_detail'
 
 class PurchasingConnectionTypeDetail(models.Model):
     connection_commercial_id = models.BigIntegerField(primary_key=True)
+    connection_id = models.BigIntegerField()
     connection_type_path = LTreeField(unique=True)
     connection_type_modifier = models.CharField(max_length=255)
     connection_type_description = models.TextField()
@@ -214,7 +222,11 @@ class PurchasingConnectionTypeDetail(models.Model):
     due_date = models.DateField()
     received_date = models.DateField()
     location = models.TextField()
-    unique_code = models.TextField()
+    unique_code = models.TextField()    
+    fat_complete = models.DateField()
+    sat_complete = models.DateField()
+    commissioning_complete = models.DateField()
+    installed_date = models.DateField()
     class Meta:
         managed = False
         db_table = 'connection_purchasing_detail'

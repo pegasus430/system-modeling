@@ -8,7 +8,7 @@
 // Treeview Initialization
 $(document).ready(function() {
   $('.treeview-animated').mdbTreeview();
-  $('#version').html('1.0.27 (27/07/2023)')
+  $('#version').html('1.0.31 (31/07/2023)')
 
     // display purchasing_overview_table as default
     var tableData = []
@@ -783,7 +783,7 @@ $(document).ready(function() {
              })
           })
           
-          var table = $('#state_equipment_table').DataTable({
+          $('#state_equipment_table').DataTable({
             data:  tableData ,
             destroy: true,
             columns: [
@@ -834,16 +834,191 @@ $(document).ready(function() {
               { "visible": false, "targets": 0 }
             ]})
 
-          $('#state_equipment_table').on('click', 'tbody tr', function(){
-            
-            var row = table.row(this)
-            console.log(row.data())
-            selectedEquipmentId = row.data().equipment_id
-            console.log(selectedEquipmentId)
-            $('#equipmentStateModal').modal('show')
-          })
+          
       }
     }
+    
+    $('#state_equipment_table').on('click', 'tr', function(){
+      equipmentCommercialDetail = JSON.parse(document.getElementById('equipment_state_detail').textContent)
+      $('#ready_for_fat').val("")
+      $('#sat_complete').val("")
+      $('#fat_complete').val("")
+      $('#installed_date').val("")
+      $('#commissioning_complete').val("")
+      
+      equipment_full_identifier = this.getElementsByTagName('td')[0].textContent;
+      selectedData = state_equipment_detail.find(element=> element.equipment_full_identifier == equipment_full_identifier)
+      selectedEquipmentId = selectedData.equipment_id
+      $('#selected_state_equipment_id').val(selectedEquipmentId)
+      selectedEquipmentDetail = equipmentCommercialDetail.find(element=>element.equipment_id == selectedEquipmentId)
+      
+      if(selectedEquipmentDetail){
+        $('#selected_state_equipment_update_flag').val('update')
+        readyForFat = selectedEquipmentDetail.ready_for_fat
+        if (readyForFat != null){
+          $('#ready_for_fat').val(readyForFat)
+        }
+
+        installed_date = selectedEquipmentDetail.installed_date
+        if (installed_date != null){
+          $('#installed_date').val(installed_date)
+        }
+        fat_complete = selectedEquipmentDetail.fat_complete
+        if (fat_complete != null){
+          $('#fat_complete').val(fat_complete)
+        }
+        sat_complete = selectedEquipmentDetail.sat_complete
+        if (sat_complete != null){
+          $('#sat_complete').val(sat_complete)
+        }
+        commissioning_complete = selectedEquipmentDetail.commissioning_complete
+        if (commissioning_complete != null){
+          $('#commissioning_complete').val(commissioning_complete)
+        }
+
+      }else{
+        $('#selected_state_equipment_update_flag').val('add')
+      }
+
+      $('#equipmentStateModal').modal('show')
+    })
+    // update equipment commercail with read_fat_fat, fat_complete, sat_complete, ...
+    $('#equipmentStateModal .btn-primary').on('click', function(){
+      selected_state_equipment_id = $('#selected_state_equipment_id').val()
+      readyForFat = $('#ready_for_fat').val()
+      fatComplete = $('#fat_complete').val()
+      satComplete = $('#sat_complete').val()
+      commissioningComplete = $('#commissioning_complete').val()
+      installedDate = $('#installed_date').val()
+      selectedEquipmentUpdateFlag = $('#selected_state_equipment_update_flag').val()
+      $.ajax({
+        url: 'updateEquipmentCommercialState',
+        data: {
+          selected_state_equipment_id: selected_state_equipment_id,
+          ready_for_fat: readyForFat,
+          fat_complete: fatComplete,
+          sat_complete: satComplete,
+          commissioning_complete: commissioningComplete,
+          installed_date: installedDate,
+          selectedEquipmentUpdateFlag: selectedEquipmentUpdateFlag,
+        },
+        type: "GET",
+        success: function(data){
+          jsonData = JSON.parse(data)
+          result = jsonData['result']
+          state_equipment_detail = jsonData['all_equipment']
+          equipment_commercial_state_detail = jsonData['equipment_commercial_state_detail']
+          document.getElementById('equipment_state_detail').textContent = JSON.stringify(equipment_commercial_state_detail)
+          
+          if(state_equipment_detail.length){
+            tableData = []
+            state_equipment_detail.forEach(element => {
+                 tableData.push({
+                  'equipment_id': element.equipment_id,
+                  'identifier': element.equipment_full_identifier ,
+                  'description': element.equipment_description,
+                  'quoted': element.quote_received,
+                  'ordered': element.is_ordered,
+                  'received': element.is_received,
+                  'installed': element.is_installed,
+                  'in_warranty': element.in_warranty,
+                  'design_approved': element.design_approved,
+                  'configured': element.is_configured,
+                  'fat_complete': element.fat_complete,
+                  'sat_complete': element.sat_complete,
+                  'commissioning_complete': element. is_commissioned
+                 })
+              })
+              
+              $('#state_equipment_table').DataTable({
+                data:  tableData ,
+                destroy: true,
+                columns: [
+                  { data: 'equipment_id' },
+                  { data: 'identifier' },
+                  { data: 'description' },
+                   { 
+                      data: 'design_approved',
+                      render: stateFunction 
+                    },
+                    { 
+                      data: 'quoted' ,
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'ordered' ,
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'received' ,
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'configured',
+                      render: stateFunction 
+                    },
+                    { 
+                      data: 'fat_complete',
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'installed' ,
+                      render: stateFunction 
+                    },
+                    { 
+                      data: 'sat_complete',
+                      render: stateFunction },
+                    { 
+                      data: 'commissioning_complete',
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'in_warranty' ,
+                      render: stateFunction
+                    },
+                ],
+                columnDefs:[
+                  { "visible": false, "targets": 0 }
+                ]})
+    
+              
+          }
+
+          if (result){
+            $.toast({
+              heading: 'Success',
+              text: 'The equipment commercial information has been updated  successfully!',
+              icon: 'info',              
+              bgColor : '#2cc947',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+            $('#equipmentStateModal').modal('hide')
+          }else{
+            $.toast({
+              heading: 'Error',
+              text: 'Error while updating the equipment commercail date',
+              icon: 'error',              
+              bgColor : 'red',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+          }
+          
+        },
+        error: function(){
+          $.toast({
+            heading: 'Error',
+            text: 'Error while requesting the equipment commercail date',
+            icon: 'error',              
+            bgColor : 'red',  
+            showHideTransition : 'slide',
+            position : 'top-right'
+          })
+        }
+      })
+    })
+
     if(document.getElementById('all_connection')){
       tableData = []
 
@@ -852,6 +1027,7 @@ $(document).ready(function() {
       if(state_connection_detail.length){
         state_connection_detail.forEach(element => {
              tableData.push({
+              'connection_id': element.connection_id,
               'identifier': element.connection_identifier ,
               'description': element.connection_description,
               'quoted': element.quote_received,
@@ -870,6 +1046,7 @@ $(document).ready(function() {
             data:  tableData ,
             destroy: true,
             columns: [
+              { data: 'connection_id' },
               { data: 'identifier' },
               { data: 'description' },
               { 
@@ -907,10 +1084,187 @@ $(document).ready(function() {
                   data: 'in_warranty' ,
                   render: stateFunction
                 },
-            ]}
+            ],
+            columnDefs:[
+              { "visible": false, "targets": 0 }
+            ]
+          }
           )
       }
     }
+
+    $('#state_connection_table').on('click', 'tr', function(){
+      connectionCommercialDetail = JSON.parse(document.getElementById('connection_state_detail').textContent)
+      
+      $('#connection_sat_complete').val("")
+      $('#connection_fat_complete').val("")
+      $('#connection_installed_date').val("")
+      $('#connection_commissioning_complete').val("")
+      
+      connection_identifier = this.getElementsByTagName('td')[0].textContent;
+      selectedData = state_connection_detail.find(element=> element.connection_identifier == connection_identifier)
+      selectedConnectionId = selectedData.connection_id
+      
+      $('#selected_state_connection_id').val(selectedConnectionId)
+      selectedConnectionDetail = connectionCommercialDetail.find(element=>element.connection_id == selectedConnectionId)
+      
+      if(selectedConnectionDetail){
+        $('#selected_state_connection_update_flag').val('update')
+        
+
+        installed_date = selectedConnectionDetail.installed_date
+        if (installed_date != null){
+          $('#connection_installed_date').val(installed_date)
+        }
+        fat_complete = selectedConnectionDetail.fat_complete
+        if (fat_complete != null){
+          $('#connection_fat_complete').val(fat_complete)
+        }
+        sat_complete = selectedConnectionDetail.sat_complete
+        if (sat_complete != null){
+          $('#connection_sat_complete').val(sat_complete)
+        }
+        commissioning_complete = selectedConnectionDetail.commissioning_complete
+        if (commissioning_complete != null){
+          $('#connection_commissioning_complete').val(commissioning_complete)
+        }
+
+      }else{
+        $('#selected_state_connection_update_flag').val('add')
+      }
+
+      $('#connectionStateModal').modal('show')
+    })
+
+    // update connection commercial with read_fat_fat, fat_complete, sat_complete, ...
+    $('#connectionStateModal .btn-primary').on('click', function(){
+      selected_state_connection_id = $('#selected_state_connection_id').val()
+      
+      fatComplete = $('#connection_fat_complete').val()
+      satComplete = $('#connection_sat_complete').val()
+      commissioningComplete = $('#connection_commissioning_complete').val()
+      installedDate = $('#connection_installed_date').val()
+      selectedConnectionUpdateFlag = $('#selected_state_connection_update_flag').val()
+      $.ajax({
+        url: 'updateConnectionCommercialState',
+        data: {
+          selected_state_connection_id: selected_state_connection_id,
+          fat_complete: fatComplete,
+          sat_complete: satComplete,
+          commissioning_complete: commissioningComplete,
+          installed_date: installedDate,
+          selectedConnectionUpdateFlag: selectedConnectionUpdateFlag,
+        },
+        type: "GET",
+        success: function(data){
+          jsonData = JSON.parse(data)
+          result = jsonData['result']
+          state_connection_detail = jsonData['all_connection']
+          connection_commercial_state_detail = jsonData['connection_commercial_state_detail']
+          document.getElementById('connection_state_detail').textContent = JSON.stringify(connection_commercial_state_detail)
+
+          if(state_connection_detail.length){
+            tableData = []
+            state_connection_detail.forEach(element => {
+                 tableData.push({
+                  'connection_id': element.connection_id,
+                  'identifier': element.connection_identifier ,
+                  'description': element.connection_description,
+                  'quoted': element.quote_received,
+                  'ordered': element.is_ordered,
+                  'received': element.is_received,
+                  'installed': element.is_installed,
+                  'in_warranty': element.in_warranty,
+                  'design_approved': element.design_approved,                
+                  'fat_complete': element.fat_complete,
+                  'sat_complete': element.sat_complete,
+                  'commissioning_complete': element.is_commissioned
+                 })
+              })
+              
+              $('#state_connection_table').DataTable({
+                data:  tableData ,
+                destroy: true,
+                columns: [
+                  { data: 'connection_id' },
+                  { data: 'identifier' },
+                  { data: 'description' },
+                  { 
+                      data: 'design_approved',
+                      render: stateFunction 
+                    },
+                    { 
+                      data: 'quoted' ,
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'ordered' ,
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'received' ,
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'fat_complete',
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'installed' ,
+                      render: stateFunction 
+                    },
+                    { 
+                      data: 'sat_complete',
+                      render: stateFunction },
+                    { 
+                      data: 'commissioning_complete',
+                      render: stateFunction
+                    },
+                    { 
+                      data: 'in_warranty' ,
+                      render: stateFunction
+                    },
+                ],
+                columnDefs:[
+                  { "visible": false, "targets": 0 }
+                ]
+              })
+            }
+
+          if (result){
+            $.toast({
+              heading: 'Success',
+              text: 'The connection commercial information has been updated  successfully!',
+              icon: 'info',              
+              bgColor : '#2cc947',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+            $('#connectionStateModal').modal('hide')
+          }else{
+            $.toast({
+              heading: 'Error',
+              text: 'Error while updating the connection commercail date',
+              icon: 'error',              
+              bgColor : 'red',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+          }
+          
+        },
+        error: function(){
+          $.toast({
+            heading: 'Error',
+            text: 'Error while requesting the connection commercail date',
+            icon: 'error',              
+            bgColor : 'red',  
+            showHideTransition : 'slide',
+            position : 'top-right'
+          })
+        }
+      })
+    })
 
     if(document.getElementById('system_parameters')){
   

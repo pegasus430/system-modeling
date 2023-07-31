@@ -1360,10 +1360,11 @@ $(document).ready(function() {
         var tableData = []
 
         state_connection_detail = jsonData['state_connection_detail']       
-        console.log(state_connection_detail)
+        
         if(state_connection_detail.length){
           state_connection_detail.forEach(element => {
                tableData.push({
+                'connection_id': element.connection_id,
                 'identifier': element.connection_identifier ,
                 'description': element.connection_description,
                 'quoted': element.quote_received,
@@ -1382,6 +1383,7 @@ $(document).ready(function() {
               data:  tableData ,
               destroy: true,
               columns: [
+                { data: 'connection_id'},
                 { data: 'identifier' },
                 { data: 'description' },
                 { 
@@ -1419,6 +1421,9 @@ $(document).ready(function() {
                   data: 'in_warranty' ,
                   render: stateFunction
                 },
+              ],
+              columnDefs:[
+                { "visible": false, "targets": 0 }
               ]}
             )
         }

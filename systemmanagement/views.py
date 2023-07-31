@@ -70,11 +70,15 @@ def system_state(request):
     page = 'system'
     all_equipment = list(EquipmentState.objects.order_by('equipment_sort_identifier').values())
     all_connection = list(ConnectionState.objects.order_by('connection_identifier').values())
+    equipment_state_detail = list(PurchasingEquipmentTypeDetail.objects.order_by('type_modifier').values())
+    connection_state_detail = list(PurchasingConnectionTypeDetail.objects.order_by('connection_type_modifier').values())
     context = {
         'title': 'System State',
         'page': page,
         'all_equipment': all_equipment,
-        'all_connection': all_connection
+        'all_connection': all_connection,
+        'equipment_state_detail': equipment_state_detail,
+        'connection_state_detail': connection_state_detail,
     }
     
     return render(request, 'system_state.html', context=context)
@@ -931,6 +935,137 @@ def updateConnectionTypePurchaseDetail(request):
             } 
         )
         return HttpResponse(data)
+
+def updateEquipmentCommercialState(request):
+    if request.method == 'GET':
+        selected_state_equipment_id = request.GET['selected_state_equipment_id']
+        selectedEquipmentUpdateFlag = request.GET['selectedEquipmentUpdateFlag']
+        ready_for_fat = request.GET['ready_for_fat']
+        if ready_for_fat == "":
+            ready_for_fat = 'NULL'
+        else:
+            ready_for_fat = "'" + ready_for_fat +"'"
+
+        fat_complete = request.GET['fat_complete']
+        if fat_complete == "":
+            fat_complete = 'NULL'
+        else:
+            fat_complete ="'" + fat_complete +"'"
+
+        sat_complete = request.GET['sat_complete']
+        if sat_complete == "":
+            sat_complete = 'NULL'
+        else:
+            sat_complete ="'" + sat_complete +"'"
+
+        commissioning_complete = request.GET['commissioning_complete']
+        if commissioning_complete == "":
+            commissioning_complete = 'NULL'
+        else:
+            commissioning_complete ="'" + commissioning_complete +"'"
+
+        installed_date = request.GET['installed_date']
+        if installed_date == "":
+            installed_date = 'NULL'
+        else:
+            installed_date ="'" + installed_date +"'"
+
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        p_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        if selectedEquipmentUpdateFlag == 'update':
+            raw_query = "SELECT fn_update_equipment_commercial({}, {}, {}, {}, {}, {}, '{}')".format(
+                selected_state_equipment_id, ready_for_fat, fat_complete, sat_complete, commissioning_complete, installed_date, p_modified_at)
+        else:
+            raw_query = "SELECT fn_add_equipment_commercial({}, {}, {}, {}, {}, {}, '{}')".format(
+                selected_state_equipment_id, ready_for_fat, fat_complete, sat_complete, commissioning_complete, installed_date, p_modified_at)
+            
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+            all_equipment = list(EquipmentState.objects.order_by('equipment_sort_identifier').values())
+            equipment_commercial_state_detail = list(PurchasingEquipmentTypeDetail.objects.order_by('type_modifier').values())
+        except Exception as e:
+            print(e)
+            result = False
+    
+        data = json.dumps(
+            {
+                'result': result,   
+                'all_equipment': all_equipment,
+                'equipment_commercial_state_detail': equipment_commercial_state_detail,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def updateConnectionCommercialState(request):
+    if request.method == 'GET':
+        selected_state_connection_id = request.GET['selected_state_connection_id']
+        selectedConnectionUpdateFlag = request.GET['selectedConnectionUpdateFlag']
+
+        fat_complete = request.GET['fat_complete']
+        if fat_complete == "":
+            fat_complete = 'NULL'
+        else:
+            fat_complete ="'" + fat_complete +"'"
+
+        sat_complete = request.GET['sat_complete']
+        if sat_complete == "":
+            sat_complete = 'NULL'
+        else:
+            sat_complete ="'" + sat_complete +"'"
+
+        commissioning_complete = request.GET['commissioning_complete']
+        if commissioning_complete == "":
+            commissioning_complete = 'NULL'
+        else:
+            commissioning_complete ="'" + commissioning_complete +"'"
+
+        installed_date = request.GET['installed_date']
+        if installed_date == "":
+            installed_date = 'NULL'
+        else:
+            installed_date ="'" + installed_date +"'"
+
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        p_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        if selectedConnectionUpdateFlag == 'update':
+            raw_query = "SELECT fn_update_connection_commercial({}, {}, {}, {}, {}, '{}')".format(
+                selected_state_connection_id,  fat_complete, sat_complete, commissioning_complete, installed_date, p_modified_at)
+        else:
+            raw_query = "SELECT fn_add_connection_commercial({}, {}, {}, {}, {}, '{}')".format(
+                selected_state_connection_id,  fat_complete, sat_complete, commissioning_complete, installed_date, p_modified_at)
+            
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+            all_connection = list(ConnectionState.objects.order_by('connection_identifier').values())
+            connection_commercial_state_detail = list(PurchasingConnectionTypeDetail.objects.order_by('connection_type_modifier').values())
+        except Exception as e:
+            print(e)
+            result = False
+    
+        data = json.dumps(
+            {
+                'result': result,   
+                'all_connection': all_connection,
+                'connection_commercial_state_detail':connection_commercial_state_detail,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

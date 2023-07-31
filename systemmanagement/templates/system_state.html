@@ -5,6 +5,8 @@
 
 {{all_equipment | json_script:'all_equipment'}}
 {{all_connection | json_script:'all_connection'}}
+{{equipment_state_detail | json_script:'equipment_state_detail'}}
+{{connection_state_detail | json_script:'connection_state_detail'}}
 
 <section class="section equipment">
     <div class="row">
@@ -100,6 +102,7 @@
                                   <table class="display nowrap custom_datatable" id='state_equipment_table'>
                                     <thead >
                                       <tr>
+                                        <th>id</th>
                                         <th>Identifier</th>
                                         <th>Description</th>
                                         <th>Design</th>
@@ -146,6 +149,7 @@
                                   <table class="display nowrap custom_datatable" id='state_connection_table'>
                                     <thead>
                                       <tr>
+                                        <th>id</th>
                                         <th>Identifier</th>
                                         <th>Description</th>
                                         <th>Design</th>
@@ -170,15 +174,7 @@
                         </div>
                       </div>
                       <!-- Middle Object Hierarchy -->
-                      <!-- Buttons Section -->
-                      <div class="col-xxl-12 col-lg-12 col-md-12">
-                        <div class="card">
-                          <div class="card-body buttons_section">
-                            <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
-                            <button type="button" class="btn btn-outline-primary">Commit</button>
-                          </div>
-                        </div>
-                      </div><!-- End Buttons Section -->
+                     
                     </div><!-- End Main Content -->
                   </div>
                   <!-- // End System Tab Content -->
@@ -189,7 +185,97 @@
         </div>
       </div><!-- End Left side columns -->
     </div>
-    
+    <div class="modal fade" id="equipmentStateModal" tabindex="-1" aria-labelledby="equipmentStateModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="equipmentStateModalLabel">Equipment State</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="text" style="display: none;" id="selected_state_equipment_id">
+            <input type="text" style="display: none;" id="selected_state_equipment_update_flag">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Ready for fat:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="ready_for_fat">
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Fat complete:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="fat_complete">
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Sat complete:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="sat_complete">
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Commissioning complete:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="commissioning_complete">
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Installed date:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="installed_date">
+              </div>
+            </div>
+          </div> 
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary"  >Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="connectionStateModal" tabindex="-1" aria-labelledby="connectionStateModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="connectionStateModalLabel">Connection State</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="text" style="display: none;" id="selected_state_connection_id">
+            <input type="text" style="display: none;" id="selected_state_connection_update_flag">
+            
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Fat complete:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="connection_fat_complete">
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Sat complete:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="connection_sat_complete">
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Commissioning complete:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="connection_commissioning_complete">
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Installed date:</label>
+              <div class="col-md-7">
+                <input type="date" class="form-control mt-2" id="connection_installed_date">
+              </div>
+            </div>
+          </div> 
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary"  >Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
   <script type="text/javascript">
     all_equipment = JSON.parse(document.getElementById('all_equipment').textContent)

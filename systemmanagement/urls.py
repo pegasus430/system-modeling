@@ -39,4 +39,6 @@ urlpatterns = [
     path(r'definitions/getEquipmentTypesInterface', views.getEquipmentTypesInterface, name='getEquipmentTypesInterface'),
     path(r'system/updateEquipmentTypePurchaseDetail', views.updateEquipmentTypePurchaseDetail, name= 'updateEquipmentTypePurchaseDetail'),
     path(r'system/updateConnectionTypePurchaseDetail', views.updateConnectionTypePurchaseDetail, name = 'updateConnectionTypePurchaseDetail'),
+    path(r'system/updateEquipmentCommercialState', views.updateEquipmentCommercialState, name='getEquipmentCommercialState'),
+    path(r'system/updateConnectionCommercialState', views.updateConnectionCommercialState, name='updateConnectionCommercialState'),
 ]

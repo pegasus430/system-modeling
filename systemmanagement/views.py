@@ -281,7 +281,7 @@ def connections(request):
 
 def definitions(request):
     page = 'definitions'
-    system_parameters = list(SystemSetting.objects.values())
+    system_parameters = list(SystemSetting.objects.order_by('label').values())
     sidebar_title = 'system_parameters'
     context = {
         'title': 'Definitions',
@@ -1065,6 +1065,109 @@ def updateConnectionCommercialState(request):
         )
         return HttpResponse(data)
 
+def updateSystemParameters(request):
+    if request.method == 'GET':
+        p_id = request.GET['p_id']
+        p_value = request.GET['p_value']
+        p_label = request.GET['p_label']
+        p_comment = request.GET['p_comment']
+        if p_comment =='':
+            p_comment = 'NULL'
+        else:
+            p_comment = "'" + p_comment + "'"
+
+        current_time = datetime.datetime.now(pytz.utc)
+        p_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_update_system_settings({}, '{}', '{}', {}, '{}')".format(
+            p_id, p_label, p_value, p_comment, p_modified_at
+        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+            
+                        
+        except Exception as e:
+            print(e)
+            result = False
+    
+        system_parameters = list(SystemSetting.objects.order_by('label').values())
+
+        data = json.dumps(
+            {
+                'result': result,  
+                'system_parameters' : system_parameters,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def addSystemParameters(request):
+     if request.method == 'GET':       
+        p_value = request.GET['p_value']
+        p_label = request.GET['p_label']
+        p_comment = request.GET['p_comment']
+        if p_comment =='':
+            p_comment = 'NULL'
+        else:
+            p_comment = "'" + p_comment + "'"
+
+        current_time = datetime.datetime.now(pytz.utc)
+        p_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_add_system_settings('{}', '{}', {}, '{}')".format(
+             p_label, p_value, p_comment, p_modified_at
+        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+            
+                        
+        except Exception as e:
+            print(e)
+            result = False
+        system_parameters = list(SystemSetting.objects.order_by('label').values())
+
+        data = json.dumps(
+            {
+                'result': result,  
+                'system_parameters' : system_parameters,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def removeSystemParameters(request):
+    if request.method == 'GET':
+        p_id = request.GET['selectedPId']
+        current_time = datetime.datetime.now(pytz.utc)
+        p_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_remove_system_settings({})".format(
+            p_id
+        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+            
+                        
+        except Exception as e:
+            print(e)
+            result = False
+    
+        system_parameters = list(SystemSetting.objects.order_by('label').values())
+
+        data = json.dumps(
+            {
+                'result': result,  
+                'system_parameters' : system_parameters,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):

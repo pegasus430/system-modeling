@@ -41,4 +41,7 @@ urlpatterns = [
     path(r'system/updateConnectionTypePurchaseDetail', views.updateConnectionTypePurchaseDetail, name = 'updateConnectionTypePurchaseDetail'),
     path(r'system/updateEquipmentCommercialState', views.updateEquipmentCommercialState, name='getEquipmentCommercialState'),
     path(r'system/updateConnectionCommercialState', views.updateConnectionCommercialState, name='updateConnectionCommercialState'),
+    path(r'definitions/updateSystemParameters', views.updateSystemParameters, name='updateSystemParameters'),
+    path(r'definitions/addSystemParameters', views.addSystemParameters, name='addSystemParameters'),
+    path(r'definitions/removeSystemParameters', views.removeSystemParameters, name='removeSystemParameters'),
 ]

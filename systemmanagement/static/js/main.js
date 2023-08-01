@@ -1274,30 +1274,405 @@ $(document).ready(function() {
       if(system_parameters.length){
           system_parameters.forEach(element => {
              tableData.push({
+              'id': element.id,
               'label': element.label ,
               'value': element.value,
               'comment': element.comment,
               'last_modified': element.modified_at,
               'action': '<div class="inner-flex">\
-                <span class="bi bi-pencil p-1" style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#systemParamerterModal"></span> \
-                <span class="bi bi-trash p-1" style="cursor:pointer"></span> \
+                <span class="bi bi-trash p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
                 </div>'
              })
+
+          })
+
+          var editor = new DataTable.Editor({
+            
+            idSrc:  'comment',
+            fields: [
+              {
+                label: 'Label',
+                name: 'label'
+              },
+              
+              {
+                label: 'Value',
+                name: 'value'
+              },
+              {
+                label: 'Comment',
+                name: 'comment'
+              }
+              
+            ],
+            table: '#system_paramter_table'
           })
           
           $('#system_paramter_table').DataTable({
             data:  tableData ,
+            dom: 'Bfrtip',
             destroy: true,
             columns: [
+              { data: 'id' },
               { data: 'label' },
               { data: 'value' },
               { data: 'comment' },
               { data: 'last_modified' },
               { data: 'action'}
-            ]}
-          )
+            ],
+            columnDefs:[
+              {
+                targets: [0], 
+                visible: false 
+              },
+              
+            ],
+            "order": [[ 1, "asc" ]]
+          })
+
+          $('#system_paramter_table').on('click', 'td:nth-child(n+1):nth-child(-n+3)', function(){
+            editor.inline(this)
+          })
+
+          editor.on('edit', function(e, datatable, cell) {
+            p_id = cell.id
+            p_label = cell.label
+            if(p_label == ""){
+              $.toast({
+                heading: 'Error',
+                text: "The label can't be empty string",
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+              return
+            }
+            p_value = cell.value
+            if(p_value == ""){
+              $.toast({
+                heading: 'Error',
+                text: "The value can't be empty string",
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+              return
+            }
+            p_comment = cell.comment
+          
+            $.ajax({
+              type: "GET",
+              url: 'updateSystemParameters',
+              data: {
+                p_id: p_id,
+                p_label: p_label,
+                p_value: p_value,
+                p_comment: p_comment,
+              },
+              success: function (data){
+                data = JSON.parse(data)
+                var result = data['result']
+                
+                if(result){
+                  $.toast({
+                    heading: 'Success',
+                    text: 'The system parameter has been  updated successfully!',
+                    icon: 'info',              
+                    bgColor : '#2cc947',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+                  
+                  var system_parameters = data['system_parameters']
+                  
+                  var tableData = []
+                  if(system_parameters.length){
+                      system_parameters.forEach(element => {
+                        tableData.push({
+                          'id': element.id,
+                          'label': element.label ,
+                          'value': element.value,
+                          'comment': element.comment,
+                          'last_modified': element.modified_at,
+                          'action': '<div class="inner-flex">\
+                            <span class="bi bi-trash p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
+                            </div>'
+                        })
+
+                      })
+                      
+                      $('#system_paramter_table').DataTable({
+                        data:  tableData ,
+                        dom: 'Bfrtip',
+                        destroy: true,
+                        columns: [
+                          { data: 'id' },
+                          { data: 'label' },
+                          { data: 'value' },
+                          { data: 'comment' },
+                          { data: 'last_modified' },
+                          { data: 'action'}
+                        ],
+                        columnDefs:[
+                          {
+                            targets: [0], 
+                            visible: false 
+                          },
+                          
+                        ],
+                        "order": [[ 1, "asc" ]]
+                      })
+                    }
+
+                }
+                else{
+                  $.toast({
+                    heading: 'Error',
+                    text: 'The error happend while updating the system parameters!',
+                    icon: 'error',              
+                    bgColor : '#red',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+                }
+              },
+              error: function(e){
+                
+                $.toast({
+                  heading: 'Error',
+                  text: 'The error happend while requesting the server',
+                  icon: 'error',              
+                  bgColor : '#red',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+              }
+            })
+          });
+
       }
     }
+
+    // add system parameter in the modal
+    $('#systemParamerterModal .btn-primary').on('click', function(){
+       var label = $('#adding_systemParamerter_label').val()
+       if(label == ""){
+        $.toast({
+          heading: 'Error',
+          text: "The label can't be empty string",
+          icon: 'error',              
+          bgColor : '#red',  
+          showHideTransition : 'slide',
+          position : 'top-right'
+        })
+        return
+       }
+
+       var value = $('#adding_systemParamerter_value').val()
+       if(value == ""){
+        $.toast({
+          heading: 'Error',
+          text: "The value can't be empty string",
+          icon: 'error',              
+          bgColor : '#red',  
+          showHideTransition : 'slide',
+          position : 'top-right'
+        })
+        return
+       }
+
+       var comment =  $('#adding_systemParamerter_comment').val()
+
+       $.ajax({
+        type: "GET",
+        url: 'addSystemParameters',
+        data: {
+          
+          p_label: label,
+          p_value: value,
+          p_comment: comment,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          
+          if(result){
+            $.toast({
+              heading: 'Success',
+              text: 'The system parameter has been  added successfully!',
+              icon: 'info',              
+              bgColor : '#2cc947',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+            
+            var system_parameters = data['system_parameters']
+            
+            var tableData = []
+            if(system_parameters.length){
+                system_parameters.forEach(element => {
+                  tableData.push({
+                    'id': element.id,
+                    'label': element.label ,
+                    'value': element.value,
+                    'comment': element.comment,
+                    'last_modified': element.modified_at,
+                    'action': '<div class="inner-flex">\
+                      <span class="bi bi-trash p-1"  data-id="'+ element.id +'" style="cursor:pointer"></span> \
+                      </div>'
+                  })
+
+                })
+                
+                $('#system_paramter_table').DataTable({
+                  data:  tableData ,
+                  dom: 'Bfrtip',
+                  destroy: true,
+                  columns: [
+                    { data: 'id' },
+                    { data: 'label' },
+                    { data: 'value' },
+                    { data: 'comment' },
+                    { data: 'last_modified' },
+                    { data: 'action'}
+                  ],
+                  columnDefs:[
+                    {
+                      targets: [0], 
+                      visible: false 
+                    }
+                    
+                  ],
+                  "order": [[ 1, "asc" ]]
+                })
+              }
+
+            $('#systemParamerterModal').modal('hide')
+
+          }
+          else{
+            $.toast({
+              heading: 'Error',
+              text: 'The error happend while adding the system parameters!',
+              icon: 'error',              
+              bgColor : '#red',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+          }
+        },
+        error: function(e){
+          
+          $.toast({
+            heading: 'Error',
+            text: 'The error happend while requesting the server',
+            icon: 'error',              
+            bgColor : '#red',  
+            showHideTransition : 'slide',
+            position : 'top-right'
+          })
+        }
+      })
+
+
+    })
+
+    // remove system paramter from the table
+    $('#system_paramter_table').on('click', '.bi-trash', function(){
+
+      if(confirm('Are you sure to remove this system parameter?')){
+        selectedPId = this.getAttribute('data-id')
+        $.ajax({
+          type: "GET",
+          url: 'removeSystemParameters',
+          data: {
+            selectedPId: selectedPId,
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            
+            if(result){
+              $.toast({
+                heading: 'Success',
+                text: 'The system parameter has been  removed successfully!',
+                icon: 'info',              
+                bgColor : '#2cc947',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+              
+              var system_parameters = data['system_parameters']
+              
+              var tableData = []
+              if(system_parameters.length){
+                  system_parameters.forEach(element => {
+                    tableData.push({
+                      'id': element.id,
+                      'label': element.label ,
+                      'value': element.value,
+                      'comment': element.comment,
+                      'last_modified': element.modified_at,
+                      'action': '<div class="inner-flex">\
+                        <span class="bi bi-trash  p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
+                        </div>'
+                    })
+
+                  })
+                  
+                  $('#system_paramter_table').DataTable({
+                    data:  tableData ,
+                    dom: 'Bfrtip',
+                    destroy: true,
+                    columns: [
+                      { data: 'id' },
+                      { data: 'label' },
+                      { data: 'value' },
+                      { data: 'comment' },
+                      { data: 'last_modified' },
+                      { data: 'action'}
+                    ],
+                    columnDefs:[
+                      {
+                        targets: [0], 
+                        visible: false 
+                      },
+                     
+                    ],
+                    "order": [[ 1, "asc" ]]
+                  })
+                }
+
+              $('#systemParamerterModal').modal('hide')
+
+            }
+            else{
+              $.toast({
+                heading: 'Error',
+                text: 'The error happend while removing the system parameters!',
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+            }
+          },
+          error: function(e){
+            
+            $.toast({
+              heading: 'Error',
+              text: 'The error happend while requesting the server',
+              icon: 'error',              
+              bgColor : '#red',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+          }
+        })
+      }
+    })
 
     if(document.getElementById('target_systems')){
       target_systems = JSON.parse(document.getElementById('target_systems').textContent)

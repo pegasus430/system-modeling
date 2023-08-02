@@ -1216,7 +1216,60 @@ def updateEquipmentTypeDetail(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
-       
+
+def addEquipmentType(request):
+     if request.method == 'GET':
+        addingEquipmentTypeLabel = request.GET['addingEquipmentTypeLabel']
+        addingEquipmentTypeDescription =  request.GET['addingEquipmentTypeDescription']
+        addingEquipmentTypeModifier = request.GET['addingEquipmentTypeModifier']        
+        addingEquipmentTypeManufacturer =  request.GET['addingEquipmentTypeManufacturer']
+        addingEquipmentTypeModel =  request.GET['addingEquipmentTypeModel']
+        addingEquipmentTypeComment =  request.GET['addingEquipmentTypeComment']
+        addingEquipmentTypeParentPath =  request.GET['addingEquipmentTypeParentPath']
+        addingEquipmentTypeApproved = request.GET['addingEquipmentTypeApproved'] 
+
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        equipment_type_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        try:
+            query  = 'SELECT max(id) FROM all_equipment_type'
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+                result = cursor.fetchone()
+                
+            maximun_id = result[0]
+            new_equipment_type_id = maximun_id + 1
+            if addingEquipmentTypeParentPath:
+                equipment_type_path = addingEquipmentTypeParentPath + '.' + str(new_equipment_type_id)
+            else:
+                equipment_type_path = str(new_equipment_type_id)
+            
+            
+            raw_query = "SELECT  fn_add_equipment_type({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, '{}')".format(
+                new_equipment_type_id, equipment_type_path, addingEquipmentTypeLabel,addingEquipmentTypeModel, addingEquipmentTypeModifier,
+                addingEquipmentTypeManufacturer,addingEquipmentTypeDescription , addingEquipmentTypeComment,addingEquipmentTypeApproved,  equipment_type_modified_at
+            ) 
+           
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            return_result = True
+        except Exception as e:
+            print(e)
+            return_result = False
+        all_equipment_types = list(EquipmentType.objects.order_by('path').values())
+        
+        data = json.dumps(
+            {
+                'result': return_result,
+                'all_equipment_types': all_equipment_types,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

@@ -2643,7 +2643,6 @@ $(document).ready(function() {
     })
   }
  
-  
   // update equipment
   if(select('.equipment_page #commit'))
   {
@@ -3384,6 +3383,203 @@ $(document).ready(function() {
           showHideTransition : 'slide',
           position : 'top-right'
         })
+       }
+       
+     })
+   }
+
+  // when clicking the add same equipment type btn for modal
+  if(select('#btn_equipment_type_add_same')){
+    on('click','#btn_equipment_type_add_same' , function(){
+      // make  all dropdown list empty
+      $("#adding_equipment_type_parent_path").find('option').remove()
+
+       var selectedEquipmentTypeId = $('#equipment_type_id').val()
+       if(selectedEquipmentTypeId){
+         
+          allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
+          
+          var selectedEquipmentType = allEquipmentTypes.filter(element => element.id == parseInt(selectedEquipmentTypeId))
+          
+          // display parent path
+          var p = new Option('none' , '', undefined, false);
+          $(p).html('none');
+          $("#adding_equipment_type_parent_path").append(p);
+
+
+          allEquipmentTypes.forEach( element => {
+
+            element_path = element.path.join('.')
+            var selected_element_path = selectedEquipmentType[0]['path']
+            selected_element_path = selected_element_path.join('.')
+           
+            if(selected_element_path.indexOf('.'))
+              selected_element_parent_path = selected_element_path.substr(0, selected_element_path.lastIndexOf('.'))
+            else
+              selected_element_parent_path = ''
+            
+            var selected = element_path === selected_element_parent_path ? true : false ;
+            var o = new Option(element.label, element.path, undefined, selected);
+            $(o).html(element.label);
+            $("#adding_equipment_type_parent_path").append(o);
+          })
+       }
+       else{
+          $.toast({
+            heading: 'Error',
+            text: 'You have to select the equipment type to be same!',
+            icon: 'error',              
+            bgColor : '#red',  
+            showHideTransition : 'slide',
+            position : 'top-right'
+          })
+       }
+    })
+  }
+
+  // when clicking the add child equipment type btn for modal
+  if(select('#btn_equipment_type_add_child')){
+    on('click','#btn_equipment_type_add_child' , function(){
+      // make  all dropdown list empty
+      $("#adding_equipment_type_parent_path").find('option').remove()
+
+       var selectedEquipmentTypeId = $('#equipment_type_id').val()
+       if(selectedEquipmentTypeId){
+         
+          allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
+          
+
+          var selectedEquipmentType = allEquipmentTypes.filter(element => element.id == parseInt(selectedEquipmentTypeId))
+          
+          // display parent path
+          var p = new Option('none' , '', undefined, false);
+          $(p).html('none');
+          $("#adding_equipment_type_parent_path").append(p);
+
+
+          allEquipmentTypes.forEach( element => {
+
+            element_path = element.path.join('.')
+            var selected_element_path = selectedEquipmentType[0]['path']
+            selected_element_path = selected_element_path.join('.')
+
+            var selected = element_path === selected_element_path ? true : false ;
+            var o = new Option(element.label, element.path, undefined, selected);
+            $(o).html(element.label);
+            $("#adding_equipment_type_parent_path").append(o);
+          })
+       }
+       else{
+          $.toast({
+            heading: 'Error',
+            text: 'You have to select the equipment type to be child!',
+            icon: 'error',              
+            bgColor : '#red',  
+            showHideTransition : 'slide',
+            position : 'top-right'
+          })
+       }
+    })
+  }
+
+   // add euqipment in the modal
+   if(select('#equipmentTypeModal .btn-primary'))
+   {
+     on('click', '#equipmentTypeModal .btn-primary', function(){
+       var addingEquipmentTypeLabel = $('#adding_equipment_type_label').val()
+       var addingEquipmentTypeDescription = $('#adding_equipment_type_description').val()
+    
+       if(addingEquipmentTypeLabel != "" && addingEquipmentTypeDescription != ""){
+         if(confirm('Are you sure to add this equpment type?')){
+             var addingEquipmentTypeModifier = $('#adding_equipment_type_modifier').val()
+             var addingEquipmentTypeManufacturer = $('#adding_equipment_type_manufacturer').val()
+             var addingEquipmentTypeModel = $('#adding_equipment_type_model').val()
+             var addingEquipmentTypeComment = $('#adding_equipment_type_comment').val()
+             var addingEquipmentTypeParentPath = $('#adding_equipment_type_parent_path').val()
+             addingEquipmentTypeParentPath =  addingEquipmentTypeParentPath.replaceAll(',', '.')
+             var addingEquipmentTypeApproved = $('#adding_equipment_type_approved').prop('checked')
+             
+ 
+             $.ajax({
+               type: "GET",
+               url: 'addEquipmentType',
+               data: {
+                addingEquipmentTypeLabel: addingEquipmentTypeLabel,  
+                addingEquipmentTypeDescription: addingEquipmentTypeDescription,
+                addingEquipmentTypeModifier: addingEquipmentTypeModifier,
+                addingEquipmentTypeManufacturer: addingEquipmentTypeManufacturer,
+                addingEquipmentTypeModel: addingEquipmentTypeModel,
+                addingEquipmentTypeComment: addingEquipmentTypeComment,
+                addingEquipmentTypeParentPath: addingEquipmentTypeParentPath,
+                addingEquipmentTypeApproved: addingEquipmentTypeApproved          
+               },
+               success: function (data){
+                 data = JSON.parse(data)
+                 var result = data['result']
+                 
+                 if(result){
+ 
+                   $.toast({
+                     heading: 'Success',
+                     text: 'The equipment type has been inserted successfully!',
+                     icon: 'info',              
+                     bgColor : '#2cc947',  
+                     showHideTransition : 'slide',
+                     position : 'top-right'
+                   })
+ 
+                   $('#adding_equipment_type_label').val('')
+                   $('#adding_equipment_type_description').val('')
+                   $('#adding_equipment_type_parent_path').find('option').remove()
+                   $('#adding_equipment_type_modifier').val('')
+                   $('#adding_equipment_type_manufacturer').val('')
+                   $('#adding_equipment_type_model').val('')
+                   $('#adding_equipment_type_comment').val('')
+                   $('#adding_equipment_type_approved').prop('checked', false)
+ 
+                   $("#equipmentTypeModal").modal('hide');
+ 
+                   var allEquipmentTypes = data['all_equipment_types']
+                   document.getElementById('all_equipment_types').textContent = JSON.stringify(allEquipmentTypes)
+                   const html = createEquipmentTypeTree(allEquipmentTypes)
+                   document.getElementById('all_equipment_types_tree').innerHTML = html
+                   $('.treeview-animated').mdbTreeview();
+
+                 }
+                 else{
+                   $.toast({
+                     heading: 'Error',
+                     text: 'The error has happend while adding the equipment type',
+                     icon: 'error',              
+                     bgColor : '#red',  
+                     showHideTransition : 'slide',
+                     position : 'top-right'
+                   })
+                 }
+               },
+               error: function(e){
+                  $.toast({
+                    heading: 'Error',
+                    text: 'The error has happend while requesting the server',
+                    icon: 'error',              
+                    bgColor : '#red',  
+                    showHideTransition : 'slide',
+                    position : 'top-right'
+                  })
+               }
+             })
+         }
+         
+       }else{
+         $.toast({
+           heading: 'Error',
+           text: 'Label and description can not be empty string',
+           icon: 'error',              
+           bgColor : '#red',  
+           showHideTransition : 'slide',
+           position : 'top-right'
+         })
+         
        }
        
      })

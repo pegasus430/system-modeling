@@ -1169,6 +1169,54 @@ def removeSystemParameters(request):
         )
         return HttpResponse(data) 
 
+def updateEquipmentTypeDetail(request):
+     if request.method == 'GET':
+        p_equipment_type_id = request.GET['equipment_type_id']
+        p_equipment_type_label = request.GET['equipment_type_label']
+        p_equipment_type_parent_path = request.GET['equipment_type_parent_path']
+
+        if p_equipment_type_parent_path:
+                p_equipment_type_parent_path = p_equipment_type_parent_path.replace(',', '.') + '.' + p_equipment_type_id
+        else:
+            p_equipment_type_parent_path =  p_equipment_type_id
+        
+        p_equipment_type_description =  request.GET['equipment_type_description']
+        p_equipment_type_modifier =  request.GET['equipment_type_modifier']
+        equipment_type_manufacturer =  request.GET['equipment_type_manufacturer']
+        equipment_type_model =  request.GET['equipment_type_model']
+        equipment_type_comment = request.GET['equipment_type_comment'] 
+        equipment_type_is_approved = request.GET['equipment_type_is_approved'] 
+
+        current_time = datetime.datetime.now(pytz.utc)
+        
+        # Convert the current time to a timestamp with time zone
+        equipment_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        
+        
+        raw_query = "SELECT  fn_update_equipment_type({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', {} , '{}')".format(
+            p_equipment_type_id, p_equipment_type_label, p_equipment_type_parent_path, p_equipment_type_description, p_equipment_type_modifier,
+             equipment_type_manufacturer , equipment_type_model , equipment_type_comment, equipment_type_is_approved, equipment_modified_at
+        ) 
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_equipment_types = list(EquipmentType.objects.order_by('path').values())
+        
+        data = json.dumps(
+            {
+                'result': result,
+                'all_equipment_types': all_equipment_types,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+       
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

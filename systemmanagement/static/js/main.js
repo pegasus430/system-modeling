@@ -2290,6 +2290,53 @@ $(document).ready(function() {
     return root.map(getNodeHtml).join('')
   }
 
+  function createEquipmentTypeTree(data) {
+    const nodeWithParent = []
+    
+    //make the path as string from list
+    data.forEach(element => {
+      if(element.path){
+          path = element.path.join('.')
+          element.path = path        
+      }else{
+          element.path = ''
+      }
+      
+    })
+
+    //Find the parent for each element
+    data.forEach(element => {
+      const parent = element.path.includes('.')? element.path.substr(0, element.path.lastIndexOf('.')):null
+      nodeWithParent.push({...element, parent})
+    });
+
+    //Recursive function to create HTML out of node
+    function getNodeHtml(n) {
+      let html = ''
+      const children = nodeWithParent.filter(d => d.parent === n.path)
+                
+      if(children.length > 0) {
+        html += '<li class="treeview-animated-items treeview-li"> \
+                    <a class="closed"> \
+                      <i class="fas fa-angle-right"></i> \
+                      <span class="ml-1 treeview-title" data-typeid="'+ n.id +'" data-typepath="'+ n.path +'">'+ n.label + '  (' + n.description + ')</span> \
+                    </a> \
+                    <ul class="nested">' 
+          + children.map( getNodeHtml).join('')
+          + '</ul></li>'
+      }
+      else{
+        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-typeid="'+n.id+'" data-typepath="'+ n.path + '"> \
+        '+n.label + '  (' + n.description +')</li>'
+      }
+      return html
+    }
+
+    // Get all root nodes (without parent)
+    const root = nodeWithParent.filter(d => d.parent === null)
+
+    return root.map(getNodeHtml).join('')
+  }
 
   // remove equipment
   if(select('#btn_equipment_delete')){
@@ -3241,6 +3288,106 @@ $(document).ready(function() {
     })
   }
 
+  // update equipment type
+  if(select('#equipmentTypeUpdateCommitBtn'))
+   {
+     on('click', '#equipmentTypeUpdateCommitBtn', function(){
+      var equipment_type_id = $('#equipment_type_id').val()  
+       if(equipment_type_id){
+        if(confirm('Are you sure to update this equipment type?')){
+          
+          var equipment_type_label = $('#equipment_type_label').val()
+          var equipment_type_parent_path = $('#equipment_type_parent_path').val()
+          var equipment_type_description = $('#equipment_type_description').val()
+          var equipment_type_modifier = $('#equipment_type_modifier').val()
+          var equipment_type_manufacturer = $('#equipment_type_manufacturer').val()
+          var equipment_type_model = $('#equipment_type_model').val()
+          var equipment_type_comment = $('#equipment_type_comment').val()                
+          var equipment_type_is_approved = $('#equipment_type_is_approved').prop('checked')
+          
+          $.ajax({
+           type: "GET",
+           url: 'updateEquipmentTypeDetail',
+           data: {
+              equipment_type_id: equipment_type_id,
+              equipment_type_label: equipment_type_label,  
+              equipment_type_parent_path: equipment_type_parent_path,
+              equipment_type_description: equipment_type_description,
+              equipment_type_modifier: equipment_type_modifier,
+              equipment_type_manufacturer: equipment_type_manufacturer,
+              equipment_type_model: equipment_type_model,
+              equipment_type_comment: equipment_type_comment,
+              equipment_type_is_approved: equipment_type_is_approved,       
+           },
+           success: function (data)
+           {
+             data = JSON.parse(data)
+             var result = data['result']
+             var allEquipmentTypes = data['all_equipment_types']
+             if(result){
+               $.toast({
+                 heading: 'Success',
+                 text: 'The equipment type has been updated successfully!',
+                 icon: 'info',              
+                 bgColor : '#2cc947',  
+                 showHideTransition : 'slide',
+                 position : 'top-right'
+               })
+ 
+               const html = createEquipmentTypeTree(allEquipmentTypes)
+               document.getElementById('all_equipment_types_tree').innerHTML = html
+               $('.treeview-animated').mdbTreeview();
+ 
+               $("#equipment_type_parent_path").find('option').remove()
+               $('#equipment_type_id').val('')
+               $('#equipment_type_label').val('')
+               $('#equipment_type_description').val('')
+               $('#equipment_type_modifier').val('')
+               $('#equipment_type_manufacturer').val('')
+               $('#equipment_type_model').val('')
+               $('#equipment_type_comment').val('')
+               $('#equipment_type_last_modified').val('')               
+               $('#equipment_type_is_approved').prop('checked' , false)
+               
+             }
+             else{
+              $.toast({
+                heading: 'Error',
+                text: 'The error happend while updating the equipment type!',
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+            }
+           },
+           error:function(e){
+            $.toast({
+              heading: 'Error',
+              text: 'The error happened while requesting the server',
+              icon: 'error',              
+              bgColor : '#red',  
+              showHideTransition : 'slide',
+              position : 'top-right'
+            })
+           }
+          })
+ 
+       }
+       }
+       else{
+        $.toast({
+          heading: 'Error',
+          text: 'You have to select the equipment type to be updated!',
+          icon: 'error',              
+          bgColor : '#red',  
+          showHideTransition : 'slide',
+          position : 'top-right'
+        })
+       }
+       
+     })
+   }
  
 } )
 ();

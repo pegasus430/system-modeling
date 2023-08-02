@@ -3584,6 +3584,87 @@ $(document).ready(function() {
        
      })
    }
+
+   //remove equipment type
+  if(select('#btn_equipment_type_delete')){
+    on('click','#btn_equipment_type_delete' , function(){
+      var selectedEquipmentTypeId = $('#equipment_type_id').val()
+      if(selectedEquipmentTypeId){
+        
+        if(confirm('Are you sure to remove this equipment type?')){
+          $.ajax({
+            type: "GET",
+            url: 'removeEquipmentType',
+            data: {
+              selectedEquipmentTypeId: selectedEquipmentTypeId    
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']
+              var allEquipmentTypes = data['all_equipment_types']
+              if(result){
+
+                $.toast({
+                  heading: 'Success',
+                  text: 'The equipment type has been removed successfully!',
+                  icon: 'info',              
+                  bgColor : '#2cc947',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+
+              const html = createEquipmentTypeTree(allEquipmentTypes)
+               document.getElementById('all_equipment_types_tree').innerHTML = html
+               $('.treeview-animated').mdbTreeview();
+ 
+               $("#equipment_type_parent_path").find('option').remove()
+               $('#equipment_type_id').val('')
+               $('#equipment_type_label').val('')
+               $('#equipment_type_description').val('')
+               $('#equipment_type_modifier').val('')
+               $('#equipment_type_manufacturer').val('')
+               $('#equipment_type_model').val('')
+               $('#equipment_type_comment').val('')
+               $('#equipment_type_last_modified').val('')               
+               $('#equipment_type_is_approved').prop('checked' , false)
+
+  
+              }
+              else{
+                $.toast({
+                  heading: 'Error',
+                  text: 'The error happend while removing the euqipment type!',
+                  icon: 'error',              
+                  bgColor : '#red',  
+                  showHideTransition : 'slide',
+                  position : 'top-right'
+                })
+              }
+            },
+            error: function(e){
+              $.toast({
+                heading: 'Error',
+                text: 'The error happend while requesting the server!',
+                icon: 'error',              
+                bgColor : '#red',  
+                showHideTransition : 'slide',
+                position : 'top-right'
+              })
+            }
+           })
+        }
+      }else{
+        $.toast({
+          heading: 'Error',
+          text: 'You need to select the equipment type to be removed!',
+          icon: 'error',              
+          bgColor : '#red',  
+          showHideTransition : 'slide',
+          position : 'top-right'
+        })
+      }
+    })
+  }
  
 } )
 ();

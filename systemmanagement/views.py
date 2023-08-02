@@ -1270,6 +1270,34 @@ def addEquipmentType(request):
         )
         return HttpResponse(data)
 
+def removeEquipmentType(request):
+    if request.method == 'GET':
+        selectedEquipmentTypeId = request.GET['selectedEquipmentTypeId']
+        
+        raw_query = "SELECT fn_remove_equipment_type({})".format(
+            selectedEquipmentTypeId
+        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+            
+                        
+        except Exception as e:
+            print(e)
+            result = False
+    
+        all_equipment_types = list(EquipmentType.objects.order_by('path').values())
+
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_equipment_types' : all_equipment_types,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

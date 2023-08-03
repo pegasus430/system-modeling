@@ -1318,8 +1318,21 @@ $(document).ready(function() {
             ],
             columnDefs:[
               { "visible": false, "targets": [0, 1] },
-              
             ]})
+          
+          tableData = []
+          $('#equipment_type_interface_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'identifier'},
+              { data: 'description' },
+              { data: 'class_label' },
+              { data: 'comment' },
+              { data: 'active' },
+              
+            ],
+          })
 
        
       }
@@ -1328,10 +1341,11 @@ $(document).ready(function() {
   }); 
 
   $('#equipment_type_resource_table').on('click', 'tbody tr', function(e){
-    
+    sTable = $('#equipment_type_resource_table').DataTable()
     var row = sTable.row(this).data()
     var selectedTypeId = row.type_id
     var selectedResourceId = row.resource_id
+    $('#selectedResourceId').val(selectedResourceId)
     $.ajax({
       type: "GET",
       url: 'getEquipmentTypesInterface',

@@ -1346,3 +1346,11 @@ table.dataTable tbody th, table.dataTable tbody td {
   padding-top: 0.3rem !important;
   padding-bottom: 0.3rem !important;
 }
+
+table#equipment_type_resource_table tbody{
+  cursor: pointer;
+}
+
+table#equipment_type_resource_table tr:hover{
+  background-color: #eee;
+}

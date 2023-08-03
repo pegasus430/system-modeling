@@ -1315,7 +1315,7 @@ def addEquipmentTypeResource(request):
             with connection.cursor() as cursor:
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
-            result = True        
+            result = True
         except Exception as e:
             print(e)
             result = False
@@ -1339,6 +1339,53 @@ def addEquipmentTypeResource(request):
         )
         return HttpResponse(data) 
 
+def removeEquipmentTypeResource(request):
+    if request.method == 'GET':
+        typeId = request.GET['typeId']
+        selectedResourceId = request.GET['selectedResourceId']
+        message = ''
+        raw_query = "SELECT count(*) FROM type_resource WHERE type_id = {} and resource_id = {}".format(
+            typeId, selectedResourceId
+        )
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+                counter = results[0]
+                if counter > 0:
+                    raw_query = 'SELECT fn_remove_type_resource({}, {})'.format(typeId, selectedResourceId)
+                    
+                    cursor.execute(raw_query)
+                    results = cursor.fetchone()
+                    result = True        
+                else:
+                    result = False
+                    message = 'This resource is from the Ancestor type. You can not remove this resource.'
+        except Exception as e:
+            print(e)
+            result = False
+        print(raw_query)
+        print(message)
+        
+        raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
+            left join all_resource B on A.resource_id = B.id \
+            where type_id = " + typeId + " order by B.modifier"
+        
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+            associatedResource = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
+    
+        data = json.dumps(
+            {
+                'result': result,  
+                'associatedResource': associatedResource,
+                'message': message,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

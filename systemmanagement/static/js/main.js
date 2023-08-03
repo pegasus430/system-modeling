@@ -3241,6 +3241,77 @@ $(document).ready(function() {
     })
   }
 
+  // remove type resource from the asociated Resource
+  if(select('#btn_delete_equipment_type_resource')){
+    on('click', '#btn_delete_equipment_type_resource', function(){
+      var typeId = $('#equipment_type_id').val()
+      var selectedResourceId = $('#selectedResourceId').val()
+      
+      if(typeId && selectedResourceId){
+        if(confirm('Are you sure to remove the resource from the type resource?')){
+          $.ajax({
+            type: "GET",
+            url: 'removeEquipmentTypeResource',
+            data: {
+              typeId: typeId,  
+              selectedResourceId: selectedResourceId,            
+            },
+            success: function (data){
+              $('#selectedResourceId').val('')
+              data = JSON.parse(data)
+              var result = data['result']
+              var associatedResource = data['associatedResource']
+              
+              if(result){
+                showSuccessNotification('The Resource has been removed successfully!')                  
+                tableData = []
+                if(associatedResource.length){
+                  
+                  associatedResource.forEach(resource => {
+                    tableData.push({
+                      'type_id': resource.type_id,
+                      'resource_id': resource.resource_id,              
+                      'modifier': resource.modifier,
+                      'description': resource.description,
+                      'comment': resource.comment,
+                    })
+                  })
+                }
+                $('#equipment_type_resource_table').DataTable({
+                  data:  tableData ,
+                  destroy: true,
+                  columns: [
+                    { data: 'type_id'},
+                    { data: 'resource_id' },
+                    { data: 'modifier' },
+                    { data: 'description' },
+                    { data: 'comment' },
+                    
+                  ],
+                  columnDefs:[
+                    { "visible": false, "targets": [0, 1] },
+                  ]
+                })
+              }
+              else{
+                var message = data['message']
+                if(message){
+                  showErrorNotification(message)
+                }else{
+                  showErrorNotification('The error has happend while removing the type resource')
+                }
+              }
+            },
+            error: function(e){
+               showErrorNotification('The error has happend while requesting the server')
+            }
+           })
+        }
+      }else{
+        showErrorNotification('You should select the Resource to be removed!')
+      }
+    })
+  }
 } )
 ();
 

@@ -307,11 +307,13 @@ def definitions_equipment_types(request):
     page = 'definitions'
     sidebar_title = 'equipment_types'
     all_equipment_types = list(EquipmentType.objects.order_by('path').values())
+    all_resources = list(Resource.objects.order_by('group_label').values())
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title,
         'all_equipment_types': all_equipment_types,
+        'all_resources': all_resources,
     }
     
     return render(request, 'definitions_equipment_types.html', context=context)
@@ -465,12 +467,12 @@ def getEquipmentTypesAttributes(request):
             results = cursor.fetchall()
         associatedResource = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
     
-    data = json.dumps(
+        data = json.dumps(
             {
                 'associatedResource': associatedResource,
             } 
         )
-    return HttpResponse(data)
+        return HttpResponse(data)
 
 def getEquipmentTypesInterface(request):
     if request.method == 'GET':
@@ -1282,8 +1284,7 @@ def removeEquipmentType(request):
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
             result = True
-            
-                        
+                           
         except Exception as e:
             print(e)
             result = False
@@ -1298,6 +1299,46 @@ def removeEquipmentType(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+
+def addEquipmentTypeResource(request):
+    if request.method == 'GET':
+        addingEquipmentTypeId = request.GET['addingEquipmentTypeId']
+        addingResourceId = request.GET['addingResourceId']
+        addingEquipmentTypeReourceComment = request.GET['addingEquipmentTypeReourceComment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_add_type_resource({}, {}, '{}', '{}')".format(
+            addingEquipmentTypeId,addingResourceId , addingEquipmentTypeReourceComment, modified_at
+        )
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True        
+        except Exception as e:
+            print(e)
+            result = False
+    
+        
+        raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
+            left join all_resource B on A.resource_id = B.id \
+            where type_id = " + addingEquipmentTypeId + " order by B.modifier"
+        
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+            associatedResource = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
+    
+        data = json.dumps(
+            {
+                'result': result,  
+                'associatedResource': associatedResource,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

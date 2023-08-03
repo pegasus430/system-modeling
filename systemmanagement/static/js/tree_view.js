@@ -2,6 +2,29 @@ $(document).ready(function() {
     // Treeview Initialization
     
   let gChildEquipments
+  let sTable
+
+  function showErrorNotification(text){
+    $.toast({
+      heading: 'Error',
+      text: text,
+      icon: 'error',              
+      bgColor : '#red',  
+      showHideTransition : 'slide',
+      position : 'top-right'
+    })
+  }
+  
+  function showSuccessNotification(text){
+    $.toast({
+      heading: 'Success',
+      text: text,
+      icon: 'info',              
+      bgColor : '#2cc947',  
+      showHideTransition : 'slide',
+      position : 'top-right'
+    })
+  }
 
   var stateFunction = function(data) {
     if(data == true)
@@ -630,40 +653,19 @@ $(document).ready(function() {
               p_due_date = cell.due_date
               if(p_due_date == null) p_due_date = ""
               if(!isValidDateFormat(p_due_date)){
-                $.toast({
-                  heading: 'Error',
-                  text: 'Due Date format error! You should input the date as YYYY-MM-DD.',
-                  icon: 'error',              
-                  bgColor : '#red',  
-                  showHideTransition : 'slide',
-                  position : 'top-right'
-                })
+                showErrorNotification('Due Date format error! You should input the date as YYYY-MM-DD.')
                 return
               }
               p_leadtime = cell.leadtime
               if(p_leadtime == '' || p_leadtime ==  null) p_leadtime = 0
               if(!validateNumber(p_leadtime)){
-                $.toast({
-                  heading: 'Error',
-                  text: 'Leadtime(Days) format error! You should input the date as the number',
-                  icon: 'error',              
-                  bgColor : '#red',  
-                  showHideTransition : 'slide',
-                  position : 'top-right'
-                })
+                showErrorNotification('Leadtime(Days) format error! You should input the date as the number')
                 return
               }
               p_po_date = cell.po_date
               if(p_po_date == null) p_po_date = ""
               if(!isValidDateFormat(p_po_date)){
-                $.toast({
-                  heading: 'Error',
-                  text: 'Po Date format error! You should input the date as YYYY-MM-DD.',
-                  icon: 'error',              
-                  bgColor : '#red',  
-                  showHideTransition : 'slide',
-                  position : 'top-right'
-                })
+                showErrorNotification('Po Date format error! You should input the date as YYYY-MM-DD.')
                 return
               }
               p_po_reference = cell.po_reference
@@ -692,24 +694,10 @@ $(document).ready(function() {
                   var result = data['result']
                   
                   if(result){
-                    $.toast({
-                      heading: 'Success',
-                      text: 'The purchased equipment has been  removed successfully!',
-                      icon: 'info',              
-                      bgColor : '#2cc947',  
-                      showHideTransition : 'slide',
-                      position : 'top-right'
-                    })
+                    showSuccessNotification('The purchased equipment has been  removed successfully!')
                   }
                   else{
-                    $.toast({
-                      heading: 'Error',
-                      text: 'The error happend while updating the purchased equipment!',
-                      icon: 'error',              
-                      bgColor : '#red',  
-                      showHideTransition : 'slide',
-                      position : 'top-right'
-                    })
+                    showErrorNotification('The error happend while updating the purchased equipment!')
                   }
                 }
               })
@@ -812,40 +800,19 @@ $(document).ready(function() {
               p_due_date = cell.due_date
               if(p_due_date == null) p_due_date = ""
               if(!isValidDateFormat(p_due_date)){
-                $.toast({
-                  heading: 'Error',
-                  text: 'Due Date format error! You should input the date as YYYY-MM-DD.',
-                  icon: 'error',              
-                  bgColor : '#red',  
-                  showHideTransition : 'slide',
-                  position : 'top-right'
-                })
+                showErrorNotification('Due Date format error! You should input the date as YYYY-MM-DD.')
                 return
               }
               p_leadtime = cell.leadtime
               if(p_leadtime == '' || p_leadtime ==  null) p_leadtime = 0
               if(!validateNumber(p_leadtime)){
-                $.toast({
-                  heading: 'Error',
-                  text: 'Leadtime(Days) format error! You should input the date as the number',
-                  icon: 'error',              
-                  bgColor : '#red',  
-                  showHideTransition : 'slide',
-                  position : 'top-right'
-                })
+                showErrorNotification('Leadtime(Days) format error! You should input the date as the number')
                 return
               }
               p_po_date = cell.po_date
               if(p_po_date == null) p_po_date = ""
               if(!isValidDateFormat(p_po_date)){
-                $.toast({
-                  heading: 'Error',
-                  text: 'Po Date format error! You should input the date as YYYY-MM-DD.',
-                  icon: 'error',              
-                  bgColor : '#red',  
-                  showHideTransition : 'slide',
-                  position : 'top-right'
-                })
+                showErrorNotification('Po Date format error! You should input the date as YYYY-MM-DD.')
                 return
               }
               p_po_reference = cell.po_reference
@@ -873,24 +840,11 @@ $(document).ready(function() {
                   var result = data['result']
                   
                   if(result){
-                    $.toast({
-                      heading: 'Success',
-                      text: 'The purchased connection has been  removed successfully!',
-                      icon: 'info',              
-                      bgColor : '#2cc947',  
-                      showHideTransition : 'slide',
-                      position : 'top-right'
-                    })
+                    showSuccessNotification('The purchased connection has been  removed successfully!')
+                    
                   }
                   else{
-                    $.toast({
-                      heading: 'Error',
-                      text: 'The error happend while updating the purchased connection!',
-                      icon: 'error',              
-                      bgColor : '#red',  
-                      showHideTransition : 'slide',
-                      position : 'top-right'
-                    })
+                    showErrorNotification('The error happend while updating the purchased connection!')
                   }
                 }
               })
@@ -993,14 +947,7 @@ $(document).ready(function() {
                 p_due_date = cell.due_date
                 if(p_due_date == null) p_due_date = ""
                 if(!isValidDateFormat(p_due_date)){
-                  $.toast({
-                    heading: 'Error',
-                    text: 'Due Date format error! You should input the date as YYYY-MM-DD.',
-                    icon: 'error',              
-                    bgColor : '#red',  
-                    showHideTransition : 'slide',
-                    position : 'top-right'
-                  })
+                  showErrorNotification('Due Date format error! You should input the date as YYYY-MM-DD.')
                   return
                 }
                 p_leadtime = selectedObj.lead_time_days
@@ -1017,14 +964,7 @@ $(document).ready(function() {
                 p_received_date = cell.received_date
                 if(p_received_date == null) p_received_date = ""
                 if(!isValidDateFormat(p_received_date)){
-                  $.toast({
-                    heading: 'Error',
-                    text: 'Received Date format error! You should input the date as YYYY-MM-DD.',
-                    icon: 'error',              
-                    bgColor : '#red',  
-                    showHideTransition : 'slide',
-                    position : 'top-right'
-                  })
+                  showErrorNotification('Received Date format error! You should input the date as YYYY-MM-DD.')
                   return
                 }
                 p_unique_code = cell.serial_number
@@ -1049,24 +989,10 @@ $(document).ready(function() {
                     var result = data['result']
                     
                     if(result){
-                      $.toast({
-                        heading: 'Success',
-                        text: 'The purchased equipment has been  removed successfully!',
-                        icon: 'info',              
-                        bgColor : '#2cc947',  
-                        showHideTransition : 'slide',
-                        position : 'top-right'
-                      })
+                      showSuccessNotification('The purchased equipment has been  removed successfully!')
                     }
                     else{
-                      $.toast({
-                        heading: 'Error',
-                        text: 'The error happend while updating the purchased equipment!',
-                        icon: 'error',              
-                        bgColor : '#red',  
-                        showHideTransition : 'slide',
-                        position : 'top-right'
-                      })
+                      showErrorNotification('The error happend while updating the purchased equipment!')
                     }
                   }
                 })
@@ -1108,34 +1034,7 @@ $(document).ready(function() {
              'location': element.location
             })
          })
-         var connectionEditor = new DataTable.Editor({ 
-           idSrc:  'connection_commercial_id',
-           fields: [
-             {
-               label: 'connection_commercial_id',
-               name: 'connection_commercial_id'
-             },
-             {
-               label: 'Due Date',
-               name: 'due_date'
-             },
-             {
-               label: 'Received Date',
-               name: 'received_date'
-             },
-             {
-               label: 'Serial Number',
-               name: 'serial_number'
-             },
-             {
-               label: 'Location',
-               name: 'location'
-             },
-           
-             
-           ],
-           table: '#delivery_connection_type_table'
-         })
+         
          $('#delivery_connection_type_table').DataTable({
            data:  tableData ,
            destroy: true,
@@ -1156,97 +1055,6 @@ $(document).ready(function() {
            ]
          }
          )
-        //  $('#delivery_connection_type_table').on('click', 'td:nth-child(n+5):nth-child(-n+8)',function (){
-        //    connectionEditor.inline(this)
-        //  })
-        //  connectionEditor.on('edit', function(e, datatable, cell) {
-        //    p_id = cell.connection_commercial_id
-        //    selectedObj = child_purchasing_connection_type.find( element => element.connection_commercial_id === p_id) 
-        
-        //    p_due_date = cell.due_date
-        //    if(p_due_date == null) p_due_date = ""
-        //    if(!isValidDateFormat(p_due_date)){
-        //      $.toast({
-        //        heading: 'Error',
-        //        text: 'Due Date format error! You should input the date as YYYY-MM-DD.',
-        //        icon: 'error',              
-        //        bgColor : '#red',  
-        //        showHideTransition : 'slide',
-        //        position : 'top-right'
-        //      })
-        //      return
-        //    }
-        //    p_leadtime = selectedObj.lead_time_days
-           
-        //    if(p_leadtime == '' || p_leadtime ==  null) p_leadtime = 0
-           
-        //    p_po_date = selectedObj.purchase_order_date
-        //    if(p_po_date == null) p_po_date = ""
-          
-        //    p_po_reference = selectedObj.purchase_order_reference
-        //    p_quote_reference = selectedObj.quote_reference
-           
-        //    p_location = cell.location
-        //    if(p_location == null) p_location = ""
-           
-        //    p_received_date = cell.received_date
-        //    if(p_received_date == null) p_received_date = ""
-        //    if(!isValidDateFormat(p_received_date)){
-        //      $.toast({
-        //        heading: 'Error',
-        //        text: 'Received Date format error! You should input the date as YYYY-MM-DD.',
-        //        icon: 'error',              
-        //        bgColor : '#red',  
-        //        showHideTransition : 'slide',
-        //        position : 'top-right'
-        //      })
-        //      return
-        //    }
-        //    p_unique_code = cell.serial_number
-        //    if(p_unique_code == null) p_unique_code = ""
-
-        //    $.ajax({
-        //      type: "GET",
-        //      url: 'updateConnectionTypePurchaseDetail',
-        //      data: {
-        //        p_id: p_id,
-        //        p_due_date: p_due_date,
-        //        p_leadtime: p_leadtime,
-        //        p_po_date: p_po_date,
-        //        p_po_reference: p_po_reference,
-        //        p_quote_reference: p_quote_reference,
-        //        p_location: p_location,
-        //        p_received_date: p_received_date,
-        //        p_unique_code: p_unique_code
-        //      },
-        //      success: function (data){
-        //        data = JSON.parse(data)
-        //        var result = data['result']
-               
-        //        if(result){
-        //          $.toast({
-        //            heading: 'Success',
-        //            text: 'The purchased connection has been  removed successfully!',
-        //            icon: 'info',              
-        //            bgColor : '#2cc947',  
-        //            showHideTransition : 'slide',
-        //            position : 'top-right'
-        //          })
-        //        }
-        //        else{
-        //          $.toast({
-        //            heading: 'Error',
-        //            text: 'The error happend while updating the purchased connection!',
-        //            icon: 'error',              
-        //            bgColor : '#red',  
-        //            showHideTransition : 'slide',
-        //            position : 'top-right'
-        //          })
-        //        }
-        //      }
-        //    })
-
-        //  });
         }
       }
     })
@@ -1482,48 +1290,48 @@ $(document).ready(function() {
       },
       success: function (data){
         jsonData = JSON.parse(data)
-      
         associatedResource = jsonData['associatedResource']
-       
-        var html = ''
+        tableData = []
         if(associatedResource.length){
-          associatedResource.forEach(resource => {
-            html += '<tr> \
-              <td style="display: none">'+ resource.type_id + '</td> \
-              <td style="display: none">'+ resource.resource_id + '</td>  \
-              <td>'+ resource.modifier +'</td> \
-              <td>'+ resource.description +'</td> \
-              <td>'+ resource.comment +'</td> \
-            </tr>'
-          })
           
-        }else{
-            html += '<tr> \
-            <td style="display:none"></td> \
-            <td style="display:none"></td> \
-            <td></td> \
-            <td> No Data</td> \
-            <td></td> \
-            </tr>'
+          associatedResource.forEach(resource => {
+            tableData.push({
+              'type_id': resource.type_id,
+              'resource_id': resource.resource_id,              
+              'modifier': resource.modifier,
+              'description': resource.description,
+              'comment': resource.comment,
+             })
+          })
         }
-        $('#equipment_type_resouce_attribute').html(html)
-        html = '<tr> \
-            <td></td> \
-            <td></td> \
-            <td></td> \
-            <td></td> \
-            <td></td> \
-          </tr>'
         
-      $('#equipment_type_interface_attribute').html(html)
-          }
+          sTable = $('#equipment_type_resource_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'type_id'},
+              { data: 'resource_id' },
+              { data: 'modifier' },
+              { data: 'description' },
+              { data: 'comment' },
+              
+            ],
+            columnDefs:[
+              { "visible": false, "targets": [0, 1] },
+              
+            ]})
+
+       
+      }
     })
     
   }); 
 
-  $('#equipment_type_resource_table').on('click', 'tbody tr', function(){
-    var selectedTypeId = $(this).find('td').eq(0).text()
-    var selectedResourceId = $(this).find('td').eq(1).text()
+  $('#equipment_type_resource_table').on('click', 'tbody tr', function(e){
+    
+    var row = sTable.row(this).data()
+    var selectedTypeId = row.type_id
+    var selectedResourceId = row.resource_id
     $.ajax({
       type: "GET",
       url: 'getEquipmentTypesInterface',
@@ -1534,28 +1342,37 @@ $(document).ready(function() {
       success: function (data){
         jsonData = JSON.parse(data)
         typeInterfaceList = jsonData['typeInterfaceList']
-        var html = ''
+        
+        tableData = []
         if(typeInterfaceList.length){
           typeInterfaceList.forEach(interface => {
-            html += '<tr> \
-              <td >'+ interface.interface_identifier + '</td> \
-              <td >'+ interface.interface_description + '</td>  \
-              <td>'+ interface.interface_class_label +'</td> \
-              <td>'+ interface.type_interface_comment +'</td> \
-              <td>'+ interface.type_interface_is_active+'</td> \
-            </tr>'
+            tableData.push({
+              'identifier': interface.interface_identifier,
+              'description': interface.interface_description,              
+              'class_label': interface.interface_class_label,
+              'comment': interface.type_interface_comment,
+              'active': interface.type_interface_is_active,
+             })
           })
-          
-        }else{
-            html += '<tr> \
-              <td></td> \
-              <td></td> \
-              <td></td> \
-              <td></td> \
-              <td></td> \
-            </tr>'
         }
-        $('#equipment_type_interface_attribute').html(html)
+
+        $('#equipment_type_interface_table').DataTable({
+          data:  tableData ,
+          destroy: true,
+          columns: [
+            { data: 'identifier'},
+            { data: 'description' },
+            { data: 'class_label' },
+            { data: 'comment' },
+            { data: 'active' },
+            
+          ],
+          // columnDefs:[
+          //   { "visible": false, "targets": [0, 1] },
+            
+          // ]
+        })
+        
       }
     })
 

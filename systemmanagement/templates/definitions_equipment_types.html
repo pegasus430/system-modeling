@@ -3,6 +3,7 @@
 
 {% block maincontent %}
 {{all_equipment_types | json_script:'all_equipment_types'}}
+{{all_resources | json_script:'all_resources'}}
 
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
@@ -113,7 +114,7 @@
                         <div class="row">
                             <!-- Equipment Details table -->
                             <h5 class="card-title">Associated Resources</h5>
-                            <table class="table table-bordered text-center" id="equipment_type_resource_table">
+                            <table class="table table-bordered custom_datatable1" id="equipment_type_resource_table">
                                 <thead style="background-color: #000; color: white; border: solid 1px;">
                                     <tr>
                                         <th style="display: none;">type_id</th>
@@ -123,22 +124,29 @@
                                         <th scope="col" >comment</th>
                                     </tr>
                                 </thead>
-                                <tbody id="equipment_type_resouce_attribute">
-                                    <tr style="border: solid 1px">
-                                        <td style="display: none;"></td>
-                                        <td style="display: none;"></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
+                                <tbody>
+                                    
                                 </tbody>
                             </table><!-- End Equipment Details table -->
+
+                            <div class="row mt-1 p-2 pl-4">
+                              <div class="col-md-4">
+                                <button type="button" class="btn btn-success" id="btn_add_equipment_type_resource" data-bs-toggle="modal" data-bs-target="#equipmentTypeResourceModal">
+                                    Add Resource
+                                </button>
+                              </div>
+                              <div class="col-md-4">
+                              <button type="button" id="btn_delete_equipment_type_resource" class="btn btn-danger">
+                                  Delete Resource
+                              </button>
+                              </div>
+                            </div>
 
                         </div>
                         <div class="row">
                             <!-- Equipment Details table -->
                             <h5 class="card-title">Associated Interfaces</h5>
-                            <table class="table table-bordered text-center">
+                            <table class="table table-bordered custom_datatable1" id="equipment_type_interface_table">
                                 <thead style="background-color: #000; color: white; border: solid 1px;">
                                     <tr>
                                     <th scope="col" width="30%">Identifer</th>
@@ -148,14 +156,8 @@
                                     <th scope="col" >Active</th>
                                     </tr>
                                 </thead>
-                                <tbody id="equipment_type_interface_attribute">
-                                    <tr style="border: solid 1px">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
+                                <tbody>
+                                    
                                 </tbody>
                             </table><!-- End Equipment Details table -->
 
@@ -242,6 +244,47 @@
           </div>
         </div>
       </div>
+
+    <div class="modal fade" id="equipmentTypeResourceModal" tabindex="-1" aria-labelledby="equipmentTypeResourceModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="equipmentTypeResourceModalLabel">Add Equipment Type Resource</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Equipment Type:</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" placeholder="Equipment Type Label" value="" id="selectedEquipmentTypeLabel" readonly>
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Resources:</label>
+                <div class="col-md-7">
+                  <select class="form-select" id="addingEquipmentTypeResource">
+                    
+                  </select>
+                </div>
+              </div>
+              
+              
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Comment:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="comment" style="height: 60px;" id="addingEquipmentTypeResourceComment"></textarea>
+                </div>
+              </div>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary"  >Save</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
     <script type="text/javascript">
         
         allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)

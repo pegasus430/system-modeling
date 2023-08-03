@@ -1351,6 +1351,14 @@ table#equipment_type_resource_table tbody{
   cursor: pointer;
 }
 
-table#equipment_type_resource_table tr:hover{
+table#equipment_type_resource_table tbody tr:hover{
+  background-color: #eee;
+}
+
+table#equipment_type_interface_table tbody{
+  cursor: pointer;
+}
+
+table#equipment_type_interface_table tbody tr:hover{
   background-color: #eee;
 }

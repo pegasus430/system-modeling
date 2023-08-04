@@ -1246,6 +1246,7 @@ $(document).ready(function() {
     
     $("#equipment_type_parent_path").find('option').remove()
     $('#selectedResourceId').val('')
+    $('#selectedInterfaceId').val('')
     selectedtypeId = $(this).attr("data-typeid")
     selectedTypeElement = allEquipmentTypes.filter( d=> d.id == selectedtypeId )
     
@@ -1350,6 +1351,7 @@ $(document).ready(function() {
     var selectedTypeId = row.type_id
     var selectedResourceId = row.resource_id
     $('#selectedResourceId').val(selectedResourceId)
+    $('#selectedInterfaceId').val('')
     $.ajax({
       type: "GET",
       url: 'getEquipmentTypesInterface',
@@ -1395,6 +1397,12 @@ $(document).ready(function() {
       }
     })
 
+  })
+
+  $('#equipment_type_interface_table').on('click', 'tbody tr', function(e){
+    sTable = $('#equipment_type_interface_table').DataTable()
+    var row = sTable.row(this).data()    
+    $('#selectedInterfaceId').val(row.interface_id)
   })
 
   $('.equipment_resource_page').on('click', '.treeview-li .treeview-title',function(){

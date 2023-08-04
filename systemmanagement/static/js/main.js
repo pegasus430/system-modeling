@@ -3427,6 +3427,81 @@ $(document).ready(function() {
     })
   }
 
+  // remove type interface from the asociated interface
+  if(select('#btn_delete_equipment_type_interface')){
+    on('click', '#btn_delete_equipment_type_interface', function(){
+      var typeId = $('#equipment_type_id').val()
+      var selectedResourceId = $('#selectedResourceId').val()
+      var selectedInterfaceId = $('#selectedInterfaceId').val()
+      if(typeId && selectedResourceId && selectedInterfaceId){
+        if(confirm('Are you sure to remove the interface from the type interface?')){
+          $.ajax({
+            type: "GET",
+            url: 'removeEquipmentTypeInterface',
+            data: {
+              typeId: typeId,  
+              selectedResourceId: selectedResourceId,    
+              selectedInterfaceId:selectedInterfaceId,        
+            },
+            success: function (data){
+              
+              $('#selectedInterfaceId').val('')
+              data = JSON.parse(data)
+              var result = data['result']
+              var associatedInterface = data['associatedInterface']
+              
+              if(result){
+                showSuccessNotification('The Interface has been removed successfully!')                  
+                tableData = []
+                if(associatedInterface.length){
+                  associatedInterface.forEach(element => {
+                    tableData.push({
+                      'interface_id': element.interface_id,
+                      'identifier': element.interface_identifier,
+                      'description': element.interface_description,              
+                      'class_label': element.interface_class_label,
+                      'comment': element.type_interface_comment,
+                      'active': element.type_interface_is_active,
+                     })
+                  })
+                }
+                $('#equipment_type_interface_table').DataTable({
+                  data:  tableData ,
+                  destroy: true,
+                  columns: [
+                    { data: 'interface_id'},
+                    { data: 'identifier'},
+                    { data: 'description' },
+                    { data: 'class_label' },
+                    { data: 'comment' },
+                    { data: 'active' },
+                    
+                  ],
+                  columnDefs:[
+                    { "visible": false, "targets": [0] },
+                  ]
+                })
+               
+              }
+              else{
+                var message = data['message']
+                if(message){
+                  showErrorNotification(message)
+                }else{
+                  showErrorNotification('The error has happend while removing the type interface')
+                }
+              }
+            },
+            error: function(e){
+               showErrorNotification('The error has happend while requesting the server')
+            }
+           })
+        }
+      }else{
+        showErrorNotification('You should select the interface to be removed!')
+      }
+    })
+  }
 } )
 ();
 

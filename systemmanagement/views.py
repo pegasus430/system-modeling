@@ -1367,8 +1367,6 @@ def removeEquipmentTypeResource(request):
         except Exception as e:
             print(e)
             result = False
-        print(raw_query)
-        print(message)
         
         raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
             left join all_resource B on A.resource_id = B.id \
@@ -1448,8 +1446,10 @@ def removeEquipmentTypeInterface(request):
     if request.method == 'GET':
         typeId = request.GET['typeId']
         selectedResourceId = request.GET['selectedResourceId']
+        selectedInterfaceId = request.GET['selectedInterfaceId']
+
         message = ''
-        raw_query = "SELECT count(*) FROM type_resource WHERE type_id = {} and resource_id = {}".format(
+        raw_query = "SELECT id FROM type_resource WHERE type_id = {} and resource_id = {}".format(
             typeId, selectedResourceId
         )
         
@@ -1457,35 +1457,38 @@ def removeEquipmentTypeInterface(request):
             with connection.cursor() as cursor:
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
-                counter = results[0]
-                if counter > 0:
-                    raw_query = 'SELECT fn_remove_type_resource({}, {})'.format(typeId, selectedResourceId)
-                    
+                type_resource_id = results[0]
+                if type_resource_id:
+                    raw_query = 'SELECT count(*) FROM type_interface WHERE type_resource_id = {} and interface_id = {}'.format(type_resource_id, selectedInterfaceId)
                     cursor.execute(raw_query)
                     results = cursor.fetchone()
-                    result = True        
+                    counter = results[0]
+                    if counter:
+                        raw_query = "SELECT fn_remove_type_interface({}, {})".format(type_resource_id, selectedInterfaceId)
+                        cursor.execute(raw_query)
+                        results = cursor.fetchone()
+                        result = True
+                    else:
+                        result = False
+                        message = 'This resource is from the Ancestor type. You can not remove this resource.'
                 else:
                     result = False
                     message = 'This resource is from the Ancestor type. You can not remove this resource.'
         except Exception as e:
             print(e)
             result = False
-        print(raw_query)
-        print(message)
         
-        raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
-            left join all_resource B on A.resource_id = B.id \
-            where type_id = " + typeId + " order by B.modifier"
+        typeInterfacedb = TypeInterface.objects.extra(
+            where=[
+                "type_id = " + typeId + " and resource_id = " + selectedResourceId
+            ]
+        ).order_by('interface_identifier')
+        typeInterfaceList = list(typeInterfacedb.values())
         
-        with connection.cursor() as cursor:
-            cursor.execute(raw_query)
-            results = cursor.fetchall()
-            associatedResource = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
-    
         data = json.dumps(
             {
                 'result': result,  
-                'associatedResource': associatedResource,
+                'associatedInterface': typeInterfaceList,
                 'message': message,
             } ,
             cls=DateTimeEncoder

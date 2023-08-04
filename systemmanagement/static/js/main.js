@@ -3144,6 +3144,7 @@ $(document).ready(function() {
   // click the add equipment type resource btn for the modal
   if(select('#btn_add_equipment_type_resource')){
     on('click', '#btn_add_equipment_type_resource', function(){
+      $("#addingEquipmentTypeResource").find('option').remove()
       var selectedEquipmentTypeId = $('#equipment_type_id').val()
       if(selectedEquipmentTypeId){
         let allResources = JSON.parse(document.getElementById('all_resources').textContent)
@@ -3312,6 +3313,120 @@ $(document).ready(function() {
       }
     })
   }
+
+  // click the add equipment type interface btn for the modal
+  if(select('#btn_add_equipment_type_interface')){
+    on('click', '#btn_add_equipment_type_interface', function(){
+      $("#addingEquipmentTypeInterface").find('option').remove()
+      var selectedEquipmentTypeId = $('#equipment_type_id').val()
+      var selectedResourceId = $('#selectedResourceId').val()
+
+      if(selectedEquipmentTypeId && selectedResourceId){
+        let allInterfaces = JSON.parse(document.getElementById('all_interfaces').textContent)
+        let allResources = JSON.parse(document.getElementById('all_resources').textContent)
+
+        var selectedEquipmentTypeLabel = $('#equipment_type_label').val()
+        var selectedEquipmentTypeDescription = $('#equipment_type_description').val()
+        $('#selectedEquipmentTypeLabel2').val(selectedEquipmentTypeLabel + ' (' + selectedEquipmentTypeDescription + ')')
+        
+        var selectedResource = allResources.find(element => element.id == selectedResourceId)
+        $('#selectedEquipmentTypeResource').val(selectedResource.modifier+ ' (' + selectedResource.description + ')')
+
+        allInterfaces.forEach(element => {
+          var o = new Option(element.identifier, element.id, undefined, undefined);
+          $(o).html((element.identifier ? element.identifier: ' ') + ' (' + element.description + ')');
+          $("#addingEquipmentTypeInterface").append(o);
+        })
+
+      }else{
+         showErrorNotification('You have to select the equipment type and resource.')
+       }
+     
+    })
+  }
+
+  // add euqipment type interface in the modal
+  if(select('#equipmentTypeInterfaceModal .btn-primary'))
+  {
+    on('click', '#equipmentTypeInterfaceModal .btn-primary', function(){
+      var addingTypeId = $('#equipment_type_id').val()
+      var addingResourceId = $('#selectedResourceId').val()
+   
+      if(addingTypeId && addingResourceId){
+        if(confirm('Are you sure to add this interface to the equipment type?')){
+            var addingInterfaceId = $('#addingEquipmentTypeInterface').val()
+            var is_active =  $('#addingEquipmentTypeInterfaceActive').prop('checked')
+            var addingComment = $('#addingEquipmentTypeInterfaceComment').val()
+            $.ajax({
+              type: "GET",
+              url: 'addEquipmentTypeInterface',
+              data: {
+                addingTypeId: addingTypeId,  
+                addingResourceId: addingResourceId,
+                addingInterfaceId: addingInterfaceId,
+                is_active:is_active,
+                addingComment: addingComment,
+              },
+              success: function (data){
+                data = JSON.parse(data)
+                var result = data['result']
+                var associatedInterface = data['associatedInterface']
+                
+                if(result){
+                  showSuccessNotification('The Resource has been inserted successfully!')                  
+                  $('#addingEquipmentTypeInterfaceComment').val('')
+                  $('#addingInterfaceId').find('option').remove()
+                  $('#addingEquipmentTypeInterfaceActive').prop('checked', false)
+                  $("#equipmentTypeInterfaceModal").modal('hide');
+
+                  tableData = []
+                  if(associatedInterface.length){
+                    associatedInterface.forEach(element => {
+                      tableData.push({
+                        'interface_id': element.interface_id,
+                        'identifier': element.interface_identifier,
+                        'description': element.interface_description,              
+                        'class_label': element.interface_class_label,
+                        'comment': element.type_interface_comment,
+                        'active': element.type_interface_is_active,
+                       })
+                    })
+                  }
+                  
+                    $('#equipment_type_interface_table').DataTable({
+                      data:  tableData ,
+                      destroy: true,
+                      columns: [
+                        { data: 'interface_id'},
+                        { data: 'identifier'},
+                        { data: 'description' },
+                        { data: 'class_label' },
+                        { data: 'comment' },
+                        { data: 'active' },
+                        
+                      ],
+                      columnDefs:[
+                        { "visible": false, "targets": [0] },
+                      ]
+                    })
+                }
+                else{
+                  showErrorNotification('The error has happend while adding the interface')
+                }
+              },
+              error: function(e){
+                 showErrorNotification('The error has happend while requesting the server')
+              }
+            })
+        }
+        
+      }else{
+        showErrorNotification('you should select the Equipment type and the resource')
+      }
+      
+    })
+  }
+
 } )
 ();
 

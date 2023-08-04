@@ -4,6 +4,7 @@
 {% block maincontent %}
 {{all_equipment_types | json_script:'all_equipment_types'}}
 {{all_resources | json_script:'all_resources'}}
+{{all_interfaces | json_script:'all_interfaces'}}
 
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
@@ -147,20 +148,34 @@
                         <div class="row">
                             <!-- Equipment Details table -->
                             <h5 class="card-title">Associated Interfaces</h5>
+                            <input type="text" style="display: none;" id="selectedInterfaceId">
                             <table class="display nowrap custom_datatable1" id="equipment_type_interface_table">
                                 <thead style="background-color: #000; color: white; border: solid 1px;">
                                     <tr>
-                                    <th scope="col" width="30%">Identifer</th>
-                                    <th scope="col" width="15%">Description</th>
-                                    <th scope="col" >Interface Class label</th>
-                                    <th scope="col" >comment</th>
-                                    <th scope="col" >Active</th>
+                                      <th style="display: none;">interface_id</th>
+                                      <th scope="col" width="30%">Identifer</th>
+                                      <th scope="col" width="15%">Description</th>
+                                      <th scope="col" >Interface Class label</th>
+                                      <th scope="col" >comment</th>
+                                      <th scope="col" >Active</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     
                                 </tbody>
                             </table><!-- End Equipment Details table -->
+                            <div class="row mt-1 p-2 pl-4">
+                              <div class="col-md-4">
+                                <button type="button" class="btn btn-success" id="btn_add_equipment_type_interface" data-bs-toggle="modal" data-bs-target="#equipmentTypeInterfaceModal">
+                                    Add Interface
+                                </button>
+                              </div>
+                              <div class="col-md-4">
+                              <button type="button" id="btn_delete_equipment_type_interface" class="btn btn-danger">
+                                  Delete Interface
+                              </button>
+                              </div>
+                            </div>
 
                         </div>
                         <!-- Buttons Section -->
@@ -285,6 +300,58 @@
           </div>
         </div>
     </div>
+
+    <div class="modal fade" id="equipmentTypeInterfaceModal" tabindex="-1" aria-labelledby="equipmentTypeInterfaceModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="equipmentTypeInterfaceModalLabel">Add Equipment Type Interface</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Equipment Type:</label>
+              <div class="col-md-7">
+                <input type="text" class="form-control" placeholder="Equipment Type Label" value="" id="selectedEquipmentTypeLabel2" readonly>
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Equipment Type Resource:</label>
+              <div class="col-md-7">
+                <input type="text" class="form-control" placeholder="Equipment Type Resource" value="" id="selectedEquipmentTypeResource" readonly>
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Interface:</label>
+              <div class="col-md-7">
+                <select class="form-select" id="addingEquipmentTypeInterface">
+                  
+                </select>
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-5 col-form-label text-secondary">Is Active</label>
+              <div class="col-md-6 form-check form-switch pt-2">
+                <input class="form-check-input form-control" type="checkbox" id="addingEquipmentTypeInterfaceActive">
+              </div>
+          </div>
+            
+            
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Comment:</label>
+              <div class="col-md-7">
+                <textarea class="form-control" placeholder="comment" style="height: 60px;" id="addingEquipmentTypeInterfaceComment"></textarea>
+              </div>
+            </div>
+            
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary"  >Save</button>
+          </div>
+        </div>
+      </div>
+  </div>
 
     <script type="text/javascript">
         

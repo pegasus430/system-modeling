@@ -308,12 +308,14 @@ def definitions_equipment_types(request):
     sidebar_title = 'equipment_types'
     all_equipment_types = list(EquipmentType.objects.order_by('path').values())
     all_resources = list(Resource.objects.order_by('group_label').values())
+    all_interfaces = list(Interface.objects.order_by('identifier').values())
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title,
         'all_equipment_types': all_equipment_types,
         'all_resources': all_resources,
+        'all_interfaces': all_interfaces,
     }
     
     return render(request, 'definitions_equipment_types.html', context=context)
@@ -1386,6 +1388,110 @@ def removeEquipmentTypeResource(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+    
+def addEquipmentTypeInterface(request):
+    if request.method == 'GET':
+        addingTypeId = request.GET['addingTypeId']
+        addingResourceId = request.GET['addingResourceId']
+        addingInterfaceId = request.GET['addingInterfaceId']
+        is_active = request.GET['is_active']
+        addingComment = request.GET['addingComment']
+
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = 'SELECT id FROM type_resource WHERE type_id = {} and resource_id = {}'.format(
+            addingTypeId, addingResourceId
+        )
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            type_resource_id = results[0]
+        except Exception as e:
+            print(e)
+            result = False
+
+        raw_query = "SELECT fn_add_type_interface({}, {}, '{}', {}, '{}')".format(
+            type_resource_id, addingInterfaceId, addingComment, is_active, modified_at
+        )
+        print(raw_query)
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+
+        typeInterfacedb = TypeInterface.objects.extra(
+            where=[
+                "type_id = " + addingTypeId + " and resource_id = " + addingResourceId
+            ]
+        ).order_by('interface_identifier')
+
+        typeInterfaceList = list(typeInterfacedb.values())
+
+        data = json.dumps(
+            {
+                'result': result,  
+                'associatedInterface': typeInterfaceList,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
+def removeEquipmentTypeInterface(request):
+    if request.method == 'GET':
+        typeId = request.GET['typeId']
+        selectedResourceId = request.GET['selectedResourceId']
+        message = ''
+        raw_query = "SELECT count(*) FROM type_resource WHERE type_id = {} and resource_id = {}".format(
+            typeId, selectedResourceId
+        )
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+                counter = results[0]
+                if counter > 0:
+                    raw_query = 'SELECT fn_remove_type_resource({}, {})'.format(typeId, selectedResourceId)
+                    
+                    cursor.execute(raw_query)
+                    results = cursor.fetchone()
+                    result = True        
+                else:
+                    result = False
+                    message = 'This resource is from the Ancestor type. You can not remove this resource.'
+        except Exception as e:
+            print(e)
+            result = False
+        print(raw_query)
+        print(message)
+        
+        raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
+            left join all_resource B on A.resource_id = B.id \
+            where type_id = " + typeId + " order by B.modifier"
+        
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchall()
+            associatedResource = [dict(zip([col[0] for col in cursor.description], row)) for row in results]
+    
+        data = json.dumps(
+            {
+                'result': result,  
+                'associatedResource': associatedResource,
+                'message': message,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

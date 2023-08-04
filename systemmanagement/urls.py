@@ -49,4 +49,6 @@ urlpatterns = [
     path(r'definitions/removeEquipmentType', views.removeEquipmentType, name='removeEquipmentType'),
     path(r'definitions/addEquipmentTypeResource', views.addEquipmentTypeResource, name='addEquipmentTypeResource'),
     path(r'definitions/removeEquipmentTypeResource', views.removeEquipmentTypeResource, name='removeEquipmentTypeResource'),
+    path(r'definitions/addEquipmentTypeInterface', views.addEquipmentTypeInterface, name='addEquipmentTypeInterface'),
+    path(r'definitions/removeEquipmentTypeInterface', views.removeEquipmentTypeInterface, name='removeEquipmentTypeInterface'),
 ]

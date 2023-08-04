@@ -1245,7 +1245,7 @@ $(document).ready(function() {
     allEquipmentTypes = JSON.parse(document.getElementById('all_equipment_types').textContent)
     
     $("#equipment_type_parent_path").find('option').remove()
-
+    $('#selectedResourceId').val('')
     selectedtypeId = $(this).attr("data-typeid")
     selectedTypeElement = allEquipmentTypes.filter( d=> d.id == selectedtypeId )
     
@@ -1325,6 +1325,7 @@ $(document).ready(function() {
             data:  tableData ,
             destroy: true,
             columns: [
+              { data: 'interface_id'},
               { data: 'identifier'},
               { data: 'description' },
               { data: 'class_label' },
@@ -1332,6 +1333,9 @@ $(document).ready(function() {
               { data: 'active' },
               
             ],
+            columnDefs:[
+              { "visible": false, "targets": [0] },
+            ]
           })
 
        
@@ -1361,6 +1365,7 @@ $(document).ready(function() {
         if(typeInterfaceList.length){
           typeInterfaceList.forEach(interface => {
             tableData.push({
+              'interface_id': interface.interface_id,
               'identifier': interface.interface_identifier,
               'description': interface.interface_description,              
               'class_label': interface.interface_class_label,
@@ -1374,6 +1379,7 @@ $(document).ready(function() {
           data:  tableData ,
           destroy: true,
           columns: [
+            { data: 'interface_id'},
             { data: 'identifier'},
             { data: 'description' },
             { data: 'class_label' },
@@ -1381,10 +1387,9 @@ $(document).ready(function() {
             { data: 'active' },
             
           ],
-          // columnDefs:[
-          //   { "visible": false, "targets": [0, 1] },
-            
-          // ]
+          columnDefs:[
+            { "visible": false, "targets": [0] },
+          ]
         })
         
       }

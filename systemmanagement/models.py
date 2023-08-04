@@ -311,6 +311,7 @@ class TypeResource(models.Model):
 class TypeInterface(models.Model):
     type_id = models.BigIntegerField(primary_key=True)
     resource_id = models.BigIntegerField()
+    interface_id = models.BigIntegerField()
     type_interface_comment = models.TextField()
     type_interface_is_active = models.BooleanField()
     interface_identifier = models.TextField()

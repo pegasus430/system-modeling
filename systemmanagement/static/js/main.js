@@ -1430,6 +1430,8 @@ $(document).ready(function() {
       }
     })
 
+
+
     if(document.getElementById('target_systems')){
       target_systems = JSON.parse(document.getElementById('target_systems').textContent)
       all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
@@ -2287,8 +2289,6 @@ $(document).ready(function() {
             var addingEquipmentTypeId = $('#adding_equipment_type').val()
             var addingEquipmentComment = $('#adding_equipment_comment').val()
             var addingEquipmentApproved = $('#adding_equipment_approved').prop('checked')
-            // console.log(addingEquipmentDescription, addingEquipmentParentPath , addingEquipmentLocationPath, addingEquipmentIncludeParentFlag, addingEquipmentTypeId, addingEquipmentComment,  addingEquipmentApproved)
-
             $.ajax({
               type: "GET",
               url: 'addEquipment',
@@ -2307,9 +2307,7 @@ $(document).ready(function() {
                 var result = data['result']
                 var equipment_list = data['equipment_list']
                 if(result){
-
                   showSuccessNotification('The equipment has been inserted successfully!')
-
                   $('#adding_equipment_identifier').val('')
                   $('#adding_equipment_description').val('')
                   $('#adding_parent_path').find('option').remove()
@@ -2318,9 +2316,7 @@ $(document).ready(function() {
                   $('#adding_equipment_type').find('option').remove()
                   $('#adding_equipment_comment').val('')
                   $('#adding_equipment_approved').prop('checked', false)
-
                   $("#equipmentModal").modal('hide');
-
                   if(equipment_list){
                     const html = createEquipmentTree(equipment_list)
                     document.getElementById('all_equipment_tree').innerHTML = html
@@ -3499,6 +3495,379 @@ $(document).ready(function() {
         }
       }else{
         showErrorNotification('You should select the interface to be removed!')
+      }
+    })
+  }
+  
+  //add resource group in the modal
+  if(select('#resourceGroupModal .btn-primary')){
+    on('click', '#resourceGroupModal .btn-primary', function(){
+      let label = $('#adding_resource_group_label').val()
+      let description = $('#adding_resource_group_description').val()
+      let is_report = $('#adding_resource_group_is_reportable').prop('checked')
+      let comment = $('#adding_resource_group_comment').val()
+      if(label && description){
+        $.ajax({
+          type: 'GET',
+          url: 'addResourceGroup',
+          data:{
+            label:label,
+            description: description,
+            is_report: is_report,
+            comment: comment
+          },
+          success: function(data){
+            data = JSON.parse(data)
+            let result = data['result']
+            if(result){
+              showSuccessNotification('The resource group has been added successfully')
+              let all_resource_group = data['all_resource_group']
+              document.getElementById('all_resource_group').textContent = JSON.stringify(all_resource_group)
+              var html = ''
+              all_resource_group.forEach(group => {
+                  html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-group_id="'+ group.id + '"> \
+                      '+group.label + '  (' + group.description +')</li>'
+                
+              });
+              document.getElementById('all_equipment_resources_tree').innerHTML = html
+              $('.treeview-animated').mdbTreeview();
+              $('#resourceGroupModal').modal('hide')
+            }else{
+              showErrorNotification('The error happend while adding the resource group')
+            }
+          },
+          error: function(e){
+            showErrorNotification('The error happend while requesting the server')
+          }
+        })
+      }else{
+        showErrorNotification('The Label and Description can not be empty!')
+      }
+    })
+  }
+
+  // update resource group 
+  if(select('#btn_update_resourcegroup')){
+    on('click', '#btn_update_resourcegroup', function(){
+      var selectedGroupId = $('#resource_group_id').val()
+      if(selectedGroupId){
+        let label  = $('#resource_group_label').val()
+        let description  = $('#resource_group_description').val()
+        let is_report  = $('#resource_group_is_reportable').prop('checked')
+        let comment  = $('#resource_group_comment').val()
+        if(label && description){
+          if(confirm('Are you sure to update this resource group ?')){
+            $.ajax({
+              type: 'GET',
+              url: 'updateResourceGroup',
+              data:{
+                groupId: selectedGroupId,
+                label:label,
+                description: description,
+                is_report: is_report,
+                comment: comment
+              },
+              success: function(data){
+                data = JSON.parse(data)
+                let result = data['result']
+                if(result){
+                  showSuccessNotification('The resource group has been updated successfully')
+                  let all_resource_group = data['all_resource_group']
+                  document.getElementById('all_resource_group').textContent = JSON.stringify(all_resource_group)
+                  var html = ''
+                  all_resource_group.forEach(group => {
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-group_id="'+ group.id + '"> \
+                          '+group.label + '  (' + group.description +')</li>'
+                    
+                  });
+                  document.getElementById('all_equipment_resources_tree').innerHTML = html
+                  $('.treeview-animated').mdbTreeview();
+                  $('#resourceGroupModal').modal('hide')
+                }else{
+                  showErrorNotification('The error happend while updating the resource group')
+                }
+              },
+              error: function(e){
+                showErrorNotification('The error happend while requesting the server')
+              }
+            })
+          }
+        }else{
+          showErrorNotification('Label and Description should not be empty string')
+        }
+      }else{
+        showErrorNotification('You should select the resource group to be updated')
+      }
+    })
+  }
+
+  // remove resource group 
+  if(select('#btn_remove_resource_group')){
+    on('click', '#btn_remove_resource_group', function(){
+      var selectedGroupId = $('#resource_group_id').val()
+      if(selectedGroupId){
+          if(confirm('Are you sure to remove this resource group?')){
+            $.ajax({
+              type: 'GET',
+              url: 'removeResourceGroup',
+              data:{
+                groupId: selectedGroupId,
+              },
+              success: function(data){
+                data = JSON.parse(data)
+                let result = data['result']
+                if(result){
+                  showSuccessNotification('The resource group has been removed successfully')
+                  let all_resource_group = data['all_resource_group']
+                  document.getElementById('all_resource_group').textContent = JSON.stringify(all_resource_group)
+                  var html = ''
+                  all_resource_group.forEach(group => {
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-group_id="'+ group.id + '"> \
+                          '+group.label + '  (' + group.description +')</li>'
+                    
+                  });
+                  document.getElementById('all_equipment_resources_tree').innerHTML = html
+                  $('.treeview-animated').mdbTreeview();
+                  $('#resourceGroupModal').modal('hide')
+                }else{
+                  showErrorNotification('The error happend while removing the resource group')
+                }
+              },
+              error: function(e){
+                showErrorNotification('The error happend while requesting the server')
+              }
+            })
+          }
+      }else{
+        showErrorNotification('You should select the resource group to be removed')
+      }
+    })
+  }
+
+  // click the btn for adding included resource
+  if(select('#btn_add_resource_togroup')){
+    on('click', '#btn_add_resource_togroup', function(){
+      $("#all_resources_to_group").find('option').remove()
+      let selectedResourceGroupId = $('#resource_group_id').val()
+      if(selectedResourceGroupId){
+        all_resources = JSON.parse(document.getElementById('all_resources').textContent)
+        all_resources.forEach( element => {
+          var label = element.modifier + ' (' + element.description + ')'
+          var p = new Option(label, element.id, undefined, undefined);
+          $(p).html(label);
+          $("#all_resources_to_group").append(p);
+        })
+      }else{
+        showErrorNotification('You should select the resource group')
+      }
+    })
+  }
+
+  // add the resource to group in the modal
+  if(select('#resourceToGroupModal .btn-primary'))
+  {
+    on('click', '#resourceToGroupModal .btn-primary', function(){
+      let selectedResourceGroupId = $('#resource_group_id').val()
+      let resourceGroupLabel = $('#resource_group_label').val()
+      let resourceId = $("#all_resources_to_group").val()
+      
+      if(selectedResourceGroupId && resourceId){
+        if(confirm('Are you sure to add this resource to the resource group:' + resourceGroupLabel+ '?')){
+            let all_reesources = JSON.parse(document.getElementById('all_resources').textContent)
+            let selectedResource = all_reesources.find(element => element.id ==  resourceId)
+            $.ajax({
+              type: "GET",
+              url: 'updateReourceDetail',
+              data: {
+                resourceId: resourceId,
+                modifier: selectedResource.modifier,
+                description:selectedResource.description,
+                comment: selectedResource.comment,
+                resourceGroupId: selectedResourceGroupId
+              },
+              success: function (data){
+                data = JSON.parse(data)
+                var result = data['result']
+
+                if(result){
+                  showSuccessNotification('The Resource has been added to the group successfully!') 
+                  $('#resourceToGroupModal').modal('hide')
+                  var all_resources = data['all_resources']
+                  document.getElementById('all_resources').textContent = JSON.stringify(all_resources)                 
+                  includedResources = all_resources.filter(element => element.group_id == selectedResourceGroupId)
+                  tableData = []
+                  includedResources.forEach(
+                    resource => { 
+                      tableData.push({
+                        'id': resource.id,
+                        'modifier': resource.modifier,
+                        'description': resource.description,
+                        'comment': resource.comment
+                      })
+                  })
+
+                  var resourceEditor = new DataTable.Editor({
+                    idSrc:  'id',
+                    fields: [
+                      {
+                        label: 'id',
+                        name: 'id'
+                      },
+                      {
+                        label: 'modifier',
+                        name: 'modifier'
+                      },
+                      {
+                        label: 'description',
+                        name: 'description'
+                      },
+                      {
+                        label: 'comment',
+                        name: 'comment'
+                      },
+                    ],
+                    table: '#resource_table'
+                  })
+
+                  
+                  $('#resource_table').DataTable({
+                    data:  tableData ,
+                    destroy: true,
+                    columns: [
+                      { data: 'id' },
+                      { data: 'modifier' },
+                      { data: 'description' },
+                      { data: 'comment' },
+                    ],
+                    order: [[1, 'asc']],
+                    columnDefs:[
+                      {
+                        visible:false, 
+                        targets:0
+                      }
+                      
+                    ]
+                  })
+
+                  $('#resource_table').on('click', 'td', function(){
+                    resourceEditor.inline(this)
+                  })
+
+                }
+                else{
+                  showErrorNotification('The error has happend while adding the resource')
+                }
+              },
+              error: function(e){
+                 showErrorNotification('The error has happend while requesting the server')
+              }
+            })
+        }
+        
+      }else{
+        showErrorNotification('you should select the resource group for adding the resource')
+      }
+    })
+  }
+
+  if(select('#btn_remove_resource_fromgroup')){
+    on('click', '#btn_remove_resource_fromgroup', function(){
+      let resourceGroupLabel = $('#resource_group_label').val()
+      let resourceId = $("#resource_id").val()
+      let selectedResourceGroupId = $('#resource_group_id').val()
+      if(resourceId){
+        if(confirm('Are you sure to remove the resource from the group: ' + resourceGroupLabel + ' ?')){
+          let all_reesources = JSON.parse(document.getElementById('all_resources').textContent)
+          let selectedResource = all_reesources.find(element => element.id ==  resourceId)
+          $.ajax({
+            type: "GET",
+            url: 'removeResourceFromGroup',
+            data: {
+              resourceId: resourceId,
+              modifier: selectedResource.modifier,
+              description:selectedResource.description,
+              comment: selectedResource.comment              
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']
+
+              if(result){
+                showSuccessNotification('The Resource has been removed from the group successfully!') 
+                
+                var all_resources = data['all_resources']
+                document.getElementById('all_resources').textContent = JSON.stringify(all_resources)                 
+                includedResources = all_resources.filter(element => element.group_id == selectedResourceGroupId)
+                tableData = []
+                includedResources.forEach(
+                  resource => { 
+                    tableData.push({
+                      'id': resource.id,
+                      'modifier': resource.modifier,
+                      'description': resource.description,
+                      'comment': resource.comment
+                    })
+                })
+
+                var resourceEditor = new DataTable.Editor({
+                  idSrc:  'id',
+                  fields: [
+                    {
+                      label: 'id',
+                      name: 'id'
+                    },
+                    {
+                      label: 'modifier',
+                      name: 'modifier'
+                    },
+                    {
+                      label: 'description',
+                      name: 'description'
+                    },
+                    {
+                      label: 'comment',
+                      name: 'comment'
+                    },
+                  ],
+                  table: '#resource_table'
+                })
+
+                
+                $('#resource_table').DataTable({
+                  data:  tableData ,
+                  destroy: true,
+                  columns: [
+                    { data: 'id' },
+                    { data: 'modifier' },
+                    { data: 'description' },
+                    { data: 'comment' },
+                  ],
+                  order: [[1, 'asc']],
+                  columnDefs:[
+                    {
+                      visible:false, 
+                      targets:0
+                    }
+                    
+                  ]
+                })
+
+                $('#resource_table').on('click', 'td', function(){
+                  resourceEditor.inline(this)
+                })
+
+              }
+              else{
+                showErrorNotification('The error has happend while adding the resource')
+              }
+            },
+            error: function(e){
+               showErrorNotification('The error has happend while requesting the server')
+            }
+          })
+        }
+      }else{
+        showErrorNotification('You should select the resource to be removed from the group')
       }
     })
   }

@@ -1407,21 +1407,22 @@ $(document).ready(function() {
 
   $('.equipment_resource_page').on('click', '.treeview-li .treeview-title',function(){
     selectedResourceGroupId = $(this).attr("data-group_id")
-    
     all_resources = JSON.parse(document.getElementById('all_resources').textContent)
-    
+    all_resources_group= JSON.parse(document.getElementById('all_resource_group').textContent)
+    $('#resource_id').val('')
     // display resource group detail
-    selectedResource = all_resources.find(element => element.group_id == selectedResourceGroupId)
+    selectedResourceGroup = all_resources_group.find(element => element.id == selectedResourceGroupId)
     $('#resource_group_id').val(selectedResourceGroupId)
-    $('#resource_group_label').val(selectedResource.group_label)
-    $('#resource_group_description').val(selectedResource.group_description)
-    if(selectedResource['group_is_reportable']){
+    $('#resource_group_label').val(selectedResourceGroup.label)
+    $('#modal_resource_group_label').val(selectedResourceGroup.label + ' (' + selectedResourceGroup.description + ')')
+    $('#resource_group_description').val(selectedResourceGroup.description)
+    if(selectedResourceGroup['is_reportable']){
       $('#resource_group_is_reportable').prop('checked' , true)
     }else{
       $('#resource_group_is_reportable').prop('checked' , false)
     }
-    $('#resource_group_comment').val(selectedResource.group_comment)
-    if(selectedResource['is_used']){
+    $('#resource_group_comment').val(selectedResourceGroup.comment)
+    if(selectedResourceGroup['is_used']){
       $('#resource_group_used').prop('checked' , true)
     }else{
       $('#resource_group_used').prop('checked' , false)
@@ -1430,33 +1431,113 @@ $(document).ready(function() {
 
     // display included resources
     includedResources = all_resources.filter(element => element.group_id == selectedResourceGroupId)
-    
-    includedResources.sort((a, b) => {
-      const valueA = a.modifer == null ? '': a.modifier.toLowerCase(); // Get the value to compare in object A (converted to lowercase for case-insensitive sorting)
-      const valueB = b.modifer == null ? '': b.modifier.toLowerCase(); // Get the value to compare in object B (converted to lowercase for case-insensitive sorting)
-      
-      if (valueA < valueB) {
-        return -1; // Return negative value if A should come before B
-      }
-    
-      if (valueA > valueB) {
-        return 1; // Return positive value if A should come after B
-      }
-    
-      return 0; // Return 0 if values are equal
-    });
-    
-    var html = ''
-
-    includedResources.forEach(resource => {
-       html += '<tr> \
-          <td style="display: none">'+ resource.id +'</td>\
-          <td>'+ resource.modifier +'</td>\
-          <td>'+ resource.description +'</td>\
-          <td>'+ resource.comment +'</td>\
-        </tr>'
+    tableData = []
+    includedResources.forEach(
+      resource => { 
+        tableData.push({
+          'id': resource.id,
+          'modifier': resource.modifier,
+          'description': resource.description,
+          'comment': resource.comment
+        })
     })
-    $('#resource_group_attribute').html(html)
+
+    var resourceEditor = new DataTable.Editor({
+      idSrc:  'id',
+      fields: [
+        {
+          label: 'id',
+          name: 'id'
+        },
+        {
+          label: 'modifier',
+          name: 'modifier'
+        },
+        {
+          label: 'description',
+          name: 'description'
+        },
+        {
+          label: 'comment',
+          name: 'comment'
+        },
+      ],
+      table: '#resource_table'
+    })
+
+    
+    $('#resource_table').DataTable({
+      data:  tableData ,
+      destroy: true,
+      columns: [
+        { data: 'id' },
+        { data: 'modifier' },
+        { data: 'description' },
+        { data: 'comment' },
+      ],
+      order: [[1, 'asc']],
+      columnDefs:[
+        {
+          visible:false, 
+          targets:0
+        }
+        
+      ]
+    })
+
+    $('#resource_table').on('click', 'td', function(){
+      resourceEditor.inline(this)
+      sTable = $('#resource_table').DataTable()
+      let cell = sTable.cell(this)
+      let row = cell.index().row;
+      let rowData = sTable.row(row).data()
+      let resourceId = rowData.id
+      $('#resource_id').val(resourceId)
+    })
+
+    resourceEditor.on('edit', function(e, datatable, cell){
+      let resourceId = cell.id
+      $('#resource_id').val(resourceId)
+
+      let modifier = cell.modifier
+      let description = cell.description
+      let comment = cell.comment
+      let resourceGroupId = selectedResourceGroupId
+
+      if(description){
+        $.ajax({
+          type: 'GET',
+          url: 'updateReourceDetail',
+          data: {
+            resourceId: resourceId,
+            modifier: modifier,
+            description: description,
+            comment: comment,
+            resourceGroupId: resourceGroupId
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            var all_resources = data['all_resources']
+            
+            if(result){
+              showSuccessNotification('The resource has been updated successfully!')
+              document.getElementById('all_resources').textContent = JSON.stringify(all_resources)
+            }
+            else{
+              showErrorNotification('The error happend while updating the resource!')
+            }
+          },
+          error: function(e){
+            showErrorNotification('The error happend while requesting the server!')
+          }
+        })
+      }else{
+        showErrorNotification('Description should not be empty string.')
+      }
+
+    })
+    
   })
 
   $('.equipment_property_page').on('click','.treeview-li .treeview-title', function(){

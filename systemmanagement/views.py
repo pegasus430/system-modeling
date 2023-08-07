@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource , ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource, ResourceGroup, ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority
 from django.db import connection
 import datetime
 import json
@@ -307,7 +307,7 @@ def definitions_equipment_types(request):
     page = 'definitions'
     sidebar_title = 'equipment_types'
     all_equipment_types = list(EquipmentType.objects.order_by('path').values())
-    all_resources = list(Resource.objects.order_by('group_label').values())
+    all_resources = list(Resource.objects.order_by('modifier').values())
     all_interfaces = list(Interface.objects.order_by('identifier').values())
     context = {
         'title': 'Definitions',
@@ -338,12 +338,14 @@ def definitions_equipment_properties(request):
 def definitions_equipment_resources(request):
     page = 'definitions'
     sidebar_title = 'equipment_resources'
-    all_resources = list(Resource.objects.order_by('group_label').values())
+    all_resources = list(Resource.objects.order_by('modifier').values())
+    all_resource_group = list(ResourceGroup.objects.order_by('label').values())
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title,
-        'all_resources': all_resources
+        'all_resources': all_resources,
+        'all_resource_group': all_resource_group,
     }
     
     return render(request, 'definitions_equipment_resources.html', context=context)
@@ -1494,6 +1496,171 @@ def removeEquipmentTypeInterface(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+
+def addResourceGroup(request):
+    if request.method == 'GET':
+        label = request.GET['label']
+        description = request.GET['description']
+        reportable = request.GET['is_report']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_add_resource_group('{}', '{}', {}, '{}', '{}')".format(
+            label, description, reportable, comment, modified_at
+        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_resource_group = list(ResourceGroup.objects.order_by('label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_resource_group': all_resource_group,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
+def updateResourceGroup(request):
+     if request.method == 'GET':
+        id = request.GET['groupId']
+        label = request.GET['label']
+        description = request.GET['description']
+        reportable = request.GET['is_report']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_update_resource_group({}, '{}', '{}', {}, '{}', '{}')".format(
+            id, label, description, reportable, comment, modified_at
+        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_resource_group = list(ResourceGroup.objects.order_by('label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_resource_group': all_resource_group,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+     
+def removeResourceGroup(request):
+     if request.method == 'GET':
+        group_id = request.GET['groupId']
+
+        raw_query = "SELECT id FROM resource_group WHERE label='Unassigned'"
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchone()
+        unAssigneId = results[0]
+    
+        raw_query = "SELECT fn_update_resource_with_new_group({}, {})".format(group_id, unAssigneId)
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        
+        raw_query = "SELECT fn_remove_resource_group({})".format(group_id)
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_resource_group = list(ResourceGroup.objects.order_by('label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_resource_group': all_resource_group,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+     
+def updateReourceDetail(request):
+     if request.method == 'GET':
+        resourceId = request.GET['resourceId']
+        modifier = request.GET['modifier']
+        description = request.GET['description']
+        resourceGroupId = request.GET['resourceGroupId']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_update_resource({}, {}, '{}', '{}', '{}', '{}')".format(
+            resourceId, resourceGroupId, modifier, description, comment, modified_at
+        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_resources = list(Resource.objects.order_by('modifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_resources': all_resources,
+            } 
+        )
+        return HttpResponse(data)
+
+def removeResourceFromGroup(request):
+    if request.method == 'GET':
+        resourceId = request.GET['resourceId']
+        modifier = request.GET['modifier']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT id FROM resource_group WHERE label='Unassigned'"
+        with connection.cursor() as cursor:
+            cursor.execute(raw_query)
+            results = cursor.fetchone()
+        unAssigneId = results[0]
+
+        raw_query = "SELECT fn_update_resource({}, {}, '{}', '{}', '{}', '{}')".format(
+            resourceId, unAssigneId, modifier, description, comment, modified_at
+        )
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_resources = list(Resource.objects.order_by('modifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_resources': all_resources,
+            } 
+        )
+        return HttpResponse(data)
 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):

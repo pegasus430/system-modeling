@@ -52,6 +52,19 @@ class Resource(models.Model):
         managed = False
         db_table = 'all_resource'
 
+class ResourceGroup(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    label = models.TextField()
+    description = models.TextField()
+    comment = models.TextField()
+    is_reportable = models.BooleanField()
+    is_used = models.BooleanField()
+    modified_at = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'all_resource_group'
+
+
 class Interface(models.Model):
     id = models.BigIntegerField(primary_key=True)
     interface_class_id = models.BigIntegerField()

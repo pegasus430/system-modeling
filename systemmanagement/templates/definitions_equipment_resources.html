@@ -3,6 +3,7 @@
 
 {% block maincontent %}
 {{all_resources | json_script:'all_resources'}}
+{{all_resource_group | json_script:'all_resource_group'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_resource_page card card-body system_overview border-gray">
@@ -25,116 +26,175 @@
                     <!-- Equipments Form -->
                     <form class="row g-3">
                     
-                    <h5 class="card-title nav-tabs-bordered">Resource Group Detail</h5>
-                    <input style="display: none;" id="resource_group_id" value=""></input>
-                    <div class="row mt-1">
-                        <label class="col-md-3 col-form-label text-secondary">Label:</label>
-                        <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="Label" value="" id="resource_group_label">
+                        <h5 class="card-title nav-tabs-bordered">Resource Group Detail</h5>
+                        <input style="display: none;" id="resource_group_id" value=""></input>
+                        <div class="row mt-1">
+                            <label class="col-md-3 col-form-label text-secondary">Label:</label>
+                            <div class="col-md-8">
+                            <input type="text" class="form-control" placeholder="Label" value="" id="resource_group_label">
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="row mt-1">
-                        <label class="col-md-3 col-form-label text-secondary">Description:</label>
-                        <div class="col-md-8">
-                        <textarea class="form-control" placeholder="Description" style="height: 60px;" id="resource_group_description"></textarea>
+                        <div class="row mt-1">
+                            <label class="col-md-3 col-form-label text-secondary">Description:</label>
+                            <div class="col-md-8">
+                            <textarea class="form-control" placeholder="Description" style="height: 60px;" id="resource_group_description"></textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-md-6">
-                            <div class="form-check form-switch">
+                        <div class="row mt-1"> 
+                            <label class="col-md-3 col-form-label text-secondary">Reportable</label>
+                            <div class="col-md-8 form-check form-switch ml-3 pt-2">
                                 <input class="form-check-input form-control" type="checkbox" id="resource_group_is_reportable">
-                                <label class="form-check-label">Reportable</label>
                             </div>
-                        </div>  
-                    </div>
-                    <div class="row mt-1">
-                        <label class="col-md-3 col-form-label text-secondary">Comment:</label>
-                        <div class="col-md-8">
-                        <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="resource_group_comment"></textarea>
                         </div>
-                    </div>
-                    
-                    <div class="row mt-1">
-                        <div class="col-md-6">
-                            <div class="form-check form-switch">
+                        <div class="row mt-1">
+                            <label class="col-md-3 col-form-label text-secondary">Comment:</label>
+                            <div class="col-md-8">
+                            <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="resource_group_comment"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <label class="col-md-3 col-form-label text-secondary">Used</label>
+                            <div class="col-md-8 form-check form-switch ml-3 pt-2">
                                 <input class="form-check-input form-control" type="checkbox" id="resource_group_used" readonly>
-                                <label class="form-check-label">Used</label>
                             </div>
-                        </div>  
-                    </div>
-                    <div class="row mt-1 p-2 pl-4" style="float: right;">
-                        <div class="col-md-2">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
-                            Add 
-                        </button>
                         </div>
-                        <div class="col-md-2">
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
-                            Update
-                        </button>
+                        <div class="row mt-1 p-2 pl-4" style="float: right;">
+                            <div class="col-md-2">
+                            <button type="button" class="btn btn-success" id="btn_add_resourcegroup" data-bs-toggle="modal" data-bs-target="#resourceGroupModal">
+                                Add 
+                            </button>
+                            </div>
+                            <div class="col-md-2">
+                            <button type="button" class="btn btn-info" id="btn_update_resourcegroup">
+                                Update
+                            </button>
+                            </div>
+                            <div class="col-md-2">
+                            <button type="button" id="btn_remove_resource_group" class="btn btn-danger">
+                                Delete
+                            </button>
+                            </div>
                         </div>
-                        <div class="col-md-2">
-                        <button type="button" id="btn_equipment_delete" class="btn btn-danger">
-                            Delete
-                        </button>
-                        </div>
-                        
-                    </div>
                     </form><!-- End Equipments Form -->
-    
                     <hr/>
-    
                     <div class="row">
                         <!-- Equipment Details table -->
                         <h5 class="card-title">Included Resources</h5>
-                        <table class="table table-bordered text-center" id="resource_group_table">
+                        <input type="text" id="resource_id" style="display: none;"></input>
+                        <table class="table display nowrap custom_datatable1" id="resource_table">
                             <thead style="background-color: #000; color: white; border: solid 1px;">
                                 <tr>
-                                    
                                     <th style="display: none;">resouce_id</th>
                                     <th scope="col" >Modifer</th>
                                     <th scope="col">Description</th>
                                     <th scope="col" >comment</th>
                                 </tr>
                             </thead>
-                            <tbody id="resource_group_attribute">
-                                <tr style="border: solid 1px">
-                                
-                                    <td style="display: none;"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                            <tbody>
                             </tbody>
                         </table><!-- End Equipment Details table -->
-
+                        <div class="row mt-1 p-2 pl-4" style="float: right;">
+                          <div class="col-md-2">
+                            <button type="button" class="btn btn-success" id="btn_add_resource_togroup" data-bs-toggle="modal" data-bs-target="#resourceToGroupModal">
+                                Add                            
+                            </button>
+                          </div>
+                          
+                          <div class="col-md-2">
+                            <button type="button" id="btn_remove_resource_fromgroup" class="btn btn-danger">
+                                Remove
+                            </button>
+                          </div>
+                      </div>
                     </div>
-                    
-                    <!-- Buttons Section -->
-                    <div class="col-xxl-12 col-lg-12 col-md-12">
-                        <div class="card-body buttons_section">
-                        <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
-                        <button type="button" class="btn btn-outline-primary" id='commit'>Commit</button>
-                        </div>
-                    </div><!-- End Buttons Section -->
+
                 </div>
                 </div><!-- End right Overview -->
             </div>
            
         </div>
     </div><!-- End Right Overview -->
+    <div class="modal fade" id="resourceGroupModal" tabindex="-1" aria-labelledby="resourceToGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="resourceGroupModalLabel">Add Resource Group</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Label:</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" placeholder="Label" value="" id="adding_resource_group_label" required>
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Description:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Description" style="height: 60px;" id="adding_resource_group_description"></textarea>
+                </div>
+              </div>
+              <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Reportable</label>
+                        <div class="col-md-7 form-check form-switch ml-3 pt-2">
+                            <input class="form-check-input form-control" type="checkbox" id="adding_resource_group_is_reportable">
+                        </div>
+              </div>
+              
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Comment:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="comment" style="height: 60px;" id="adding_resource_group_comment"></textarea>
+                </div>
+              </div>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary"  >Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="modal fade" id="resourceToGroupModal" tabindex="-1" aria-labelledby="resourceToGroupModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="resourceToGroupModalLabel">Add Resource to this Group</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Resource Group:</label>
+              <div class="col-md-7">
+                <input type="text" class="form-control" placeholder="Label" value="" id="modal_resource_group_label" readonly>
+              </div>
+            </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Resources:</label>
+              <div class="col-md-7">
+              <select class="form-select" id="all_resources_to_group">
+                
+              </select>
+            </div>
+            </div>
+            
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary"  >Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <script type="text/javascript">
         all_resources = JSON.parse(document.getElementById('all_resources').textContent)
-        const nodeWithParent = []
+        all_resource_group = JSON.parse(document.getElementById('all_resource_group').textContent)
         var html = ''
-        var resource_groupid_list = []
-        all_resources.forEach(n => {
-            if(!resource_groupid_list.includes(n.group_id)){
-                resource_groupid_list.push(n.group_id)
-                html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-group_id="'+ n.group_id + '"> \
-                '+n.group_label + '  (' + n.group_description +')</li>'
-            }
+        all_resource_group.forEach(group => {
+            html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-group_id="'+ group.id + '"> \
+                '+group.label + '  (' + group.description +')</li>'
+            
         });
        
         document.getElementById('all_equipment_resources_tree').innerHTML = html

@@ -1544,7 +1544,7 @@ $(document).ready(function() {
     selectedPropertyId = $(this).attr("data-propertyId")
     resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
     all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
-    // display resource group detail
+    // display resource property detail
     selectedProperty= resourceProperty.find(element => element.id == selectedPropertyId)
     $("#resource_property_default_datatype").find('option').remove()
     
@@ -1574,32 +1574,119 @@ $(document).ready(function() {
 
     // display resources using this property
     resources = resourceProperty.filter(element => element.id == selectedPropertyId)
-    resources.sort((a, b) => {
-      const valueA = a.resource_modifier == null ? '': a.resource_modifier.toLowerCase(); // Get the value to compare in object A (converted to lowercase for case-insensitive sorting)
-      const valueB = b.resource_modifier == null ? '': b.resource_modifier.toLowerCase(); // Get the value to compare in object B (converted to lowercase for case-insensitive sorting)
-      
-      if (valueA < valueB) {
-        return -1; // Return negative value if A should come before B
-      }
-    
-      if (valueA > valueB) {
-        return 1; // Return positive value if A should come after B
-      }
-    
-      return 0; // Return 0 if values are equal
-    });
-    var html = ''
-
+    tableData = []
     resources.forEach(resource => {
-       html += '<tr> \
-          <td style="display: none">'+ resource.resource_id +'</td>\
-          <td>'+ resource.resource_modifier + '(' + resource.resource_description + ') </td>\
-          <td>'+ resource.resource_property_default_datatype_label + '(' + resource.resource_property_default_datatype_comment + ')</td>\
-          <td>'+ resource.resource_property_default_value +'</td>\
-          <td>'+ resource.resource_property_comment +'</td>\
-        </tr>'
+       tableData.push({
+          'id': resource.resource_id ,
+          'resource': resource.resource_modifier + '(' + resource.resource_description + ')',
+          'datatype': resource.resource_property_default_datatype_label + '(' + resource.resource_property_default_datatype_comment + ')',
+          'value':resource.resource_property_default_value ,
+          'comment':resource.resource_property_comment ,
+        })
+        
     })
-    $('#resource_property_attribute').html(html)
+
+    var propertyEditor = new DataTable.Editor({
+      idSrc:  'id',
+      fields: [
+        {
+          label: 'id',
+          name: 'id'
+        },
+        {
+          label: 'resource',
+          name: 'resource'
+        },
+        {
+          label: 'datatype',
+          name: 'datatype'
+        },
+        {
+          label: 'value',
+          name: 'value'
+        },
+        {
+          label: 'comment',
+          name: 'comment'
+        }
+      ],
+      table: '#resource_property_table'
+    })
+
+    
+    $('#resource_property_table').DataTable({
+      data:  tableData ,
+      destroy: true,
+      columns: [
+        { data: 'id' },
+        { data: 'resource' },
+        { data: 'datatype' },
+        { data: 'value' },
+        { data: 'comment' },
+      ],
+      order: [[1, 'asc']],
+      columnDefs:[
+        {
+          visible:false, 
+          targets:0
+        }
+        
+      ]
+    })
+
+    $('#resource_property_table').on('click', 'td', function(){
+      propertyEditor.inline(this)
+      sTable = $('#resource_property_table').DataTable()
+      let cell = sTable.cell(this)
+      let row = cell.index().row;
+      let rowData = sTable.row(row).data()
+      let selectedPropertyId = rowData.id
+      $('#selectedPropertyId').val(selectedPropertyId)
+    })
+
+    propertyEditor.on('edit', function(e, datatable, cell){
+      let propertyId = cell.id
+      $('#selectedPropertyId').val(resourceId)
+
+      // let modifier = cell.modifier
+      // let description = cell.description
+      // let comment = cell.comment
+      // let resourceGroupId = selectedResourceGroupId
+
+      // if(description){
+      //   $.ajax({
+      //     type: 'GET',
+      //     url: 'updateReourceDetail',
+      //     data: {
+      //       resourceId: resourceId,
+      //       modifier: modifier,
+      //       description: description,
+      //       comment: comment,
+      //       resourceGroupId: resourceGroupId
+      //     },
+      //     success: function (data){
+      //       data = JSON.parse(data)
+      //       var result = data['result']
+      //       var all_resources = data['all_resources']
+            
+      //       if(result){
+      //         showSuccessNotification('The resource has been updated successfully!')
+      //         document.getElementById('all_resources').textContent = JSON.stringify(all_resources)
+      //       }
+      //       else{
+      //         showErrorNotification('The error happend while updating the resource!')
+      //       }
+      //     },
+      //     error: function(e){
+      //       showErrorNotification('The error happend while requesting the server!')
+      //     }
+      //   })
+      // }else{
+      //   showErrorNotification('Description should not be empty string.')
+      // }
+
+    })
+    
   
   })
 

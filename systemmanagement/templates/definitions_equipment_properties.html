@@ -81,17 +81,17 @@
                     </div>
                     <div class="row mt-1 p-2 pl-4" style="float: right;">
                         <div class="col-md-2">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
+                        <button type="button" class="btn btn-success" id="btnEquipmentPropertyAdd" data-bs-toggle="modal" data-bs-target="#equipmentPropertyModal">
                             Add
                         </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
+                        <button type="button" id="btnEquipmentPropertyUpdate" class="btn btn-info">
                             Update
                         </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" id="btn_equipment_delete" class="btn btn-danger">
+                        <button type="button" id="btn_equipment_property_delete" class="btn btn-danger">
                             Delete
                         </button>
                         </div>
@@ -103,8 +103,9 @@
     
                     <div class="row">
                         <!-- Equipment Details table -->
+                        <input type="text" style="display: none;" id="selectedPropertyId" />
                         <h5 class="card-title">Resources using this property</h5>
-                        <table class="table table-bordered text-center" id="resource_property_table">
+                        <table class="table display nowrap custom_datatable1" id="resource_property_table">
                             <thead style="background-color: #000; color: white; border: solid 1px;">
                                 <tr>
                                     <th style="display: none;">id</th>
@@ -114,15 +115,6 @@
                                     <th scope="col" >comment</th>
                                 </tr>
                             </thead>
-                            <tbody id="resource_property_attribute">
-                                <tr style="border: solid 1px">
-                                    <td style="display: none;"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
                         </table><!-- End Equipment Details table -->
 
                     </div>
@@ -142,7 +134,6 @@
     </div><!-- End Right Overview -->
     <script>
         resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
-        console.log("property list is " ,resourceProperty)
         var html = ''
         var resource_id_list = []
         resourceProperty.forEach(n => {

@@ -3770,6 +3770,7 @@ $(document).ready(function() {
     })
   }
 
+  // remove resource from the resouce group
   if(select('#btn_remove_resource_fromgroup')){
     on('click', '#btn_remove_resource_fromgroup', function(){
       let resourceGroupLabel = $('#resource_group_label').val()
@@ -3868,6 +3869,70 @@ $(document).ready(function() {
         }
       }else{
         showErrorNotification('You should select the resource to be removed from the group')
+      }
+    })
+  }
+
+  //update the property
+  if(select('#btnEquipmentPropertyUpdate')){
+    on('click', '#btnEquipmentPropertyUpdate', function(){
+      let propertyId = $('#resource_property_id').val()
+      if(propertyId){
+         let propertyModifier = $('#resource_property_modifier').val()
+         let propertyDescription = $('#resource_property_description').val()
+         let propertyDeValue =  $('#resource_property_default_value').val()
+         let propertyDeDataLabelId = $('#resource_property_default_datatype').val()
+         let propertyDeComment =  $('#resource_property_comment').val()
+         let propertyReportable =  $('#resource_property_is_reportable').prop('checked')
+         if(propertyDescription){
+          $.ajax({
+            type: "GET",
+            url: 'updatePropertyDetail',
+            data: {
+              propertyId: propertyId,
+              propertyModifier: propertyModifier,
+              propertyDescription: propertyDescription,
+              propertyDeValue: propertyDeValue,
+              propertyDeDataLabelId: propertyDeDataLabelId,
+              propertyDeComment: propertyDeComment,
+              propertyReportable: propertyReportable,
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']            
+
+              if(result){
+                showSuccessNotification('The property has been updated successfully!')
+                var resourceProperty = data['resourceProperty']
+                document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+                var html = ''
+                var resource_id_list = []
+                resourceProperty.forEach(n => {
+                    if(!resource_id_list.includes(n.id)){
+                        resource_id_list.push(n.id)
+                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                        ' + n.modifier + '  (' + n.description +')</li>'
+                    }
+                });
+            
+                document.getElementById('all_resource_property_tree').innerHTML = html
+                $('.treeview-animated').mdbTreeview();
+
+              }
+              else{
+                showErrorNotification('The error happend while updating the property!')
+              }
+            },
+            error:function(){
+              showErrorNotification('The error happend while requesting the server')
+            }
+  
+          })
+         }else{
+           showErrorNotification('The description should not be empty string.')
+         }
+      }else{
+        showErrorNotification('You should select the property to be updated.')
       }
     })
   }

@@ -1662,6 +1662,41 @@ def removeResourceFromGroup(request):
         )
         return HttpResponse(data)
 
+def updatePropertyDetail(request):
+    if request.method == 'GET':
+        propertyId = request.GET['propertyId']
+        propertyModifier = request.GET['propertyModifier']
+        propertyDescription = request.GET['propertyDescription']
+        propertyDeValue = request.GET['propertyDeValue']
+        propertyDeDataLabelId = request.GET['propertyDeDataLabelId']
+        propertyDeComment = request.GET['propertyDeComment']
+        propertyReportable = request.GET['propertyReportable']
+        
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_update_property({}, '{}', '{}', '{}', {}, '{}', {}, '{}')".format(
+            propertyId, propertyModifier, propertyDescription, propertyDeValue, propertyDeDataLabelId, 
+            propertyDeComment, propertyReportable, modified_at
+        )        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'resourceProperty': resourceProperty,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+     
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

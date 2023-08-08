@@ -1736,6 +1736,30 @@ def addEquipmentProperty(request):
         )
         return HttpResponse(data) 
     
+def removeProperty(request):
+    if request.method == 'GET':
+        propertyId = request.GET['propertyId']
+        raw_query = "SELECT fn_remove_property({})".format(
+            propertyId
+        )        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'resourceProperty': resourceProperty,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+    
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

@@ -4030,6 +4030,66 @@ $(document).ready(function() {
       }
     })
   }
+
+  // delete the property 
+  if(select('#btn_equipment_property_delete')){
+    on('click', '#btn_equipment_property_delete', function(){
+      let propertyId = $('#resource_property_id').val()
+      if(propertyId){
+          $.ajax({
+            type: "GET",
+            url: 'removeProperty',
+            data: {
+              propertyId: propertyId,
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']            
+
+              if(result){
+
+                showSuccessNotification('The property has been removed successfully!')
+                $("#resource_property_default_datatype").find('option').remove()
+    
+                $('#resource_property_id').val('')
+                $('#resource_property_modifier').val('')
+                $('#resource_property_description').val('')
+                $('#resource_property_is_reportable').prop('checked' , false)
+                $('#resource_property_comment').val('')
+                $('#resource_property_used').prop('checked' , false)
+                $('#resource_property_default_value').val('')
+
+                var resourceProperty = data['resourceProperty']
+                document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+                var html = ''
+                var resource_id_list = []
+                resourceProperty.forEach(n => {
+                    if(!resource_id_list.includes(n.id)){
+                        resource_id_list.push(n.id)
+                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                        ' + n.modifier + '  (' + n.description +')</li>'
+                    }
+                });
+            
+                document.getElementById('all_resource_property_tree').innerHTML = html
+                $('.treeview-animated').mdbTreeview();
+
+              }
+              else{
+                showErrorNotification('The error happend while removing the property!')
+              }
+            },
+            error:function(){
+              showErrorNotification('The error happend while requesting the server')
+            }
+  
+          })
+         
+      }else{
+        showErrorNotification('You should select the property to be removed.')
+      }
+    })
+  }
 } )
 ();
 

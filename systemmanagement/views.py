@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource, ResourceGroup, ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource, ResourceGroup, ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority, AttributeClass
 from django.db import connection
 import datetime
 import json
@@ -325,12 +325,14 @@ def definitions_equipment_properties(request):
     sidebar_title = 'equipment_properties'
     resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
     all_datatype = list(DataType.objects.values())
+    all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title,
         'resourceProperty': resourceProperty,
         'all_datatype': all_datatype,
+        'all_attributeClass': all_attributeClass,
     }
     
     return render(request, 'definitions_equipment_properties.html', context=context)
@@ -1697,6 +1699,43 @@ def updatePropertyDetail(request):
         )
         return HttpResponse(data) 
      
+def addEquipmentProperty(request):
+    if request.method == 'GET':
+        modifier = request.GET['modifier']
+        description = request.GET['description']
+        defaultValue = request.GET['defaultValue']
+        defaultDataTypeId = request.GET['defaultDataTypeId']
+        if defaultDataTypeId == 'none':
+            defaultDataTypeId = 'Null'
+        reportable = request.GET['reportable']
+        comment = request.GET['comment']
+        attributeClassId = request.GET['attributeClassId']
+        if attributeClassId == 'none':
+            attributeClassId = 'Null'
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_add_property('{}', '{}', '{}', {}, '{}', {}, '{}', {})".format(
+            modifier, description, defaultValue, defaultDataTypeId, comment, reportable, modified_at, attributeClassId
+        )        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'resourceProperty': resourceProperty,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+    
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

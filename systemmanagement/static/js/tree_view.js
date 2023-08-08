@@ -1551,7 +1551,7 @@ $(document).ready(function() {
     $('#resource_property_id').val(selectedPropertyId)
     $('#resource_property_modifier').val(selectedProperty.modifier)
     $('#resource_property_description').val(selectedProperty.description)
-    if(selectedProperty['resource_property_is_reportable']){
+    if(selectedProperty['is_reportable']){
       $('#resource_property_is_reportable').prop('checked' , true)
     }else{
       $('#resource_property_is_reportable').prop('checked' , false)
@@ -1565,6 +1565,10 @@ $(document).ready(function() {
     $('#resource_property_used').prop('disabled' , true)
     $('#resource_property_default_value').val(selectedProperty.default_value)
 
+    var p = new Option('none', undefined,  undefined, undefined)
+    $(p).html('none')
+    $('#resource_property_default_datatype').append(p)
+    
     all_datatype.forEach(element => {
       var selected = element.id === selectedProperty.default_datatype_id ? true: false
       var p = new Option(element.label, element.id,  undefined, selected)
@@ -1578,8 +1582,10 @@ $(document).ready(function() {
     resources.forEach(resource => {
        tableData.push({
           'id': resource.resource_id ,
-          'resource': resource.resource_modifier + '(' + resource.resource_description + ')',
-          'datatype': resource.resource_property_default_datatype_label + '(' + resource.resource_property_default_datatype_comment + ')',
+          'resource_modifier': resource.resource_modifier ,
+          'resource_description': resource.resource_description ,
+          'datatype_label': resource.resource_property_default_datatype_label ,
+          'datatype_description': resource.resource_property_default_datatype_comment,
           'value':resource.resource_property_default_value ,
           'comment':resource.resource_property_comment ,
         })
@@ -1594,12 +1600,20 @@ $(document).ready(function() {
           name: 'id'
         },
         {
-          label: 'resource',
-          name: 'resource'
+          label: 'resource_modifier',
+          name: 'resource_modifier'
         },
         {
-          label: 'datatype',
-          name: 'datatype'
+          label: 'resource_description',
+          name: 'resource_description'
+        },
+        {
+          label: 'datatype_label',
+          name: 'datatype_label'
+        },
+        {
+          label: 'datatype_description',
+          name: 'datatype_description'
         },
         {
           label: 'value',
@@ -1619,8 +1633,10 @@ $(document).ready(function() {
       destroy: true,
       columns: [
         { data: 'id' },
-        { data: 'resource' },
-        { data: 'datatype' },
+        { data: 'resource_modifier' },
+        { data: 'resource_description' },
+        { data: 'datatype_label' },
+        { data: 'datatype_description' },
         { data: 'value' },
         { data: 'comment' },
       ],

@@ -4,6 +4,7 @@
 {% block maincontent %}
 {{resourceProperty | json_script:'resourceProperty'}}
 {{all_datatype | json_script:'all_datatype'}}
+{{all_attributeClass | json_script:'all_attributeClass'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_property_page card card-body system_overview border-gray">
@@ -109,9 +110,11 @@
                             <thead style="background-color: #000; color: white; border: solid 1px;">
                                 <tr>
                                     <th style="display: none;">id</th>
-                                    <th>Resource</th>
-                                    <th scope="col" >Datatype In Resource</th>
-                                    <th scope="col">Value In Resource</th>
+                                    <th scope="col" >Resource Modifier</th>
+                                    <th scope="col">Resource Description</th>
+                                    <th scope="col" >Datatype Label</th>
+                                    <th scope="col" >Datatype Description</th>
+                                    <th scope="col">Value</th>
                                     <th scope="col" >comment</th>
                                 </tr>
                             </thead>
@@ -132,6 +135,70 @@
            
         </div>
     </div><!-- End Right Overview -->
+    <div class="modal fade" id="equipmentPropertyModal" tabindex="-1" aria-labelledby="equipmentPropertyModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="equipmentPropertyModalLabel">Add Equipment Property</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Modifier:</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" placeholder="Modifier" value="" id="adding_property_modifier" required>
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Description:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Description" style="height: 60px;" id="adding_property_description"></textarea>
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Default Value:</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" placeholder="Value" value="" id="adding_property_default_value">
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Default Datatype Label:</label>
+                <div class="col-md-7">
+                    <select class="form-select" id="adding_property_default_datatype_label">
+                    
+                    </select>
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Comment:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="comment"  id="adding_property_comment"></textarea>
+                </div>
+              </div>
+
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reportable</label>
+                    <div class="col-md-7 form-check form-switch ml-3 pt-2">
+                        <input class="form-check-input form-control" type="checkbox" id="adding_property_is_reportable">
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Attribute Class:</label>
+                    <div class="col-md-7">
+                        <select class="form-select" id="adding_property_attribute_class">
+                        
+                        </select>
+                    </div>
+                    </div>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary"  >Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
     <script>
         resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
         var html = ''

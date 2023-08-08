@@ -3936,6 +3936,100 @@ $(document).ready(function() {
       }
     })
   }
+
+  //show Add equipment property modal
+  if(select('#btnEquipmentPropertyAdd')){
+    on('click', '#btnEquipmentPropertyAdd', function(){
+      let all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+      let all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
+      $('#adding_property_default_datatype_label').find('option').remove()
+      $('#adding_property_attribute_class').find('option').remove()
+      
+      var p = new Option('none', undefined,  undefined, undefined)
+      $(p).html('none')
+      $('#adding_property_default_datatype_label').append(p)
+      all_datatype.forEach(element => {
+        var p = new Option(element.label, element.id,  undefined, undefined)
+        $(p).html(element.label)
+        $('#adding_property_default_datatype_label').append(p)
+      })
+
+      var p = new Option('none', undefined,  undefined, undefined)
+      $(p).html('none')
+      $('#adding_property_attribute_class').append(p)      
+      all_attributeClass.forEach(element => {
+        var p = new Option(element.attribute_class_label, element.attribute_class_id,  undefined, undefined)
+        $(p).html(element.label)
+        $('#adding_property_attribute_class').append(p)
+      })
+
+    })
+  }
+
+  // add the resource to group in the modal
+  if(select('#equipmentPropertyModal .btn-primary'))
+  {
+    on('click', '#equipmentPropertyModal .btn-primary', function(){
+      let modifier = $('#adding_property_modifier').val()
+      let description = $('#adding_property_description').val()
+      let defaultValue = $('#adding_property_default_value').val()
+      let defaultDataTypeId = $('#adding_property_default_datatype_label').val()
+      let comment = $('#adding_property_comment').val()
+      let reportable = $('#adding_property_is_reportable').prop('checked')
+      let attributeClassId = $('#adding_property_attribute_class').val()
+
+      if(description){
+        if(confirm('Are you sure to add this property?')){
+            
+            $.ajax({
+              type: "GET",
+              url: 'addEquipmentProperty',
+              data: {
+                modifier: modifier,
+                description: description,
+                defaultValue: defaultValue,
+                defaultDataTypeId: defaultDataTypeId,
+                comment: comment,
+                reportable: reportable,
+                attributeClassId: attributeClassId
+              },
+              success: function (data){
+                data = JSON.parse(data)
+                var result = data['result']
+
+                if(result){
+                  showSuccessNotification('The Property has been added successfully!') 
+                  $('#equipmentPropertyModal').modal('hide')
+                  var resourceProperty = data['resourceProperty']
+                  document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+                  var html = ''
+                  var resource_id_list = []
+                  resourceProperty.forEach(n => {
+                      if(!resource_id_list.includes(n.id)){
+                          resource_id_list.push(n.id)
+                          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                          ' + n.modifier + '  (' + n.description +')</li>'
+                      }
+                  });
+                  document.getElementById('all_resource_property_tree').innerHTML = html
+                  $('.treeview-animated').mdbTreeview();
+                
+                }
+                else{
+                  showErrorNotification('The error has happend while adding the property')
+                }
+              },
+              error: function(e){
+                 showErrorNotification('The error has happend while requesting the server')
+              }
+            })
+        }
+        
+      }else{
+        showErrorNotification('Description should not be empty string')
+      }
+    })
+  }
 } )
 ();
 

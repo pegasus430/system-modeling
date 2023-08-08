@@ -424,3 +424,13 @@ class Authority(models.Model):
     class Meta:
         managed = False
         db_table = 'all_authority'
+
+class AttributeClass(models.Model):
+    attribute_class_id = models.BigIntegerField(primary_key=True)
+    attribute_class_label = models.TextField()
+    attribute_class_description = models.TextField()
+    attribute_class_comment = models.TextField()
+    attribute_class_modified_at = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'all_attribute_class'

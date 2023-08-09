@@ -64,7 +64,6 @@ class ResourceGroup(models.Model):
         managed = False
         db_table = 'all_resource_group'
 
-
 class Interface(models.Model):
     id = models.BigIntegerField(primary_key=True)
     interface_class_id = models.BigIntegerField()

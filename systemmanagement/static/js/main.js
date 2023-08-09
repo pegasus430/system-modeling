@@ -4460,6 +4460,64 @@ $(document).ready(function() {
       showErrorNotification('You should select the resource fromt the table')
     }
   })
+
+  // update equipment interface
+  $('#btnUpdateEquipmentInterface').on('click', function(){
+    let selectedInterfaceId = $('#equipment_interface_id').val()
+    if(selectedInterfaceId){
+      let identifier = $('#equipment_interface_identifier').val()      
+      let description = $('#equipment_interface_description').val()
+      let comment = $('#equipment_interface_comment').val()
+      let interfaceClassId =  $('#equipment_interface_interface_class_label').val()
+      let interfaceConnectingClassId =  $('#equipment_interface_connecting_class_label').val()
+      let isIntermediate =  $('#equipment_interface_is_intermediate').prop('checked')
+
+      $.ajax({
+        type: "GET",
+        url: 'updateEquipmentInterfaceDetail',
+        data: {
+          selectedInterfaceId: selectedInterfaceId,
+          identifier: identifier,
+          description: description,
+          comment: comment,
+          interfaceClassId: interfaceClassId,
+          interfaceConnectingClassId: interfaceConnectingClassId,
+          isIntermediate: isIntermediate,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            showSuccessNotification('The interface has been updated successfully!')
+           
+            var  all_interfaces = data['all_interfaces']
+            // update the resoruce proeprty and resouces with updated ones
+            document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
+           
+            // update the tree view
+            var html = ''
+            var interface_id_list = []
+            all_interfaces.forEach(n => {
+                if(!interface_id_list.includes(n.id)){
+                    interface_id_list.push(n.id)
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
+                    ' + n.identifier + '  (' + n.description +')</li>'
+                }
+            });
+            document.getElementById('equipment_interface_tree').innerHTML = html
+          }
+          else{
+            showErrorNotification('The error happend while updating the interface!')
+          }
+        },
+        error:function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }else{
+      showErrorNotification('You should select the interface to be updated')
+    }
+  })
 } )
 ();
 

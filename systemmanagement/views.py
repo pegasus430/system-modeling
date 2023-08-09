@@ -1870,6 +1870,44 @@ def removeResourceProperty(request):
         )
         return HttpResponse(data) 
 
+def updateEquipmentInterfaceDetail(request):
+    if request.method == 'GET':
+        selectedInterfaceId = request.GET['selectedInterfaceId']
+        identifier = request.GET['identifier']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        interfaceClassId = request.GET['interfaceClassId']
+        if interfaceClassId == 'none':
+            interfaceClassId = 'Null'
+        interfaceConnectingClassId = request.GET['interfaceConnectingClassId']
+        if interfaceConnectingClassId == 'none':
+            interfaceConnectingClassId = 'Null'
+        isIntermediate = request.GET['isIntermediate']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_update_interface({}, {}, '{}', '{}' , '{}', '{}', {}, {})".format(
+            interfaceClassId, interfaceConnectingClassId, identifier, description, comment, modified_at, isIntermediate, selectedInterfaceId
+        )  
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+              
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_interfaces = list(Interface.objects.order_by('identifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_interfaces': all_interfaces,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

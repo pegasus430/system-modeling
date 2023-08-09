@@ -62,4 +62,5 @@ urlpatterns = [
     path(r'definitions/updateResourcePropertyDetail', views.updateResourcePropertyDetail, name='updateResourcePropertyDetail'),
     path(r'definitions/addResourceProperty', views.addResourceProperty, name='addResourceProperty'),
     path(r'definitions/removeResourceProperty', views.removeResourceProperty, name='removeResourceProperty'),
+    path(r'definitions/updateEquipmentInterfaceDetail', views.updateEquipmentInterfaceDetail, name='updateEquipmentInterfaceDetail'),
 ]

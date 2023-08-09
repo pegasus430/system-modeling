@@ -1616,8 +1616,6 @@ $(document).ready(function() {
 
   })
 
-  
-
   $('.equipment_interface_page').on('click', '.treeview-li .treeview-title', function(){
     selectedInterfaceId = $(this).attr("data-interfaceId")
     all_interfaces = JSON.parse(document.getElementById('all_interfaces').textContent)
@@ -1645,14 +1643,20 @@ $(document).ready(function() {
       $('#equipment_interface_used').prop('disabled', true)
     }
     
-
+    var p = new Option('none', 'none', undefined, undefined)
+    $(p).html('none')
+    $('#equipment_interface_interface_class_label').append(p)
     all_interface_classes.forEach(element => {
       var selected = element.id === selectedInterface.interface_class_id ? true: false
       var p = new Option(element.label, element.id,  undefined, selected)
       $(p).html(element.label + ' (' + element.description + ')')
       $('#equipment_interface_interface_class_label').append(p)
     })
-  
+
+    var p = new Option('none', 'none', undefined, undefined)
+    $(p).html('none')
+    $('#equipment_interface_connecting_class_label').append(p)
+
     all_interface_classes.forEach(element => {
       var selected = element.id === selectedInterface.connecting_interface_class_id ? true: false
       var p = new Option(element.label, element.id,  undefined, selected)

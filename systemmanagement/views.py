@@ -1908,6 +1908,69 @@ def updateEquipmentInterfaceDetail(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+    
+def addInterfaceDetail(request):
+      if request.method == 'GET':
+        identifier = request.GET['identifier']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        classId = request.GET['classId']
+        if classId == 'none':
+            classId = 'Null'
+        connectingClassId = request.GET['connectingClassId']
+        if connectingClassId == 'none':
+            connectingClassId = 'Null'
+        isIntermediate = request.GET['isIntermediate']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_add_interface({}, {}, '{}', '{}' , '{}', '{}', {})".format(
+            classId, connectingClassId, identifier, description, comment, modified_at, isIntermediate
+        )  
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+              
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_interfaces = list(Interface.objects.order_by('identifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_interfaces': all_interfaces,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def removeEquipmentInterface(request):
+    if request.method == 'GET':
+        selectedInterfaceId = request.GET['selectedInterfaceId']
+
+        raw_query = "SELECT fn_remove_interface({})".format(selectedInterfaceId)  
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+              
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_interfaces = list(Interface.objects.order_by('identifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_interfaces': all_interfaces,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

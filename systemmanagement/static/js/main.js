@@ -4518,6 +4518,131 @@ $(document).ready(function() {
       showErrorNotification('You should select the interface to be updated')
     }
   })
+
+  // show adding interface modal
+  $('#btnAddEquipmentInterface').on('click', function(){
+    $('#adding_interface_class_label').find('option').remove()
+    $('#adding_interface_connecting_class_label').find('option').remove()
+    let all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+    // initialize the drop down list for class labels
+    var p = new Option('none', 'none', undefined, undefined)
+    $(p).html('none')
+    $('#adding_interface_class_label').append(p)
+    all_interface_classes.forEach(element => {
+      var p = new Option(element.label, element.id,  undefined, undefined)
+      $(p).html(element.label + ' (' + element.description + ')')
+      $('#adding_interface_class_label').append(p)
+    })
+
+    var p = new Option('none', 'none', undefined, undefined)
+    $(p).html('none')
+    $('#adding_interface_connecting_class_label').append(p)
+    all_interface_classes.forEach(element => {
+      var p = new Option(element.label, element.id,  undefined, undefined)
+      $(p).html(element.label + ' (' + element.description + ')')
+      $('#adding_interface_connecting_class_label').append(p)
+    })
+  })
+
+  //add the equipment interface in the modal
+  $('#equipmentInterfaceModal .btn-primary').on('click', function(){
+    let identifier = $('#adding_interface_identifier').val()
+    let description = $('#adding_interface_description').val()
+    let classId = $('#adding_interface_class_label').val()
+    let connectingClassId = $('#adding_interface_connecting_class_label').val()
+    let comment = $('#adding_interface_comment').val()
+    let isIntermediate= $('#adding_interface_is_intermediate').prop('checked')
+    if(identifier){
+      $.ajax({
+        type: "GET",
+        url: 'addInterfaceDetail',
+        data: {
+          identifier: identifier,
+          description: description,
+          comment: comment,
+          classId: classId,
+          connectingClassId: connectingClassId,
+          isIntermediate: isIntermediate,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            showSuccessNotification('The interface has been added successfully!')
+            $('#equipmentInterfaceModal').modal('hide')
+            var  all_interfaces = data['all_interfaces']
+            // update the resoruce proeprty and resouces with added ones
+            document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
+           
+            // update the tree view
+            var html = ''
+            var interface_id_list = []
+            all_interfaces.forEach(n => {
+                if(!interface_id_list.includes(n.id)){
+                    interface_id_list.push(n.id)
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
+                    ' + n.identifier + '  (' + n.description +')</li>'
+                }
+            });
+            document.getElementById('equipment_interface_tree').innerHTML = html
+          }
+          else{
+            showErrorNotification('The error happend while adding the interface!')
+          }
+        },
+        error:function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }else{
+      showErrorNotification('The identifier should not be empty string.')
+    }
+  })
+
+  //remove the inerface
+  $('#btnRemoveEquipmentInterface').on('click', function(){
+    let selectedInterfaceId = $('#equipment_interface_id').val()
+    if(selectedInterfaceId){
+      $.ajax({
+        type: "GET",
+        url: 'removeEquipmentInterface',
+        data: {
+          selectedInterfaceId: selectedInterfaceId,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            showSuccessNotification('The interface has been removed successfully!')
+           
+            var  all_interfaces = data['all_interfaces']
+            // update the resoruce proeprty and resouces with removed one
+            document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
+           
+            // update the tree view
+            var html = ''
+            var interface_id_list = []
+            all_interfaces.forEach(n => {
+                if(!interface_id_list.includes(n.id)){
+                    interface_id_list.push(n.id)
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
+                    ' + n.identifier + '  (' + n.description +')</li>'
+                }
+            });
+            document.getElementById('equipment_interface_tree').innerHTML = html
+          }
+          else{
+            showErrorNotification('The error happend while removing the interface!')
+          }
+        },
+        error:function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }else{
+      showErrorNotification("You should select the interface to be removed.")
+    }
+  })
 } )
 ();
 

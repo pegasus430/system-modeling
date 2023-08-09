@@ -32,7 +32,7 @@ function showSuccessNotification(text){
 $(document).ready(function() {
 
   $('.treeview-animated').mdbTreeview();
-  $('#version').html('1.0.31 (31/07/2023)')
+  $('#version').html('1.1.10 (10/08/2023)')
 
     // display purchasing_overview_table as default
     var tableData = []
@@ -1429,8 +1429,6 @@ $(document).ready(function() {
         })
       }
     })
-
-
 
     if(document.getElementById('target_systems')){
       target_systems = JSON.parse(document.getElementById('target_systems').textContent)

@@ -6,7 +6,6 @@ import datetime
 import json
 import pytz
 
-
 # Create your views here.
 def system(request):
     page = 'system'

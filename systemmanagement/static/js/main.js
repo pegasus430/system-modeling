@@ -4276,7 +4276,7 @@ $(document).ready(function() {
   })
 
    // add the resource property
-   $('#add_resource_property_btn').on('click', function(){
+  $('#add_resource_property_btn').on('click', function(){
    
     let propertyId = $('#resource_property_id').val()
    
@@ -4371,6 +4371,93 @@ $(document).ready(function() {
           showErrorNotification('The error happend while requesting the server')
         }
       })
+    }
+  })
+
+  // remove the resource from the resource property
+  $('#btnResourcePropertyRemove').on('click', function(){
+    let propertyId = $('#resource_property_id').val()
+    let resourceId = $('#selectedResourceId').val()
+    if(resourceId && propertyId){
+      $.ajax({
+        type: "GET",
+        url: 'removeResourceProperty',
+        data: {
+          propertyId: propertyId,
+          resourceId: resourceId,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']            
+
+          if(result){
+            showSuccessNotification('The resource property has been removed successfully!')
+            var resourceProperty = data['resourceProperty']
+          
+            // update the resoruce proeprty with removed one
+            document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+          
+            // update the tree view
+            var html = ''
+            var resource_id_list = []
+            resourceProperty.forEach(n => {
+                if(!resource_id_list.includes(n.id)){
+                    resource_id_list.push(n.id)
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                    ' + n.modifier + '  (' + n.description +')</li>'
+                }
+            });
+            document.getElementById('all_resource_property_tree').innerHTML = html
+            $('.treeview-animated').mdbTreeview();
+            $('#resourcePropertyModal').modal('hide')
+
+            // display resources using this property
+            resources = resourceProperty.filter(element => element.id == propertyId)
+            tableData = []
+            resources.forEach(resource => {
+              tableData.push({
+                  'resource_id': resource.resource_id ,
+                  'resource_modifier': resource.resource_modifier ,
+                  'resource_description': resource.resource_description ,
+                  'datatype_label': resource.resource_property_default_datatype_label ,
+                  'datatype_description': resource.resource_property_default_datatype_comment,
+                  'value':resource.resource_property_default_value ,
+                  'comment':resource.resource_property_comment ,
+                })
+                
+            })
+            $('#resource_property_table').DataTable({
+              data:  tableData ,
+              destroy: true,
+              columns: [
+                { data: 'resource_id' },
+                { data: 'resource_modifier' },
+                { data: 'resource_description' },
+                { data: 'datatype_label' },
+                { data: 'datatype_description' },
+                { data: 'value' },
+                { data: 'comment' },
+              ],
+              order: [[1, 'asc']],
+              columnDefs:[
+                {
+                  visible:false, 
+                  targets:0
+                }
+              ]
+            })
+
+          }
+          else{
+            showErrorNotification('The error happend while removing  the resource property!')
+          }
+        },
+        error:function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }else{
+      showErrorNotification('You should select the resource fromt the table')
     }
   })
 } )

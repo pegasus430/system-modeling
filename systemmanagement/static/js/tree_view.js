@@ -1581,7 +1581,7 @@ $(document).ready(function() {
     tableData = []
     resources.forEach(resource => {
        tableData.push({
-          'id': resource.resource_id ,
+          'resource_id': resource.resource_id ,
           'resource_modifier': resource.resource_modifier ,
           'resource_description': resource.resource_description ,
           'datatype_label': resource.resource_property_default_datatype_label ,
@@ -1591,48 +1591,12 @@ $(document).ready(function() {
         })
         
     })
-
-    var propertyEditor = new DataTable.Editor({
-      idSrc:  'id',
-      fields: [
-        {
-          label: 'id',
-          name: 'id'
-        },
-        {
-          label: 'resource_modifier',
-          name: 'resource_modifier'
-        },
-        {
-          label: 'resource_description',
-          name: 'resource_description'
-        },
-        {
-          label: 'datatype_label',
-          name: 'datatype_label'
-        },
-        {
-          label: 'datatype_description',
-          name: 'datatype_description'
-        },
-        {
-          label: 'value',
-          name: 'value'
-        },
-        {
-          label: 'comment',
-          name: 'comment'
-        }
-      ],
-      table: '#resource_property_table'
-    })
-
     
     $('#resource_property_table').DataTable({
       data:  tableData ,
       destroy: true,
       columns: [
-        { data: 'id' },
+        { data: 'resource_id' },
         { data: 'resource_modifier' },
         { data: 'resource_description' },
         { data: 'datatype_label' },
@@ -1650,61 +1614,9 @@ $(document).ready(function() {
       ]
     })
 
-    $('#resource_property_table').on('click', 'td', function(){
-      propertyEditor.inline(this)
-      sTable = $('#resource_property_table').DataTable()
-      let cell = sTable.cell(this)
-      let row = cell.index().row;
-      let rowData = sTable.row(row).data()
-      let selectedPropertyId = rowData.id
-      $('#selectedPropertyId').val(selectedPropertyId)
-    })
-
-    propertyEditor.on('edit', function(e, datatable, cell){
-      let propertyId = cell.id
-      $('#selectedPropertyId').val(resourceId)
-
-      // let modifier = cell.modifier
-      // let description = cell.description
-      // let comment = cell.comment
-      // let resourceGroupId = selectedResourceGroupId
-
-      // if(description){
-      //   $.ajax({
-      //     type: 'GET',
-      //     url: 'updateReourceDetail',
-      //     data: {
-      //       resourceId: resourceId,
-      //       modifier: modifier,
-      //       description: description,
-      //       comment: comment,
-      //       resourceGroupId: resourceGroupId
-      //     },
-      //     success: function (data){
-      //       data = JSON.parse(data)
-      //       var result = data['result']
-      //       var all_resources = data['all_resources']
-            
-      //       if(result){
-      //         showSuccessNotification('The resource has been updated successfully!')
-      //         document.getElementById('all_resources').textContent = JSON.stringify(all_resources)
-      //       }
-      //       else{
-      //         showErrorNotification('The error happend while updating the resource!')
-      //       }
-      //     },
-      //     error: function(e){
-      //       showErrorNotification('The error happend while requesting the server!')
-      //     }
-      //   })
-      // }else{
-      //   showErrorNotification('Description should not be empty string.')
-      // }
-
-    })
-    
-  
   })
+
+  
 
   $('.equipment_interface_page').on('click', '.treeview-li .treeview-title', function(){
     selectedInterfaceId = $(this).attr("data-interfaceId")

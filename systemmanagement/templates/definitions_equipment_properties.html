@@ -5,6 +5,7 @@
 {{resourceProperty | json_script:'resourceProperty'}}
 {{all_datatype | json_script:'all_datatype'}}
 {{all_attributeClass | json_script:'all_attributeClass'}}
+{{all_resources | json_script:'all_resources'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_property_page card card-body system_overview border-gray">
@@ -104,7 +105,7 @@
     
                     <div class="row">
                         <!-- Equipment Details table -->
-                        <input type="text" style="display: none;" id="selectedPropertyId" />
+                        <input type="text" style="display: none;" id="selectedResourceId" />
                         <h5 class="card-title">Resources using this property</h5>
                         <table class="table display nowrap custom_datatable1" id="resource_property_table">
                             <thead style="background-color: #000; color: white; border: solid 1px;">
@@ -121,14 +122,21 @@
                         </table><!-- End Equipment Details table -->
 
                     </div>
-                    
-                    <!-- Buttons Section -->
-                    <div class="col-xxl-12 col-lg-12 col-md-12">
-                        <div class="card-body buttons_section">
-                        <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
-                        <button type="button" class="btn btn-outline-primary" id='commit'>Commit</button>
+                    <div class="row mt-1 p-2 pl-4" style="float: right;">
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-success" id="btnResourcePropertyAdd" data-bs-toggle="modal" data-bs-target="#resourcePropertyModal">
+                                Add
+                            </button>
                         </div>
-                    </div><!-- End Buttons Section -->
+                        
+                        <div class="col-md-2">
+                            <button type="button" id="btnResourcePropertyRemove" class="btn btn-danger">
+                                Delete
+                            </button>
+                        </div>
+                        
+                    </div>
+                   
                 </div>
                 </div><!-- End right Overview -->
             </div>
@@ -198,7 +206,65 @@
             </div>
           </div>
         </div>
-      </div>
+    </div>
+
+    <div class="modal fade" id="resourcePropertyModal" tabindex="-1" aria-labelledby="resourcePropertyModalModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resourcePropertyModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mt-1" id="modal_resource_select_div">
+                    <label class="col-md-4 col-form-label text-secondary">Resource:</label>
+                    <div class="col-md-7">
+                        <select class="form-select" id="modal_resesource_select">
+                        
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-1" id="modal_resource_modifier_div">
+                    <label class="col-md-4 col-form-label text-secondary">Resource Modifier:</label>
+                    <div class="col-md-7">
+                        <input type="text" class="form-control" placeholder="Modifier" value="" id="modal_resource_modifier" >
+                    </div>
+                </div>
+                <div class="row mt-1"  id="modal_resource_description_div">
+                    <label class="col-md-4 col-form-label text-secondary">Resource Description:</label>
+                    <div class="col-md-7">
+                        <textarea class="form-control" placeholder="Description" style="height: 60px;" id="modal_resource_description"></textarea>
+                    </div>
+                </div>
+                
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Default Datatype:</label>
+                    <div class="col-md-7">
+                        <select class="form-select" id="modal_resesource_default_datatype">
+                        
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Default Value:</label>
+                    <div class="col-md-7">
+                        <textarea class="form-control" placeholder="comment"  id="modal_resource_value"></textarea>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Comment:</label>
+                    <div class="col-md-7">
+                        <textarea class="form-control" placeholder="comment"  id="modal_resource_comment"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary"  >Save</button>
+            </div>
+            </div>
+        </div>
+    </div>
     <script>
         resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
         var html = ''

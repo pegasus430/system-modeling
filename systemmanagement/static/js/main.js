@@ -4090,6 +4090,186 @@ $(document).ready(function() {
       }
     })
   }
+
+  // show add resource property modal
+  if(select('#btnResourcePropertyAdd')){
+    on('click', '#btnResourcePropertyAdd', function(){
+      let propertyId = $('#resource_property_id').val()
+      $('#resourcePropertyModalLabel').html('Add Resource Property')
+      $('#modal_resource_select_div').css('display', 'flex')
+      $('#modal_resource_modifier_div').css('display', 'none')
+      $('#modal_resource_description_div').css('display', 'none')
+      if(propertyId){
+        let all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+        let all_resources = JSON.parse(document.getElementById('all_resources').textContent)
+        $('#modal_resesource_default_datatype').find('option').remove()
+        $('#modal_resesource_select').find('option').remove()
+        var p = new Option('none', undefined,  undefined, undefined)
+        $(p).html('none')
+        $('#modal_resesource_default_datatype').append(p)
+  
+        all_datatype.forEach(element => {
+          var p = new Option(element.label, element.id,  undefined, undefined)
+          $(p).html(element.label)
+          $('#modal_resesource_default_datatype').append(p)
+        })
+  
+        all_resources.forEach(element => {
+          var p = new Option(element.modifier + ' (' + element.description + ')', element.id,  undefined, undefined)
+          $(p).html(element.modifier + ' (' + element.description + ')')
+          $('#modal_resesource_select').append(p)
+        })
+  
+        $('#modal_resource_modifier').val('')
+        $('#modal_resource_description').val('')
+        $('#modal_resource_value').val('')
+        $('#modal_resource_comment').val('')
+      }else{
+        showErrorNotification('You should select the equipment property to add the resoruce.')
+      }
+    })
+  }
+  
+  // show update resource property modal
+  $('#resource_property_table').on('click', 'td', function(){
+      
+    let sTable = $('#resource_property_table').DataTable()
+    let cell = sTable.cell(this)
+    let row = cell.index().row;
+    let rowData = sTable.row(row).data()
+    let selectedResourceId = rowData.resource_id
+
+    $('#modal_resource_select_div').css('display', 'none')
+    $('#modal_resource_modifier_div').css('display', 'flex')
+    $('#modal_resource_description_div').css('display', 'flex')
+
+    let all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+    $('#selectedResourceId').val(selectedResourceId)
+    $('#modal_resesource_default_datatype').find('option').remove()
+    let resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
+    let propertyId = $('#resource_property_id').val()
+    let resource = resourceProperty.find(element => (element.id == propertyId && element.resource_id == selectedResourceId))
+    let datatypeId = resource.default_datatype_id
+    $('#modal_resource_modifier').val(resource.resource_modifier)
+    $('#modal_resource_description').val(resource.resource_description)
+    $('#modal_resource_value').val(resource.resource_property_default_value)
+    $('#modal_resource_comment').val(resource.resource_property_comment)
+    
+    var p = new Option('none', undefined,  undefined, undefined)
+    $(p).html('none')
+    $('#modal_resesource_default_datatype').append(p)
+
+    all_datatype.forEach(element => {
+      var selected = element.id === datatypeId ? true: false
+      var p = new Option(element.label, element.id,  undefined, selected)
+      $(p).html(element.label)
+      $('#modal_resesource_default_datatype').append(p)
+    })
+
+    $('#resourcePropertyModal').modal('show') 
+    $('#resourcePropertyModalLabel').html('Update Resource Property')
+
+  })
+
+  // update the resource property
+  $('#resourcePropertyModal .btn-primary').on('click', function(){
+    let resourceId = $('#selectedResourceId').val()
+    let propertyId = $('#resource_property_id').val()
+    let resourceModifier = $('#modal_resource_modifier').val()
+    let resourceDescription = $('#modal_resource_description').val()
+    let resourcePropertyDefaultValue = $('#modal_resource_value').val()
+    let resourcePropertyComment = $('#modal_resource_comment').val()
+    let resourcePropertyDatatypeId =  $('#modal_resesource_default_datatype').val()
+    let all_resources = JSON.parse(document.getElementById('all_resources').textContent)
+    let selectedResource = all_resources.find(element => element.id == resourceId)
+    
+    $.ajax({
+      type: "GET",
+      url: 'updateResourcePropertyDetail',
+      data: {
+        propertyId: propertyId,
+        resourceId: resourceId,
+        resourceModifier: resourceModifier,
+        resourceDescription: resourceDescription,
+        resourceGroupId: selectedResource.group_id,
+        resourceComment: selectedResource.comment,
+        resourcePropertyDefaultValue: resourcePropertyDefaultValue,
+        resourcePropertyComment: resourcePropertyComment,
+        resourcePropertyDatatypeId: resourcePropertyDatatypeId,
+      },
+      success: function (data){
+        data = JSON.parse(data)
+        var result = data['result']            
+
+        if(result){
+          showSuccessNotification('The resource property has been updated successfully!')
+          var resourceProperty = data['resourceProperty']
+          var all_resources = data['all_resources']
+          // update the resoruce proeprty and resouces with updated ones
+          document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+          document.getElementById('all_resources').textContent = JSON.stringify(all_resources)
+          // update the tree view
+          var html = ''
+          var resource_id_list = []
+          resourceProperty.forEach(n => {
+              if(!resource_id_list.includes(n.id)){
+                  resource_id_list.push(n.id)
+                  html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                  ' + n.modifier + '  (' + n.description +')</li>'
+              }
+          });
+          document.getElementById('all_resource_property_tree').innerHTML = html
+          $('.treeview-animated').mdbTreeview();
+          $('#resourcePropertyModal').modal('hide')
+
+          // display resources using this property
+          resources = resourceProperty.filter(element => element.id == propertyId)
+          tableData = []
+          resources.forEach(resource => {
+            tableData.push({
+                'resource_id': resource.resource_id ,
+                'resource_modifier': resource.resource_modifier ,
+                'resource_description': resource.resource_description ,
+                'datatype_label': resource.resource_property_default_datatype_label ,
+                'datatype_description': resource.resource_property_default_datatype_comment,
+                'value':resource.resource_property_default_value ,
+                'comment':resource.resource_property_comment ,
+              })
+              
+          })
+          
+          $('#resource_property_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'resource_id' },
+              { data: 'resource_modifier' },
+              { data: 'resource_description' },
+              { data: 'datatype_label' },
+              { data: 'datatype_description' },
+              { data: 'value' },
+              { data: 'comment' },
+            ],
+            order: [[1, 'asc']],
+            columnDefs:[
+              {
+                visible:false, 
+                targets:0
+              }
+              
+            ]
+          })
+
+        }
+        else{
+          showErrorNotification('The error happend while updating the resource property!')
+        }
+      },
+      error:function(){
+        showErrorNotification('The error happend while requesting the server')
+      }
+    })
+  })
 } )
 ();
 

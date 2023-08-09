@@ -326,6 +326,7 @@ def definitions_equipment_properties(request):
     resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
     all_datatype = list(DataType.objects.values())
     all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
+    all_resources = list(Resource.objects.order_by('modifier').values())
     context = {
         'title': 'Definitions',
         'page': page,
@@ -333,6 +334,7 @@ def definitions_equipment_properties(request):
         'resourceProperty': resourceProperty,
         'all_datatype': all_datatype,
         'all_attributeClass': all_attributeClass,
+        'all_resources': all_resources,
     }
     
     return render(request, 'definitions_equipment_properties.html', context=context)
@@ -1760,6 +1762,53 @@ def removeProperty(request):
         )
         return HttpResponse(data) 
     
+def updateResourcePropertyDetail(request):
+    if request.method == 'GET':
+        propertyId = request.GET['propertyId']
+        resourceId = request.GET['resourceId']
+        resourceModifier = request.GET['resourceModifier']
+        resourceDescription = request.GET['resourceDescription']
+        resourceGroupId = request.GET['resourceGroupId']
+        resourceComment = request.GET['resourceComment']
+        resourcePropertyDefaultValue = request.GET['resourcePropertyDefaultValue']
+        resourcePropertyComment = request.GET['resourcePropertyComment']
+        resourcePropertyDatatypeId = request.GET['resourcePropertyDatatypeId']
+        if resourcePropertyDatatypeId == 'none':
+            resourcePropertyDatatypeId = 'Null'
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_update_resource({}, {}, '{}', '{}', '{}', '{}')".format(
+            resourceId, resourceGroupId, resourceModifier, resourceDescription, resourceComment, modified_at
+        )   
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+                raw_query = "SELECT fn_update_resource_property({}, {}, '{}', {} , '{}', '{}')".format(
+                    resourceId, propertyId, resourcePropertyDefaultValue, resourcePropertyDatatypeId, resourcePropertyComment, modified_at
+                )
+                
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+
+        except Exception as e:
+            print(e)
+            result = False
+
+        resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+        all_resources = list(Resource.objects.order_by('modifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'resourceProperty': resourceProperty,
+                'all_resources': all_resources,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

@@ -4099,6 +4099,8 @@ $(document).ready(function() {
       $('#modal_resource_select_div').css('display', 'flex')
       $('#modal_resource_modifier_div').css('display', 'none')
       $('#modal_resource_description_div').css('display', 'none')
+      $('#update_resource_property_btn').css('display', 'none')
+      $('#add_resource_property_btn').css('display', 'flex')
       if(propertyId){
         let all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
         let all_resources = JSON.parse(document.getElementById('all_resources').textContent)
@@ -4142,6 +4144,8 @@ $(document).ready(function() {
     $('#modal_resource_select_div').css('display', 'none')
     $('#modal_resource_modifier_div').css('display', 'flex')
     $('#modal_resource_description_div').css('display', 'flex')
+    $('#update_resource_property_btn').css('display', 'flex')
+    $('#add_resource_property_btn').css('display', 'none')
 
     let all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
     $('#selectedResourceId').val(selectedResourceId)
@@ -4172,7 +4176,7 @@ $(document).ready(function() {
   })
 
   // update the resource property
-  $('#resourcePropertyModal .btn-primary').on('click', function(){
+  $('#update_resource_property_btn').on('click', function(){
     let resourceId = $('#selectedResourceId').val()
     let propertyId = $('#resource_property_id').val()
     let resourceModifier = $('#modal_resource_modifier').val()
@@ -4269,6 +4273,105 @@ $(document).ready(function() {
         showErrorNotification('The error happend while requesting the server')
       }
     })
+  })
+
+   // add the resource property
+   $('#add_resource_property_btn').on('click', function(){
+   
+    let propertyId = $('#resource_property_id').val()
+   
+    let resourcePropertyDefaultValue = $('#modal_resource_value').val()
+    let resourcePropertyComment = $('#modal_resource_comment').val()
+    let resourcePropertyDatatypeId =  $('#modal_resesource_default_datatype').val()
+    let resourceId = $('#modal_resesource_select').val()
+    let resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
+    let resource = resourceProperty.find(element => (element.id == propertyId && element.resource_id == resourceId))
+    if(resource){
+      showErrorNotification('This resource already is in reaource property table')
+    }else{
+      $.ajax({
+        type: "GET",
+        url: 'addResourceProperty',
+        data: {
+          propertyId: propertyId,
+          resourceId: resourceId,
+          resourcePropertyDefaultValue: resourcePropertyDefaultValue,
+          resourcePropertyComment: resourcePropertyComment,
+          resourcePropertyDatatypeId: resourcePropertyDatatypeId,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']            
+
+          if(result){
+            showSuccessNotification('The resource property has been added successfully!')
+            var resourceProperty = data['resourceProperty']
+          
+            // update the resoruce proeprty with added one
+            document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+          
+            // update the tree view
+            var html = ''
+            var resource_id_list = []
+            resourceProperty.forEach(n => {
+                if(!resource_id_list.includes(n.id)){
+                    resource_id_list.push(n.id)
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                    ' + n.modifier + '  (' + n.description +')</li>'
+                }
+            });
+            document.getElementById('all_resource_property_tree').innerHTML = html
+            $('.treeview-animated').mdbTreeview();
+            $('#resourcePropertyModal').modal('hide')
+
+            // display resources using this property
+            resources = resourceProperty.filter(element => element.id == propertyId)
+            tableData = []
+            resources.forEach(resource => {
+              tableData.push({
+                  'resource_id': resource.resource_id ,
+                  'resource_modifier': resource.resource_modifier ,
+                  'resource_description': resource.resource_description ,
+                  'datatype_label': resource.resource_property_default_datatype_label ,
+                  'datatype_description': resource.resource_property_default_datatype_comment,
+                  'value':resource.resource_property_default_value ,
+                  'comment':resource.resource_property_comment ,
+                })
+                
+            })
+            
+            $('#resource_property_table').DataTable({
+              data:  tableData ,
+              destroy: true,
+              columns: [
+                { data: 'resource_id' },
+                { data: 'resource_modifier' },
+                { data: 'resource_description' },
+                { data: 'datatype_label' },
+                { data: 'datatype_description' },
+                { data: 'value' },
+                { data: 'comment' },
+              ],
+              order: [[1, 'asc']],
+              columnDefs:[
+                {
+                  visible:false, 
+                  targets:0
+                }
+                
+              ]
+            })
+
+          }
+          else{
+            showErrorNotification('The error happend while updating the resource property!')
+          }
+        },
+        error:function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }
   })
 } )
 ();

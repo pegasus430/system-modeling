@@ -1809,6 +1809,42 @@ def updateResourcePropertyDetail(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+    
+def addResourceProperty(request):
+    if request.method == 'GET':
+        propertyId = request.GET['propertyId']
+        resourceId = request.GET['resourceId']
+        resourcePropertyDefaultValue = request.GET['resourcePropertyDefaultValue']
+        resourcePropertyComment = request.GET['resourcePropertyComment']
+        resourcePropertyDatatypeId = request.GET['resourcePropertyDatatypeId']
+        if resourcePropertyDatatypeId == 'none':
+            resourcePropertyDatatypeId = 'Null'
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT fn_add_resource_property({}, {}, '{}', {} , '{}', '{}')".format(
+                    resourceId, propertyId, resourcePropertyDefaultValue, resourcePropertyDatatypeId, resourcePropertyComment, modified_at
+                )  
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+                id = results[0]
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'resourceProperty': resourceProperty,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

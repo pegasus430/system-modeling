@@ -1970,6 +1970,88 @@ def removeEquipmentInterface(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+    
+def updateInterfaceClassDetail(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        label = request.GET['label']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_update_attribute_class({},  '{}', '{}' , '{}', '{}')".format(
+           id, label, description, comment, modified_at
+        )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_interface_classes': all_interface_classes,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+    
+def addInterfaceClass(request):
+    if request.method == 'GET':
+        label = request.GET['label']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_add_attribute_class('{}', '{}' , '{}', '{}')".format(
+            label, description, comment, modified_at
+        ) 
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_interface_classes': all_interface_classes,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def removeInterfaceClassDetail(request):
+     if request.method == 'GET':
+        id = request.GET['id']       
+        raw_query = "SELECT fn_remove_attribute_class({})".format(id)
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_interface_classes': all_interface_classes,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

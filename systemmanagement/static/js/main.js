@@ -4641,6 +4641,161 @@ $(document).ready(function() {
       showErrorNotification("You should select the interface to be removed.")
     }
   })
+
+  // update the interface class
+  $('#btnUpdateInterfaceClass').on('click', function(){
+      let selectedInterfaceClassId = $('#equipment_interface_class_id').val()
+      if(selectedInterfaceClassId){
+        let label = $('#equipment_interface_class_label').val()
+        let description = $('#equipment_interface_class_description').val()
+        let comment = $('#equipment_interface_class_comment').val()
+        if(label && description){
+          $.ajax({
+            type: "GET",
+            url: 'updateInterfaceClassDetail',
+            data: {
+              id: selectedInterfaceClassId,
+              label: label,
+              description: description,
+              comment: comment,
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']
+              if(result){
+                showSuccessNotification('The interface class has been updated successfully!')
+               
+                var  all_interface_classes = data['all_interface_classes']
+                // update the resoruce proeprty and resouces with updated ones
+                document.getElementById('all_interface_classes').textContent = JSON.stringify(all_interface_classes)
+               
+                // update the tree view              
+                var html = ''
+                var interface_classid_list = []
+                all_interface_classes.forEach(n => {
+                    if(!interface_classid_list.includes(n.id)){
+                        interface_classid_list.push(n.id)
+                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
+                        ' + n.label + '  (' + n.description +')</li>'
+                    }
+                });
+            
+                document.getElementById('equipment_interface_class_tree').innerHTML = html
+              }
+              else{
+                showErrorNotification('The error happend while updating the interface class!')
+              }
+            },
+            error:function(){
+              showErrorNotification('The error happend while requesting the server')
+            }
+          })
+        }else{
+          showErrorNotification('Label and description should not be emptry string')
+        }
+      }else{  
+        showErrorNotification('You should select the interface class to be updated')
+      }
+  })
+
+  //add interface class from the  modal
+  $('#equipmentInterfaceClassModal .btn-primary').on('click', function(){
+     let label = $('#adding_interface_class_label').val()
+     let description= $('#adding_interface_class_description').val()
+     let comment = $('#adding_interface_class_comment').val()
+     if(label && description){
+      $.ajax({
+        type: "GET",
+        url: 'addInterfaceClass',
+        data: {
+          label: label,
+          description: description,
+          comment: comment,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            showSuccessNotification('The interface class has been added successfully!')
+            $('#equipmentInterfaceClassModal').modal('hide')
+            var  all_interface_classes = data['all_interface_classes']
+            // update the resoruce proeprty and resouces with added ones
+            document.getElementById('all_interface_classes').textContent = JSON.stringify(all_interface_classes)
+           
+            // update the tree view              
+            var html = ''
+            var interface_classid_list = []
+            all_interface_classes.forEach(n => {
+                if(!interface_classid_list.includes(n.id)){
+                    interface_classid_list.push(n.id)
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
+                    ' + n.label + '  (' + n.description +')</li>'
+                }
+            });
+            document.getElementById('equipment_interface_class_tree').innerHTML = html
+          }
+          else{
+            showErrorNotification('The error happend while adding the interface class!')
+          }
+        },
+        error:function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }else{
+      showErrorNotification('Label and description should not be emptry string')
+    }
+  })
+
+  //remove interface class
+  $('#btnRemoveInterfaceClass').on('click', function(){
+    let selectedInterfaceClassId = $('#equipment_interface_class_id').val()
+    if(selectedInterfaceClassId){
+        $.ajax({
+          type: "GET",
+          url: 'removeInterfaceClassDetail',
+          data: {
+            id: selectedInterfaceClassId          
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            if(result){
+              showSuccessNotification('The interface class has been removed successfully!')
+              $('#equipment_interface_class_id').val('')
+              $('#equipment_interface_class_label').val('')
+              $('#equipment_interface_class_description').val('')
+              $('#equipment_interface_class_comment').val('')
+              var  all_interface_classes = data['all_interface_classes']
+              // update the resoruce proeprty and resouces with updated ones
+              document.getElementById('all_interface_classes').textContent = JSON.stringify(all_interface_classes)
+             
+              // update the tree view              
+              var html = ''
+              var interface_classid_list = []
+              all_interface_classes.forEach(n => {
+                  if(!interface_classid_list.includes(n.id)){
+                      interface_classid_list.push(n.id)
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
+                      ' + n.label + '  (' + n.description +')</li>'
+                  }
+              });
+          
+              document.getElementById('equipment_interface_class_tree').innerHTML = html
+            }
+            else{
+              showErrorNotification('The error happend while removing the interface class!')
+            }
+          },
+          error:function(){
+            showErrorNotification('The error happend while requesting the server')
+          }
+        })
+    }else{  
+      showErrorNotification('You should select the interface class to be removed')
+    }
+  })
+  
 } )
 ();
 

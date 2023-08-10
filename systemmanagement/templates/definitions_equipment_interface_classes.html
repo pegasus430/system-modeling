@@ -40,16 +40,12 @@
                         <textarea class="form-control" placeholder="Description" style="height: 60px;" id="equipment_interface_class_description"></textarea>
                         </div>
                     </div>
-                 
-                    
                     <div class="row mt-1">
                         <label class="col-md-3 col-form-label text-secondary">Comment:</label>
                         <div class="col-md-8">
                         <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="equipment_interface_class_comment"></textarea>
                         </div>
                     </div>
-                  
-                    
                     <div class="row mt-1">
                         <div class="col-md-6">
                             <div class="form-check form-switch">
@@ -60,19 +56,19 @@
                     </div>
                     <div class="row mt-1 p-2 pl-4" style="float: right;">
                         <div class="col-md-2">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#equipmentInterfaceClassModal">
-                            Add
-                        </button>
+                            <button type="button" class="btn btn-success" id="btnAddInterfaceClass" data-bs-toggle="modal" data-bs-target="#equipmentInterfaceClassModal">
+                                Add
+                            </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#equipmentInterfaceClassModal">
-                            Update
-                        </button>
+                            <button type="button" id="btnUpdateInterfaceClass" class="btn btn-info">
+                                Update
+                            </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" id="btn_equipment_delete" class="btn btn-danger">
-                            Delete
-                        </button>
+                            <button type="button" id="btnRemoveInterfaceClass" class="btn btn-danger">
+                                Delete
+                            </button>
                         </div>
                         
                     </div>
@@ -84,6 +80,41 @@
            
         </div>
     </div><!-- End Right Overview -->
+    <div class="modal fade" id="equipmentInterfaceClassModal" tabindex="-1" aria-labelledby="equipmentInterfaceClassModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="equipmentInterfaceClassModalLabel">Add Interface Class</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Label:</label>
+                    <div class="col-md-7">
+                        <input type="text" class="form-control" placeholder="Label" value="" id="adding_interface_class_label" required>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Description:</label>
+                    <div class="col-md-7">
+                        <textarea class="form-control" placeholder="Description" style="height: 60px;" id="adding_interface_class_description"></textarea>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Comment:</label>
+                    <div class="col-md-7">
+                    <textarea class="form-control" placeholder="comment"  id="adding_interface_class_comment"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary"  >Save</button>
+            </div>
+          </div>
+        </div>
+    </div>
     <script>
         all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
         

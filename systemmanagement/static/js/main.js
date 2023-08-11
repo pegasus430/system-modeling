@@ -2094,6 +2094,54 @@ $(document).ready(function() {
     return root.map(getNodeHtml).join('')
   }
 
+  function createConnectionTypeTree(data){
+      const nodeWithParent = []
+          
+      //make the path as string from list
+      data.forEach(element => {
+        if(element.path){
+            path = element.path.join('.')
+            element.path = path   
+        }else{
+            element.path = ''
+        }
+            
+      })
+
+      //Find the parent for each element
+      data.forEach(element => {
+        const parent = element.path.includes('.')? element.path.substr(0, element.path.lastIndexOf('.')):null
+        nodeWithParent.push({...element, parent})
+      });
+
+      //Recursive function to create HTML out of node
+      function getNodeHtml(n) {
+        let html = ''
+        const children = nodeWithParent.filter(d => d.parent === n.path)
+                  
+        if(children.length > 0) {
+          html += '<li class="treeview-animated-items treeview-li"> \
+                      <a class="closed"> \
+                        <i class="fas fa-angle-right"></i> \
+                        <span class="ml-1 treeview-title" data-typeid="'+ n.id +'" data-typepath="'+ n.path +'">'+ n.label + '  (' + n.description + ')</span> \
+                      </a> \
+                      <ul class="nested">' 
+            + children.map( getNodeHtml).join('')
+            + '</ul></li>'
+        }
+        else{
+          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-typeid="'+n.id+'" data-typepath="'+ n.path + '"> \
+          '+n.label + '  (' + n.description +')</li>'
+        }
+        return html
+      }
+
+      // Get all root nodes (without parent)
+      const root = nodeWithParent.filter(d => d.parent === null)
+
+      return root.map(getNodeHtml).join('')
+  }
+
   // remove equipment
   if(select('#btn_equipment_delete')){
     on('click','#btn_equipment_delete' , function(){
@@ -2865,7 +2913,6 @@ $(document).ready(function() {
       var equipment_type_id = $('#equipment_type_id').val()  
        if(equipment_type_id){
         if(confirm('Are you sure to update this equipment type?')){
-          
           var equipment_type_label = $('#equipment_type_label').val()
           var equipment_type_parent_path = $('#equipment_type_parent_path').val()
           var equipment_type_description = $('#equipment_type_description').val()
@@ -2896,7 +2943,7 @@ $(document).ready(function() {
              var allEquipmentTypes = data['all_equipment_types']
              if(result){
                showSuccessNotification('The equipment type has been updated successfully!')
- 
+               document.getElementById('all_equipment_types').textContent = JSON.stringify(allEquipmentTypes)
                const html = createEquipmentTypeTree(allEquipmentTypes)
                document.getElementById('all_equipment_types_tree').innerHTML = html
                $('.treeview-animated').mdbTreeview();
@@ -2911,7 +2958,6 @@ $(document).ready(function() {
                $('#equipment_type_comment').val('')
                $('#equipment_type_last_modified').val('')               
                $('#equipment_type_is_approved').prop('checked' , false)
-               
              }
              else{
               showErrorNotification('The error happend while updating the equipment type!')
@@ -3883,49 +3929,51 @@ $(document).ready(function() {
          let propertyDeComment =  $('#resource_property_comment').val()
          let propertyReportable =  $('#resource_property_is_reportable').prop('checked')
          if(propertyDescription){
-          $.ajax({
-            type: "GET",
-            url: 'updatePropertyDetail',
-            data: {
-              propertyId: propertyId,
-              propertyModifier: propertyModifier,
-              propertyDescription: propertyDescription,
-              propertyDeValue: propertyDeValue,
-              propertyDeDataLabelId: propertyDeDataLabelId,
-              propertyDeComment: propertyDeComment,
-              propertyReportable: propertyReportable,
-            },
-            success: function (data){
-              data = JSON.parse(data)
-              var result = data['result']            
-
-              if(result){
-                showSuccessNotification('The property has been updated successfully!')
-                var resourceProperty = data['resourceProperty']
-                document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
-                var html = ''
-                var resource_id_list = []
-                resourceProperty.forEach(n => {
-                    if(!resource_id_list.includes(n.id)){
-                        resource_id_list.push(n.id)
-                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
-                        ' + n.modifier + '  (' + n.description +')</li>'
-                    }
-                });
-            
-                document.getElementById('all_resource_property_tree').innerHTML = html
-                $('.treeview-animated').mdbTreeview();
-
-              }
-              else{
-                showErrorNotification('The error happend while updating the property!')
-              }
-            },
-            error:function(){
-              showErrorNotification('The error happend while requesting the server')
-            }
+          if(confirm('Are you sure to update this property?')){
+            $.ajax({
+              type: "GET",
+              url: 'updatePropertyDetail',
+              data: {
+                propertyId: propertyId,
+                propertyModifier: propertyModifier,
+                propertyDescription: propertyDescription,
+                propertyDeValue: propertyDeValue,
+                propertyDeDataLabelId: propertyDeDataLabelId,
+                propertyDeComment: propertyDeComment,
+                propertyReportable: propertyReportable,
+              },
+              success: function (data){
+                data = JSON.parse(data)
+                var result = data['result']            
   
-          })
+                if(result){
+                  showSuccessNotification('The property has been updated successfully!')
+                  var resourceProperty = data['resourceProperty']
+                  document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+                  var html = ''
+                  var resource_id_list = []
+                  resourceProperty.forEach(n => {
+                      if(!resource_id_list.includes(n.id)){
+                          resource_id_list.push(n.id)
+                          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                          ' + n.modifier + '  (' + n.description +')</li>'
+                      }
+                  });
+              
+                  document.getElementById('all_resource_property_tree').innerHTML = html
+                  $('.treeview-animated').mdbTreeview();
+  
+                }
+                else{
+                  showErrorNotification('The error happend while updating the property!')
+                }
+              },
+              error:function(){
+                showErrorNotification('The error happend while requesting the server')
+              }
+    
+            })
+          }
          }else{
            showErrorNotification('The description should not be empty string.')
          }
@@ -4034,6 +4082,7 @@ $(document).ready(function() {
     on('click', '#btn_equipment_property_delete', function(){
       let propertyId = $('#resource_property_id').val()
       if(propertyId){
+        if(confirm('Are you sure to remove this property?')){
           $.ajax({
             type: "GET",
             url: 'removeProperty',
@@ -4082,7 +4131,7 @@ $(document).ready(function() {
             }
   
           })
-         
+        }
       }else{
         showErrorNotification('You should select the property to be removed.')
       }
@@ -4184,93 +4233,91 @@ $(document).ready(function() {
     let resourcePropertyDatatypeId =  $('#modal_resesource_default_datatype').val()
     let all_resources = JSON.parse(document.getElementById('all_resources').textContent)
     let selectedResource = all_resources.find(element => element.id == resourceId)
-    
-    $.ajax({
-      type: "GET",
-      url: 'updateResourcePropertyDetail',
-      data: {
-        propertyId: propertyId,
-        resourceId: resourceId,
-        resourceModifier: resourceModifier,
-        resourceDescription: resourceDescription,
-        resourceGroupId: selectedResource.group_id,
-        resourceComment: selectedResource.comment,
-        resourcePropertyDefaultValue: resourcePropertyDefaultValue,
-        resourcePropertyComment: resourcePropertyComment,
-        resourcePropertyDatatypeId: resourcePropertyDatatypeId,
-      },
-      success: function (data){
-        data = JSON.parse(data)
-        var result = data['result']            
-
-        if(result){
-          showSuccessNotification('The resource property has been updated successfully!')
-          var resourceProperty = data['resourceProperty']
-          var all_resources = data['all_resources']
-          // update the resoruce proeprty and resouces with updated ones
-          document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
-          document.getElementById('all_resources').textContent = JSON.stringify(all_resources)
-          // update the tree view
-          var html = ''
-          var resource_id_list = []
-          resourceProperty.forEach(n => {
-              if(!resource_id_list.includes(n.id)){
-                  resource_id_list.push(n.id)
-                  html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
-                  ' + n.modifier + '  (' + n.description +')</li>'
-              }
-          });
-          document.getElementById('all_resource_property_tree').innerHTML = html
-          $('.treeview-animated').mdbTreeview();
-          $('#resourcePropertyModal').modal('hide')
-
-          // display resources using this property
-          resources = resourceProperty.filter(element => element.id == propertyId)
-          tableData = []
-          resources.forEach(resource => {
-            tableData.push({
-                'resource_id': resource.resource_id ,
-                'resource_modifier': resource.resource_modifier ,
-                'resource_description': resource.resource_description ,
-                'datatype_label': resource.resource_property_default_datatype_label ,
-                'datatype_description': resource.resource_property_default_datatype_comment,
-                'value':resource.resource_property_default_value ,
-                'comment':resource.resource_property_comment ,
-              })
-              
-          })
-          
-          $('#resource_property_table').DataTable({
-            data:  tableData ,
-            destroy: true,
-            columns: [
-              { data: 'resource_id' },
-              { data: 'resource_modifier' },
-              { data: 'resource_description' },
-              { data: 'datatype_label' },
-              { data: 'datatype_description' },
-              { data: 'value' },
-              { data: 'comment' },
-            ],
-            order: [[1, 'asc']],
-            columnDefs:[
-              {
-                visible:false, 
-                targets:0
-              }
-              
-            ]
-          })
-
+    if(confirm('Are you sure to update this resource property?')){
+      $.ajax({
+        type: "GET",
+        url: 'updateResourcePropertyDetail',
+        data: {
+          propertyId: propertyId,
+          resourceId: resourceId,
+          resourceModifier: resourceModifier,
+          resourceDescription: resourceDescription,
+          resourceGroupId: selectedResource.group_id,
+          resourceComment: selectedResource.comment,
+          resourcePropertyDefaultValue: resourcePropertyDefaultValue,
+          resourcePropertyComment: resourcePropertyComment,
+          resourcePropertyDatatypeId: resourcePropertyDatatypeId,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            showSuccessNotification('The resource property has been updated successfully!')
+            var resourceProperty = data['resourceProperty']
+            var all_resources = data['all_resources']
+            // update the resoruce proeprty and resouces with updated ones
+            document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+            document.getElementById('all_resources').textContent = JSON.stringify(all_resources)
+            // update the tree view
+            var html = ''
+            var resource_id_list = []
+            resourceProperty.forEach(n => {
+                if(!resource_id_list.includes(n.id)){
+                    resource_id_list.push(n.id)
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                    ' + n.modifier + '  (' + n.description +')</li>'
+                }
+            });
+            document.getElementById('all_resource_property_tree').innerHTML = html
+            $('.treeview-animated').mdbTreeview();
+            $('#resourcePropertyModal').modal('hide')
+  
+            // display resources using this property
+            resources = resourceProperty.filter(element => element.id == propertyId)
+            tableData = []
+            resources.forEach(resource => {
+              tableData.push({
+                  'resource_id': resource.resource_id ,
+                  'resource_modifier': resource.resource_modifier ,
+                  'resource_description': resource.resource_description ,
+                  'datatype_label': resource.resource_property_default_datatype_label ,
+                  'datatype_description': resource.resource_property_default_datatype_comment,
+                  'value':resource.resource_property_default_value ,
+                  'comment':resource.resource_property_comment ,
+                })
+                
+            })
+            $('#resource_property_table').DataTable({
+              data:  tableData ,
+              destroy: true,
+              columns: [
+                { data: 'resource_id' },
+                { data: 'resource_modifier' },
+                { data: 'resource_description' },
+                { data: 'datatype_label' },
+                { data: 'datatype_description' },
+                { data: 'value' },
+                { data: 'comment' },
+              ],
+              order: [[1, 'asc']],
+              columnDefs:[
+                {
+                  visible:false, 
+                  targets:0
+                }
+                
+              ]
+            })
+          }
+          else{
+            showErrorNotification('The error happend while updating the resource property!')
+          }
+        },
+        error:function(){
+          showErrorNotification('The error happend while requesting the server')
         }
-        else{
-          showErrorNotification('The error happend while updating the resource property!')
-        }
-      },
-      error:function(){
-        showErrorNotification('The error happend while requesting the server')
-      }
-    })
+      })
+    }
   })
 
    // add the resource property
@@ -4377,83 +4424,85 @@ $(document).ready(function() {
     let propertyId = $('#resource_property_id').val()
     let resourceId = $('#selectedResourceId').val()
     if(resourceId && propertyId){
-      $.ajax({
-        type: "GET",
-        url: 'removeResourceProperty',
-        data: {
-          propertyId: propertyId,
-          resourceId: resourceId,
-        },
-        success: function (data){
-          data = JSON.parse(data)
-          var result = data['result']            
-
-          if(result){
-            showSuccessNotification('The resource property has been removed successfully!')
-            var resourceProperty = data['resourceProperty']
-          
-            // update the resoruce proeprty with removed one
-            document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
-          
-            // update the tree view
-            var html = ''
-            var resource_id_list = []
-            resourceProperty.forEach(n => {
-                if(!resource_id_list.includes(n.id)){
-                    resource_id_list.push(n.id)
-                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
-                    ' + n.modifier + '  (' + n.description +')</li>'
-                }
-            });
-            document.getElementById('all_resource_property_tree').innerHTML = html
-            $('.treeview-animated').mdbTreeview();
-            $('#resourcePropertyModal').modal('hide')
-
-            // display resources using this property
-            resources = resourceProperty.filter(element => element.id == propertyId)
-            tableData = []
-            resources.forEach(resource => {
-              tableData.push({
-                  'resource_id': resource.resource_id ,
-                  'resource_modifier': resource.resource_modifier ,
-                  'resource_description': resource.resource_description ,
-                  'datatype_label': resource.resource_property_default_datatype_label ,
-                  'datatype_description': resource.resource_property_default_datatype_comment,
-                  'value':resource.resource_property_default_value ,
-                  'comment':resource.resource_property_comment ,
-                })
-                
-            })
-            $('#resource_property_table').DataTable({
-              data:  tableData ,
-              destroy: true,
-              columns: [
-                { data: 'resource_id' },
-                { data: 'resource_modifier' },
-                { data: 'resource_description' },
-                { data: 'datatype_label' },
-                { data: 'datatype_description' },
-                { data: 'value' },
-                { data: 'comment' },
-              ],
-              order: [[1, 'asc']],
-              columnDefs:[
-                {
-                  visible:false, 
-                  targets:0
-                }
-              ]
-            })
-
+      if(confirm('Are you sure to remove this resource from the resource property?')){
+        $.ajax({
+          type: "GET",
+          url: 'removeResourceProperty',
+          data: {
+            propertyId: propertyId,
+            resourceId: resourceId,
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']            
+  
+            if(result){
+              showSuccessNotification('The resource property has been removed successfully!')
+              var resourceProperty = data['resourceProperty']
+            
+              // update the resoruce proeprty with removed one
+              document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+            
+              // update the tree view
+              var html = ''
+              var resource_id_list = []
+              resourceProperty.forEach(n => {
+                  if(!resource_id_list.includes(n.id)){
+                      resource_id_list.push(n.id)
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                      ' + n.modifier + '  (' + n.description +')</li>'
+                  }
+              });
+              document.getElementById('all_resource_property_tree').innerHTML = html
+              $('.treeview-animated').mdbTreeview();
+              $('#resourcePropertyModal').modal('hide')
+  
+              // display resources using this property
+              resources = resourceProperty.filter(element => element.id == propertyId)
+              tableData = []
+              resources.forEach(resource => {
+                tableData.push({
+                    'resource_id': resource.resource_id ,
+                    'resource_modifier': resource.resource_modifier ,
+                    'resource_description': resource.resource_description ,
+                    'datatype_label': resource.resource_property_default_datatype_label ,
+                    'datatype_description': resource.resource_property_default_datatype_comment,
+                    'value':resource.resource_property_default_value ,
+                    'comment':resource.resource_property_comment ,
+                  })
+                  
+              })
+              $('#resource_property_table').DataTable({
+                data:  tableData ,
+                destroy: true,
+                columns: [
+                  { data: 'resource_id' },
+                  { data: 'resource_modifier' },
+                  { data: 'resource_description' },
+                  { data: 'datatype_label' },
+                  { data: 'datatype_description' },
+                  { data: 'value' },
+                  { data: 'comment' },
+                ],
+                order: [[1, 'asc']],
+                columnDefs:[
+                  {
+                    visible:false, 
+                    targets:0
+                  }
+                ]
+              })
+  
+            }
+            else{
+              showErrorNotification('The error happend while removing  the resource property!')
+            }
+          },
+          error:function(){
+            showErrorNotification('The error happend while requesting the server')
           }
-          else{
-            showErrorNotification('The error happend while removing  the resource property!')
-          }
-        },
-        error:function(){
-          showErrorNotification('The error happend while requesting the server')
-        }
-      })
+        })
+      }
     }else{
       showErrorNotification('You should select the resource fromt the table')
     }
@@ -4469,49 +4518,50 @@ $(document).ready(function() {
       let interfaceClassId =  $('#equipment_interface_interface_class_label').val()
       let interfaceConnectingClassId =  $('#equipment_interface_connecting_class_label').val()
       let isIntermediate =  $('#equipment_interface_is_intermediate').prop('checked')
-
-      $.ajax({
-        type: "GET",
-        url: 'updateEquipmentInterfaceDetail',
-        data: {
-          selectedInterfaceId: selectedInterfaceId,
-          identifier: identifier,
-          description: description,
-          comment: comment,
-          interfaceClassId: interfaceClassId,
-          interfaceConnectingClassId: interfaceConnectingClassId,
-          isIntermediate: isIntermediate,
-        },
-        success: function (data){
-          data = JSON.parse(data)
-          var result = data['result']
-          if(result){
-            showSuccessNotification('The interface has been updated successfully!')
-           
-            var  all_interfaces = data['all_interfaces']
-            // update the resoruce proeprty and resouces with updated ones
-            document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
-           
-            // update the tree view
-            var html = ''
-            var interface_id_list = []
-            all_interfaces.forEach(n => {
-                if(!interface_id_list.includes(n.id)){
-                    interface_id_list.push(n.id)
-                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
-                    ' + n.identifier + '  (' + n.description +')</li>'
-                }
-            });
-            document.getElementById('equipment_interface_tree').innerHTML = html
+      if(confirm('Are you sure to update this interface?')){
+        $.ajax({
+          type: "GET",
+          url: 'updateEquipmentInterfaceDetail',
+          data: {
+            selectedInterfaceId: selectedInterfaceId,
+            identifier: identifier,
+            description: description,
+            comment: comment,
+            interfaceClassId: interfaceClassId,
+            interfaceConnectingClassId: interfaceConnectingClassId,
+            isIntermediate: isIntermediate,
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            if(result){
+              showSuccessNotification('The interface has been updated successfully!')
+             
+              var  all_interfaces = data['all_interfaces']
+              // update the resoruce proeprty and resouces with updated ones
+              document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
+             
+              // update the tree view
+              var html = ''
+              var interface_id_list = []
+              all_interfaces.forEach(n => {
+                  if(!interface_id_list.includes(n.id)){
+                      interface_id_list.push(n.id)
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
+                      ' + n.identifier + '  (' + n.description +')</li>'
+                  }
+              });
+              document.getElementById('equipment_interface_tree').innerHTML = html
+            }
+            else{
+              showErrorNotification('The error happend while updating the interface!')
+            }
+          },
+          error:function(){
+            showErrorNotification('The error happend while requesting the server')
           }
-          else{
-            showErrorNotification('The error happend while updating the interface!')
-          }
-        },
-        error:function(){
-          showErrorNotification('The error happend while requesting the server')
-        }
-      })
+        })
+      }
     }else{
       showErrorNotification('You should select the interface to be updated')
     }
@@ -4601,42 +4651,44 @@ $(document).ready(function() {
   $('#btnRemoveEquipmentInterface').on('click', function(){
     let selectedInterfaceId = $('#equipment_interface_id').val()
     if(selectedInterfaceId){
-      $.ajax({
-        type: "GET",
-        url: 'removeEquipmentInterface',
-        data: {
-          selectedInterfaceId: selectedInterfaceId,
-        },
-        success: function (data){
-          data = JSON.parse(data)
-          var result = data['result']
-          if(result){
-            showSuccessNotification('The interface has been removed successfully!')
-           
-            var  all_interfaces = data['all_interfaces']
-            // update the resoruce proeprty and resouces with removed one
-            document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
-           
-            // update the tree view
-            var html = ''
-            var interface_id_list = []
-            all_interfaces.forEach(n => {
-                if(!interface_id_list.includes(n.id)){
-                    interface_id_list.push(n.id)
-                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
-                    ' + n.identifier + '  (' + n.description +')</li>'
-                }
-            });
-            document.getElementById('equipment_interface_tree').innerHTML = html
+      if(confirm('Are you sure to remove this interface?')){
+        $.ajax({
+          type: "GET",
+          url: 'removeEquipmentInterface',
+          data: {
+            selectedInterfaceId: selectedInterfaceId,
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            if(result){
+              showSuccessNotification('The interface has been removed successfully!')
+             
+              var  all_interfaces = data['all_interfaces']
+              // update the resoruce proeprty and resouces with removed one
+              document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
+             
+              // update the tree view
+              var html = ''
+              var interface_id_list = []
+              all_interfaces.forEach(n => {
+                  if(!interface_id_list.includes(n.id)){
+                      interface_id_list.push(n.id)
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
+                      ' + n.identifier + '  (' + n.description +')</li>'
+                  }
+              });
+              document.getElementById('equipment_interface_tree').innerHTML = html
+            }
+            else{
+              showErrorNotification('The error happend while removing the interface!')
+            }
+          },
+          error:function(){
+            showErrorNotification('The error happend while requesting the server')
           }
-          else{
-            showErrorNotification('The error happend while removing the interface!')
-          }
-        },
-        error:function(){
-          showErrorNotification('The error happend while requesting the server')
-        }
-      })
+        })
+      }
     }else{
       showErrorNotification("You should select the interface to be removed.")
     }
@@ -4650,46 +4702,48 @@ $(document).ready(function() {
         let description = $('#equipment_interface_class_description').val()
         let comment = $('#equipment_interface_class_comment').val()
         if(label && description){
-          $.ajax({
-            type: "GET",
-            url: 'updateInterfaceClassDetail',
-            data: {
-              id: selectedInterfaceClassId,
-              label: label,
-              description: description,
-              comment: comment,
-            },
-            success: function (data){
-              data = JSON.parse(data)
-              var result = data['result']
-              if(result){
-                showSuccessNotification('The interface class has been updated successfully!')
-               
-                var  all_interface_classes = data['all_interface_classes']
-                // update the resoruce proeprty and resouces with updated ones
-                document.getElementById('all_interface_classes').textContent = JSON.stringify(all_interface_classes)
-               
-                // update the tree view              
-                var html = ''
-                var interface_classid_list = []
-                all_interface_classes.forEach(n => {
-                    if(!interface_classid_list.includes(n.id)){
-                        interface_classid_list.push(n.id)
-                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
-                        ' + n.label + '  (' + n.description +')</li>'
-                    }
-                });
-            
-                document.getElementById('equipment_interface_class_tree').innerHTML = html
+          if(confirm('Are you sure to update this interface class?')){
+            $.ajax({
+              type: "GET",
+              url: 'updateInterfaceClassDetail',
+              data: {
+                id: selectedInterfaceClassId,
+                label: label,
+                description: description,
+                comment: comment,
+              },
+              success: function (data){
+                data = JSON.parse(data)
+                var result = data['result']
+                if(result){
+                  showSuccessNotification('The interface class has been updated successfully!')
+                 
+                  var  all_interface_classes = data['all_interface_classes']
+                  // update the resoruce proeprty and resouces with updated ones
+                  document.getElementById('all_interface_classes').textContent = JSON.stringify(all_interface_classes)
+                 
+                  // update the tree view              
+                  var html = ''
+                  var interface_classid_list = []
+                  all_interface_classes.forEach(n => {
+                      if(!interface_classid_list.includes(n.id)){
+                          interface_classid_list.push(n.id)
+                          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
+                          ' + n.label + '  (' + n.description +')</li>'
+                      }
+                  });
+              
+                  document.getElementById('equipment_interface_class_tree').innerHTML = html
+                }
+                else{
+                  showErrorNotification('The error happend while updating the interface class!')
+                }
+              },
+              error:function(){
+                showErrorNotification('The error happend while requesting the server')
               }
-              else{
-                showErrorNotification('The error happend while updating the interface class!')
-              }
-            },
-            error:function(){
-              showErrorNotification('The error happend while requesting the server')
-            }
-          })
+            })
+          }
         }else{
           showErrorNotification('Label and description should not be emptry string')
         }
@@ -4751,6 +4805,7 @@ $(document).ready(function() {
   $('#btnRemoveInterfaceClass').on('click', function(){
     let selectedInterfaceClassId = $('#equipment_interface_class_id').val()
     if(selectedInterfaceClassId){
+      if(confirm('Are you sure to remove this interface class?')){
         $.ajax({
           type: "GET",
           url: 'removeInterfaceClassDetail',
@@ -4791,11 +4846,190 @@ $(document).ready(function() {
             showErrorNotification('The error happend while requesting the server')
           }
         })
+      }
     }else{  
       showErrorNotification('You should select the interface class to be removed')
     }
   })
+
+  //update connection type
+  $('#btn_update_connection_type').on('click', function(){
+    let connectionTypeId = $('#connection_type_id').val()
+    if(connectionTypeId){
+      let label = $('#connection_type_label').val()
+      let modifier = $('#connection_type_modifier').val()
+      let parentPath = $('#connection_type_parent_path').val()
+      let description = $('#connection_type_description').val()
+      let manufacturer = $('#connection_type_manufacturer').val()
+      let model = $('#connection_type_model').val()
+      let comment = $('#connection_type_comment').val()
+      let isApproved = $('#connection_type_is_approved').prop('checked')
+      if(label && description){
+        if(confirm('Are you sure to update this connection type?')){
+          $.ajax({
+            type: "GET",
+            url: 'updateConnectionTypeDetail',
+            data: {
+              id: connectionTypeId,
+              label: label,
+              modifier: modifier,
+              parentPath: parentPath,
+              description: description,
+              manufacturer: manufacturer,
+              model: model,
+              comment: comment,
+              isApproved: isApproved,
+            },
+            success: function (data)
+            {
+              data = JSON.parse(data)
+              var result = data['result']
+              var allConnectionTypes = data['all_connection_types']
+              if(result){
+                showSuccessNotification('The equipment type has been updated successfully!')
+                // update the connection type tree
+                document.getElementById('all_connection_types').textContent = JSON.stringify(allConnectionTypes)
+                const html = createConnectionTypeTree(allConnectionTypes)
+                document.getElementById('connection_type_tree').innerHTML = html
+                $('.treeview-animated').mdbTreeview();
   
+              }
+              else{
+               showErrorNotification('The error happend while updating the connection type!')
+             }
+            },
+            error: function(){
+              showErrorNotification('The error happend while requesting the server.')
+            }
+  
+          })
+        }
+      }else{
+        showErrorNotification('Label and description should not be empty string.')
+      }
+    }else{
+      showErrorNotification('You should select the connection type to be updated.')
+    }
+  })
+
+  //show adding connection type modal
+  $('#btn_add_connection_type').on('click', function(){
+    $("#adding_connection_type_parent_path").find('option').remove()
+    let allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
+    // display parent  path
+    var p = new Option('none' , '', undefined, false);
+    $(p).html('none');
+    $("#adding_connection_type_parent_path").append(p);
+
+    allConnectionTypes.forEach( element => {
+     let element_path = element.path.join('.')
+     var o = new Option(element.label, element_path, undefined, undefined);
+     $(o).html(element.label);
+     $("#adding_connection_type_parent_path").append(o);
+   })
+  })
+
+  // add connection type from the modal
+  $('#connectionTypeModal .btn-primary').on('click', function(){
+    let label = $('#adding_connection_type_label').val()
+    let modifier = $('#adding_connection_type_modifier').val()
+    let parentPath = $('#adding_connection_type_parent_path').val()
+    let description = $('#adding_connection_type_description').val()
+    let manufacturer = $('#adding_connection_type_manufacturer').val()
+    let model = $('#adding_connection_type_model').val()
+    let comment = $('#adding_connection_type_comment').val()
+    let isApproved = $('#adding_connection_type_approved').prop('checked')
+    if(label && description){
+      $.ajax({
+        type: "GET",
+        url: 'addConnectionType',
+        data: {
+          label: label,
+          modifier: modifier,
+          parentPath: parentPath,
+          description: description,
+          manufacturer: manufacturer,
+          model: model,
+          comment: comment,
+          isApproved: isApproved,
+        },
+        success: function (data)
+        {
+          data = JSON.parse(data)
+          var result = data['result']
+          var allConnectionTypes = data['all_connection_types']
+          if(result){
+            showSuccessNotification('The equipment type has been updated successfully!')
+            $('#connectionTypeModal').modal('hide')
+            // update the connection type tree
+            document.getElementById('all_connection_types').textContent = JSON.stringify(allConnectionTypes)
+            const html = createConnectionTypeTree(allConnectionTypes)
+            document.getElementById('connection_type_tree').innerHTML = html
+            $('.treeview-animated').mdbTreeview();
+
+          }
+          else{
+           showErrorNotification('The error happend while adding the connection type!')
+         }
+        },
+        error: function(){
+          showErrorNotification('The error happend while requesting the server.')
+        }
+
+      })
+    }else{
+      showErrorNotification('Label and description should not be empty string.')
+    }
+
+  })
+  
+  // remove connecion type
+  $('#btn_remove_connection_type').on('click', function(){
+      let id = $('#connection_type_id').val()
+      if(id){
+        if(confirm('Are you sure to remove this connection type?')){
+          $.ajax({
+            type: "GET",
+            url: 'removeConnectionTypeDetail',
+            data: {
+              id: id,
+            },
+            success: function (data)
+            {
+              data = JSON.parse(data)
+              var result = data['result']
+              var allConnectionTypes = data['all_connection_types']
+              if(result){
+                showSuccessNotification('The equipment type has been updated successfully!')
+                // update the connection type tree
+                document.getElementById('all_connection_types').textContent = JSON.stringify(allConnectionTypes)
+                const html = createConnectionTypeTree(allConnectionTypes)
+                document.getElementById('connection_type_tree').innerHTML = html
+                $('.treeview-animated').mdbTreeview();
+
+                $('#connection_type_label').val('')
+                $('#connection_type_modifier').val('')
+                $('#connection_type_parent_path').find('option').remove()
+                $('#connection_type_description').val('')
+                $('#connection_type_manufacturer').val('')
+                $('#connection_type_model').val('')
+                $('#connection_type_comment').val('')
+                $('#connection_type_is_approved').prop('checked', false)
+              }
+              else{
+               showErrorNotification('The error happend while removing the connection type!')
+             }
+            },
+            error: function(){
+              showErrorNotification('The error happend while requesting the server.')
+            }
+          })
+        }
+      }else{
+        showErrorNotification('You should select the connection type to be removed')
+      }
+    
+  })
 } )
 ();
 

@@ -1179,7 +1179,7 @@ def removeSystemParameters(request):
         return HttpResponse(data) 
 
 def updateEquipmentTypeDetail(request):
-     if request.method == 'GET':
+    if request.method == 'GET':
         p_equipment_type_id = request.GET['equipment_type_id']
         p_equipment_type_label = request.GET['equipment_type_label']
         p_equipment_type_parent_path = request.GET['equipment_type_parent_path']
@@ -2052,6 +2052,117 @@ def removeInterfaceClassDetail(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
+
+def updateConnectionTypeDetail(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        label = request.GET['label']
+        parentPath = request.GET['parentPath']
+        if parentPath:
+            parentPath = parentPath.replace(',', '.') + '.' + id
+        else:
+            parentPath =  id
+        description =  request.GET['description']
+        modifier =  request.GET['modifier']
+        manufacturer =  request.GET['manufacturer']
+        model =  request.GET['model']
+        comment = request.GET['comment'] 
+        is_approved = request.GET['isApproved'] 
+
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query = "SELECT  fn_update_connection_type({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', {} , '{}')".format(
+            id, parentPath, label, model, modifier,manufacturer , description , comment, is_approved, modified_at
+        ) 
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_connection_types = list(ConnectionType.objects.order_by('path').values())
+        data = json.dumps(
+            {
+                'result': result,
+                'all_connection_types': all_connection_types,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def addConnectionType(request):
+     if request.method == 'GET':
+        label = request.GET['label']
+        parentPath = request.GET['parentPath']
+        description =  request.GET['description']
+        modifier =  request.GET['modifier']
+        manufacturer =  request.GET['manufacturer']
+        model =  request.GET['model']
+        comment = request.GET['comment'] 
+        is_approved = request.GET['isApproved'] 
+
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+
+        raw_query  = 'SELECT max(id) FROM all_connection_type'
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                result = cursor.fetchone()
+                
+                maximun_id = result[0]
+                new_connection_type_id = maximun_id + 1
+                if parentPath:
+                    new_type_path = parentPath + '.' + str(new_connection_type_id)
+                else:
+                    new_type_path = str(new_connection_type_id)
+                raw_query = "SELECT  fn_add_connection_type({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', {} , '{}')".format(
+                    new_connection_type_id, new_type_path, label, model, modifier, manufacturer , description , comment, is_approved, modified_at
+                ) 
+                
+                with connection.cursor() as cursor:
+                    cursor.execute(raw_query)
+                    results = cursor.fetchall()
+                result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_connection_types = list(ConnectionType.objects.order_by('path').values())
+        data = json.dumps(
+            {
+                'result': result,
+                'all_connection_types': all_connection_types,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
+def removeConnectionTypeDetail(request):
+     if request.method == 'GET':
+        id = request.GET['id']
+        raw_query = "SELECT  fn_remove_connection_type({})".format(id)
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchall()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+        all_connection_types = list(ConnectionType.objects.order_by('path').values())
+        data = json.dumps(
+            {
+                'result': result,
+                'all_connection_types': all_connection_types,
+            }, 
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data)
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

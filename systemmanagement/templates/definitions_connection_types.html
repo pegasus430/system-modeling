@@ -22,7 +22,7 @@
                 <!-- right Overview -->
                 <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
                 <div class="card card-body right_overview border-gray">
-                    <!-- Equipments Form -->
+                    <!-- connections Form -->
                     <form class="row g-3">
                     
                     <h5 class="card-title nav-tabs-bordered">Connection Type Detail</h5>
@@ -91,23 +91,23 @@
                     </div>
                     <div class="row mt-1 p-2 pl-4" style="float: right;">
                         <div class="col-md-2">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#equipmentInterfaceClassModal">
+                        <button type="button" class="btn btn-success" id="btn_add_connection_type" data-bs-toggle="modal" data-bs-target="#connectionTypeModal">
                             Add
                         </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#equipmentInterfaceClassModal">
+                        <button type="button" id="btn_update_connection_type" class="btn btn-info">
                             Update
                         </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" id="btn_equipment_delete" class="btn btn-danger">
+                        <button type="button" id="btn_remove_connection_type" class="btn btn-danger">
                             Delete
                         </button>
                         </div>
                         
                     </div>
-                    </form><!-- End Equipments Form -->
+                    </form><!-- End connections Form -->
 
                 </div>
                 </div><!-- End right Overview -->
@@ -115,6 +115,74 @@
            
         </div>
     </div><!-- End Right Overview -->
+    <div class="modal fade" id="connectionTypeModal" tabindex="-1" aria-labelledby="connectionTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="connectionTypeModalLabel">Add connection Type</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Label:</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" placeholder="Label" value="" id="adding_connection_type_label" required>
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Modifier:</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" placeholder="Modifier" value="" id="adding_connection_type_modifier">
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Parent Path:</label>
+                <div class="col-md-7">
+                  <select class="form-select" id="adding_connection_type_parent_path">
+                    
+                  </select>
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Description:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Description" style="height: 60px;" id="adding_connection_type_description"></textarea>
+                </div>
+              </div>
+              
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Manufacturer:</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" placeholder="Manufacturer" value="" id="adding_connection_type_manufacturer">
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Model:</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" placeholder="Model" value="" id="adding_connection_type_model">
+                </div>
+              </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Comment:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="comment" style="height: 60px;" id="adding_connection_type_comment"></textarea>
+                </div>
+              </div>
+              
+              <div class="row mt-1">
+                  <label class="col-md-4 col-form-label text-secondary">Approved</label>
+                  <div class="col-md-7 form-check form-switch ml-3 pt-2">
+                    <input class="form-check-input form-control" type="checkbox" id="adding_connection_type_approved">
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary"  >Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
     <script type="text/javascript">
         
         all_connection_types = JSON.parse(document.getElementById('all_connection_types').textContent)

@@ -130,6 +130,7 @@ $(document).ready(function() {
     const regex = /^(\d{4}-\d{2}-\d{2})?$/;
     return regex.test(dateString);
   }
+
   function validateNumber(value) {
     return /^\d+$/.test(value);
   }
@@ -1017,9 +1018,7 @@ $(document).ready(function() {
       success: function (data){
         jsonData = JSON.parse(data)
         var tableData = []
-
         child_purchasing_connection_type = jsonData['child_connectiontype']       
-
         if(child_purchasing_connection_type.length){
           child_purchasing_connection_type.forEach(element => {
             tableData.push({
@@ -1051,7 +1050,7 @@ $(document).ready(function() {
              { data: 'location' },
            ],
            columnDefs: [
-             { "visible": false, "targets": 0 } // Target the first column to hide it
+             { "visible": false, "targets": 0 } 
            ]
          }
          )
@@ -1668,10 +1667,7 @@ $(document).ready(function() {
   $('.equipment_interface_class_page ').on('click', '.treeview-li .treeview-title',function(){
     selectedInterfaceClassId = $(this).attr("data-interfaceClassId")    
     all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
-    
-    
     selectedInterfaceClass = all_interface_classes.find(element => element.id == selectedInterfaceClassId)
-    
     $('#equipment_interface_class_id').val(selectedInterfaceClassId)
     $('#equipment_interface_class_label').val(selectedInterfaceClass.label)
     $('#equipment_interface_class_description').val(selectedInterfaceClass.description)
@@ -1682,13 +1678,12 @@ $(document).ready(function() {
       $('#equipment_interface_class_used').prop('checked' , false)
     }
     $('#equipment_interface_class_used').prop('disabled' , true)
-
   })
 
   $(".connection_type_page .left_object_hierarchy").on("click",  '.treeview-li .treeview-title', function() {
     
     allConnectionTypes = JSON.parse(document.getElementById('all_connection_types').textContent)
-    console.log(allConnectionTypes)
+    
     $("#connection_type_parent_path").find('option').remove()
 
     selectedtypeId = $(this).attr("data-typeid")

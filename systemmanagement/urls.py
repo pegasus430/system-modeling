@@ -68,4 +68,7 @@ urlpatterns = [
     path(r'definitions/updateInterfaceClassDetail', views.updateInterfaceClassDetail, name='updateInterfaceClassDetail'),
     path(r'definitions/addInterfaceClass', views.addInterfaceClass, name='addInterfaceClass'),
     path(r'definitions/removeInterfaceClassDetail', views.removeInterfaceClassDetail, name='removeInterfaceClassDetail'),
+    path(r'definitions/updateConnectionTypeDetail', views.updateConnectionTypeDetail, name='upateConnectionTypeDetail'),
+    path(r'definitions/addConnectionType', views.addConnectionType, name='addConnectionType'),
+    path(r'definitions/removeConnectionTypeDetail', views.removeConnectionTypeDetail, name='removeConnectionTypeDetail'),
 ]

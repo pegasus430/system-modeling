@@ -4694,20 +4694,20 @@ $(document).ready(function() {
     }
   })
 
-  // update the interface class
-  $('#btnUpdateInterfaceClass').on('click', function(){
-      let selectedInterfaceClassId = $('#equipment_interface_class_id').val()
-      if(selectedInterfaceClassId){
-        let label = $('#equipment_interface_class_label').val()
-        let description = $('#equipment_interface_class_description').val()
-        let comment = $('#equipment_interface_class_comment').val()
+  // update the attribute class
+  $('#btnUpdateAttributeClass').on('click', function(){
+      let selectedClassId = $('#attribute_class_id').val()
+      if(selectedClassId){
+        let label = $('#attribute_class_label').val()
+        let description = $('#attribute_class_description').val()
+        let comment = $('#attribute_class_comment').val()
         if(label && description){
-          if(confirm('Are you sure to update this interface class?')){
+          if(confirm('Are you sure to update this attribute class?')){
             $.ajax({
               type: "GET",
-              url: 'updateInterfaceClassDetail',
+              url: 'updateAttributeClassDetail',
               data: {
-                id: selectedInterfaceClassId,
+                id: selectedClassId,
                 label: label,
                 description: description,
                 comment: comment,
@@ -4716,27 +4716,18 @@ $(document).ready(function() {
                 data = JSON.parse(data)
                 var result = data['result']
                 if(result){
-                  showSuccessNotification('The interface class has been updated successfully!')
-                 
-                  var  all_interface_classes = data['all_interface_classes']
-                  // update the resoruce proeprty and resouces with updated ones
-                  document.getElementById('all_interface_classes').textContent = JSON.stringify(all_interface_classes)
-                 
-                  // update the tree view              
+                  showSuccessNotification('The attribute class has been updated successfully!')
+                  var  all_attributeClass = data['all_attributeClass']
+                  document.getElementById('all_attributeClass').textContent = JSON.stringify(all_attributeClass)                  
                   var html = ''
-                  var interface_classid_list = []
-                  all_interface_classes.forEach(n => {
-                      if(!interface_classid_list.includes(n.id)){
-                          interface_classid_list.push(n.id)
-                          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
-                          ' + n.label + '  (' + n.description +')</li>'
-                      }
+                  all_attributeClass.forEach(n => {
+                          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-attributeClassId="'+ n.attribute_class_id + '"> \
+                          ' + n.attribute_class_label + '  (' + n.attribute_class_description +')</li>'
                   });
-              
-                  document.getElementById('equipment_interface_class_tree').innerHTML = html
+                  document.getElementById('attribute_class_tree').innerHTML = html
                 }
                 else{
-                  showErrorNotification('The error happend while updating the interface class!')
+                  showErrorNotification('The error happend while updating the attribute class!')
                 }
               },
               error:function(){
@@ -4748,19 +4739,19 @@ $(document).ready(function() {
           showErrorNotification('Label and description should not be emptry string')
         }
       }else{  
-        showErrorNotification('You should select the interface class to be updated')
+        showErrorNotification('You should select the attribute class to be updated')
       }
   })
 
-  //add interface class from the  modal
-  $('#equipmentInterfaceClassModal .btn-primary').on('click', function(){
-     let label = $('#adding_interface_class_label').val()
-     let description= $('#adding_interface_class_description').val()
-     let comment = $('#adding_interface_class_comment').val()
+  //add attribute class from the  modal
+  $('#AttributeClassModal .btn-primary').on('click', function(){
+     let label = $('#adding_attribute_class_label').val()
+     let description= $('#adding_attribute_class_description').val()
+     let comment = $('#adding_attribute_class_comment').val()
      if(label && description){
       $.ajax({
         type: "GET",
-        url: 'addInterfaceClass',
+        url: 'addAttributeClass',
         data: {
           label: label,
           description: description,
@@ -4770,26 +4761,19 @@ $(document).ready(function() {
           data = JSON.parse(data)
           var result = data['result']
           if(result){
-            showSuccessNotification('The interface class has been added successfully!')
-            $('#equipmentInterfaceClassModal').modal('hide')
-            var  all_interface_classes = data['all_interface_classes']
-            // update the resoruce proeprty and resouces with added ones
-            document.getElementById('all_interface_classes').textContent = JSON.stringify(all_interface_classes)
-           
-            // update the tree view              
+            showSuccessNotification('The attribute class has been added successfully!')
+            $('#AttributeClassModal').modal('hide')
+            var  all_attributeClass = data['all_attributeClass']
+            document.getElementById('all_attributeClass').textContent = JSON.stringify(all_attributeClass)
             var html = ''
-            var interface_classid_list = []
-            all_interface_classes.forEach(n => {
-                if(!interface_classid_list.includes(n.id)){
-                    interface_classid_list.push(n.id)
-                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
-                    ' + n.label + '  (' + n.description +')</li>'
-                }
+            all_attributeClass.forEach(n => {
+                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-attributeClassId="'+ n.attribute_class_id + '"> \
+                    ' + n.attribute_class_label + '  (' + n.attribute_class_description +')</li>'
             });
-            document.getElementById('equipment_interface_class_tree').innerHTML = html
+            document.getElementById('attribute_class_tree').innerHTML = html
           }
           else{
-            showErrorNotification('The error happend while adding the interface class!')
+            showErrorNotification('The error happend while adding the attribute class!')
           }
         },
         error:function(){
@@ -4801,45 +4785,37 @@ $(document).ready(function() {
     }
   })
 
-  //remove interface class
-  $('#btnRemoveInterfaceClass').on('click', function(){
-    let selectedInterfaceClassId = $('#equipment_interface_class_id').val()
-    if(selectedInterfaceClassId){
-      if(confirm('Are you sure to remove this interface class?')){
+  //remove attribute class
+  $('#btnRemoveAttributeClass').on('click', function(){
+    let selectedClassId = $('#attribute_class_id').val()
+    if(selectedClassId){
+      if(confirm('Are you sure to remove this attribute class?')){
         $.ajax({
           type: "GET",
-          url: 'removeInterfaceClassDetail',
+          url: 'removeAttributeClassDetail',
           data: {
-            id: selectedInterfaceClassId          
+            id: selectedClassId          
           },
           success: function (data){
             data = JSON.parse(data)
             var result = data['result']
             if(result){
-              showSuccessNotification('The interface class has been removed successfully!')
-              $('#equipment_interface_class_id').val('')
-              $('#equipment_interface_class_label').val('')
-              $('#equipment_interface_class_description').val('')
-              $('#equipment_interface_class_comment').val('')
-              var  all_interface_classes = data['all_interface_classes']
-              // update the resoruce proeprty and resouces with updated ones
-              document.getElementById('all_interface_classes').textContent = JSON.stringify(all_interface_classes)
-             
-              // update the tree view              
+              showSuccessNotification('The attribute class has been removed successfully!')
+              $('#attribute_class_id').val('')
+              $('#attribute_class_label').val('')
+              $('#attribute_class_description').val('')
+              $('#attribute_class_comment').val('')
+              var  all_attributeClass = data['all_attributeClass']
+              document.getElementById('all_attributeClass').textContent = JSON.stringify(all_attributeClass)                  
               var html = ''
-              var interface_classid_list = []
-              all_interface_classes.forEach(n => {
-                  if(!interface_classid_list.includes(n.id)){
-                      interface_classid_list.push(n.id)
-                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceClassId="'+ n.id + '"> \
-                      ' + n.label + '  (' + n.description +')</li>'
-                  }
+              all_attributeClass.forEach(n => {
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-attributeClassId="'+ n.attribute_class_id + '"> \
+                      ' + n.attribute_class_label + '  (' + n.attribute_class_description +')</li>'
               });
-          
-              document.getElementById('equipment_interface_class_tree').innerHTML = html
+              document.getElementById('attribute_class_tree').innerHTML = html
             }
             else{
-              showErrorNotification('The error happend while removing the interface class!')
+              showErrorNotification('The error happend while removing the attribute class!')
             }
           },
           error:function(){
@@ -4848,7 +4824,7 @@ $(document).ready(function() {
         })
       }
     }else{  
-      showErrorNotification('You should select the interface class to be removed')
+      showErrorNotification('You should select the attribute class to be removed')
     }
   })
 

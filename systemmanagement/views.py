@@ -368,18 +368,18 @@ def definitions_equipment_interfaces(request):
     
     return render(request, 'definitions_equipment_interfaces.html', context=context)
 
-def definitions_equipment_interface_classes(request):
+def definitions_attribute_classes(request):
     page = 'definitions'
-    sidebar_title = 'equipment_interface_classes'
-    all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
+    sidebar_title = 'attribute_classes'
+    all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
     context = {
         'title': 'Definitions',
         'page': page,
         'sidebar_title': sidebar_title,
-        'all_interface_classes': all_interface_classes,
+        'all_attributeClass': all_attributeClass,
     }
     
-    return render(request, 'definitions_equipment_interface_classes.html', context=context)
+    return render(request, 'definitions_attribute_classes.html', context=context)
 
 def definitions_connection_types(request):
     page = 'definitions'
@@ -1971,7 +1971,7 @@ def removeEquipmentInterface(request):
         )
         return HttpResponse(data) 
     
-def updateInterfaceClassDetail(request):
+def updateAttributeClassDetail(request):
     if request.method == 'GET':
         id = request.GET['id']
         label = request.GET['label']
@@ -1992,17 +1992,17 @@ def updateInterfaceClassDetail(request):
             print(e)
             result = False
 
-        all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
+        all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
         data = json.dumps(
             {
                 'result': result,  
-                'all_interface_classes': all_interface_classes,
+                'all_attributeClass': all_attributeClass,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
     
-def addInterfaceClass(request):
+def addAttributeClass(request):
     if request.method == 'GET':
         label = request.GET['label']
         description = request.GET['description']
@@ -2021,17 +2021,17 @@ def addInterfaceClass(request):
             print(e)
             result = False
 
-        all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
+        all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
         data = json.dumps(
             {
                 'result': result,  
-                'all_interface_classes': all_interface_classes,
+                'all_attributeClass': all_attributeClass,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
-def removeInterfaceClassDetail(request):
+def removeAttributeClassDetail(request):
      if request.method == 'GET':
         id = request.GET['id']       
         raw_query = "SELECT fn_remove_attribute_class({})".format(id)
@@ -2043,11 +2043,11 @@ def removeInterfaceClassDetail(request):
         except Exception as e:
             print(e)
             result = False
-        all_interface_classes = list(InterfaceClass.objects.order_by('label').values())
+        all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
         data = json.dumps(
             {
                 'result': result,  
-                'all_interface_classes': all_interface_classes,
+                'all_attributeClass': all_attributeClass,
             } ,
             cls=DateTimeEncoder
         )

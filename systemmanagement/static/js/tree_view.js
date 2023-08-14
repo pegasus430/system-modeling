@@ -1664,20 +1664,20 @@ $(document).ready(function() {
     })
   })
 
-  $('.equipment_interface_class_page ').on('click', '.treeview-li .treeview-title',function(){
-    selectedInterfaceClassId = $(this).attr("data-interfaceClassId")    
-    all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
-    selectedInterfaceClass = all_interface_classes.find(element => element.id == selectedInterfaceClassId)
-    $('#equipment_interface_class_id').val(selectedInterfaceClassId)
-    $('#equipment_interface_class_label').val(selectedInterfaceClass.label)
-    $('#equipment_interface_class_description').val(selectedInterfaceClass.description)
-    $('#equipment_interface_class_comment').val(selectedInterfaceClass.comment)
-    if(selectedInterfaceClass['is_used']){
-      $('#equipment_interface_class_used').prop('checked' , true)
+  $('.attribute_class_page ').on('click', '.treeview-li .treeview-title',function(){
+    selectedAttributeClassId = $(this).attr("data-attributeClassId")    
+    all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
+    selectedAttributeClass = all_attributeClass.find(element => element.attribute_class_id == selectedAttributeClassId)
+    $('#attribute_class_id').val(selectedAttributeClassId)
+    $('#attribute_class_label').val(selectedAttributeClass.attribute_class_label)
+    $('#attribute_class_description').val(selectedAttributeClass.attribute_class_description)
+    $('#attribute_class_comment').val(selectedAttributeClass.attribute_class_comment)
+    if(selectedAttributeClass['is_used']){
+      $('#attribute_class_used').prop('checked' , true)
     }else{
-      $('#equipment_interface_class_used').prop('checked' , false)
+      $('#attribute_class_used').prop('checked' , false)
     }
-    $('#equipment_interface_class_used').prop('disabled' , true)
+    $('#attribute_class_used').prop('disabled' , true)
   })
 
   $(".connection_type_page .left_object_hierarchy").on("click",  '.treeview-li .treeview-title', function() {

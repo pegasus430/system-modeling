@@ -64,6 +64,14 @@
                         </div>
                     </div>
                     <div class="row mt-1">
+                        <label class="col-md-3 col-form-label text-secondary">Attribute Class:</label>
+                        <div class="col-md-8">
+                            <select class="form-select" id="resource_property_attribute_class">
+                            
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
                         <div class="col-md-6">
                             <div class="form-check form-switch">
                                 <input class="form-check-input form-control" type="checkbox" id="resource_property_is_reportable">
@@ -197,7 +205,7 @@
                         
                         </select>
                     </div>
-                    </div>
+                </div>
               
             </div>
             <div class="modal-footer">
@@ -268,15 +276,44 @@
     </div>
     <script>
         resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
-        var html = ''
-        var resource_id_list = []
-        resourceProperty.forEach(n => {
-            if(!resource_id_list.includes(n.id)){
-                resource_id_list.push(n.id)
-                html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
-                ' + n.modifier + '  (' + n.description +')</li>'
-            }
-        });
+        all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
+        
+        let attributeClassesHavingProperty = all_attributeClass.filter(element =>{
+            atcId = element.attribute_class_id
+            if(resourceProperty.find(element => element.attribute_class_id == atcId))
+                return true
+            else
+                return false
+        })
+        resource_id_list = []
+        var html = ''   
+
+        function createPropertyTree(resourceProperty, attributeClassesHavingProperty) {
+            let html = ''
+            attributeClassesHavingProperty.forEach(element => {
+                html += '<li class="treeview-animated-items treeview-li"> \
+                          <a class="closed"> \
+                            <i class="fas fa-angle-right"></i> \
+                            <span class="ml-1 treeview-title" data-typeid="" data-typepath=""">'+ element.attribute_class_label + '  (' + element.attribute_class_description + ')</span> \
+                          </a> \
+                          <ul class="nested">' 
+                atcId = element.attribute_class_id
+                propertiesByAttribute = resourceProperty.filter(property => property.attribute_class_id == atcId)
+                propertiesByAttribute.forEach(n => {
+                    if(!resource_id_list.includes(n.id)){
+                        resource_id_list.push(n.id)
+                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                        ' + n.modifier + '  (' + n.description +')</li>'
+                    }
+                })
+                
+                html += '</ul></li>'
+            })
+              
+            return html
+        }
+
+        html = createPropertyTree(resourceProperty, attributeClassesHavingProperty)
     
         document.getElementById('all_resource_property_tree').innerHTML = html
     </script>

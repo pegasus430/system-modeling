@@ -1672,15 +1672,18 @@ def updatePropertyDetail(request):
         propertyDescription = request.GET['propertyDescription']
         propertyDeValue = request.GET['propertyDeValue']
         propertyDeDataLabelId = request.GET['propertyDeDataLabelId']
+        if propertyDeDataLabelId == 'none':
+            propertyDeDataLabelId = 'Null'
         propertyDeComment = request.GET['propertyDeComment']
+        attributeClassId = request.GET['attributeClassId']
         propertyReportable = request.GET['propertyReportable']
         
         current_time = datetime.datetime.now(pytz.utc)
         modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
 
-        raw_query = "SELECT fn_update_property({}, '{}', '{}', '{}', {}, '{}', {}, '{}')".format(
+        raw_query = "SELECT fn_update_property({}, '{}', '{}', '{}', {}, '{}', {}, '{}', {})".format(
             propertyId, propertyModifier, propertyDescription, propertyDeValue, propertyDeDataLabelId, 
-            propertyDeComment, propertyReportable, modified_at
+            propertyDeComment, propertyReportable, modified_at, attributeClassId
         )        
         try:
             with connection.cursor() as cursor:

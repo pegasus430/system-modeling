@@ -2142,6 +2142,32 @@ $(document).ready(function() {
       return root.map(getNodeHtml).join('')
   }
 
+  function createPropertyTree(resourceProperty, attributeClassesHavingProperty) {
+    var resource_id_list = []
+    let html = ''
+    attributeClassesHavingProperty.forEach(element => {
+        html += '<li class="treeview-animated-items treeview-li"> \
+                  <a class="closed"> \
+                    <i class="fas fa-angle-right"></i> \
+                    <span class="ml-1 treeview-title" data-typeid="" data-typepath=""">'+ element.attribute_class_label + '  (' + element.attribute_class_description + ')</span> \
+                  </a> \
+                  <ul class="nested">' 
+        atcId = element.attribute_class_id
+        propertiesByAttribute = resourceProperty.filter(property => property.attribute_class_id == atcId)
+        propertiesByAttribute.forEach(n => {
+            if(!resource_id_list.includes(n.id)){
+                resource_id_list.push(n.id)
+                html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
+                ' + n.modifier + '  (' + n.description +')</li>'
+            }
+        })
+        
+        html += '</ul></li>'
+    })
+      
+    return html
+  }
+
   // remove equipment
   if(select('#btn_equipment_delete')){
     on('click','#btn_equipment_delete' , function(){
@@ -3927,8 +3953,9 @@ $(document).ready(function() {
          let propertyDeValue =  $('#resource_property_default_value').val()
          let propertyDeDataLabelId = $('#resource_property_default_datatype').val()
          let propertyDeComment =  $('#resource_property_comment').val()
+         let attributeClassId =  $('#resource_property_attribute_class').val()
          let propertyReportable =  $('#resource_property_is_reportable').prop('checked')
-         if(propertyDescription){
+         if(propertyDescription && attributeClassId){
           if(confirm('Are you sure to update this property?')){
             $.ajax({
               type: "GET",
@@ -3940,6 +3967,7 @@ $(document).ready(function() {
                 propertyDeValue: propertyDeValue,
                 propertyDeDataLabelId: propertyDeDataLabelId,
                 propertyDeComment: propertyDeComment,
+                attributeClassId:attributeClassId,
                 propertyReportable: propertyReportable,
               },
               success: function (data){
@@ -3951,15 +3979,15 @@ $(document).ready(function() {
                   var resourceProperty = data['resourceProperty']
                   document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
                   var html = ''
-                  var resource_id_list = []
-                  resourceProperty.forEach(n => {
-                      if(!resource_id_list.includes(n.id)){
-                          resource_id_list.push(n.id)
-                          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
-                          ' + n.modifier + '  (' + n.description +')</li>'
-                      }
-                  });
-              
+                  all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
+                  let attributeClassesHavingProperty = all_attributeClass.filter(element =>{
+                      atcId = element.attribute_class_id
+                      if(resourceProperty.find(element => element.attribute_class_id == atcId))
+                          return true
+                      else
+                          return false
+                  })                
+                  html = createPropertyTree(resourceProperty, attributeClassesHavingProperty)
                   document.getElementById('all_resource_property_tree').innerHTML = html
                   $('.treeview-animated').mdbTreeview();
   
@@ -3975,7 +4003,7 @@ $(document).ready(function() {
             })
           }
          }else{
-           showErrorNotification('The description should not be empty string.')
+           showErrorNotification('The description and attribute class should not be empty string.')
          }
       }else{
         showErrorNotification('You should select the property to be updated.')
@@ -3991,7 +4019,7 @@ $(document).ready(function() {
       $('#adding_property_default_datatype_label').find('option').remove()
       $('#adding_property_attribute_class').find('option').remove()
       
-      var p = new Option('none', undefined,  undefined, undefined)
+      var p = new Option('none', 'none',  undefined, undefined)
       $(p).html('none')
       $('#adding_property_default_datatype_label').append(p)
       all_datatype.forEach(element => {
@@ -4000,7 +4028,7 @@ $(document).ready(function() {
         $('#adding_property_default_datatype_label').append(p)
       })
 
-      var p = new Option('none', undefined,  undefined, undefined)
+      var p = new Option('none', '',  undefined, undefined)
       $(p).html('none')
       $('#adding_property_attribute_class').append(p)      
       all_attributeClass.forEach(element => {
@@ -4024,7 +4052,7 @@ $(document).ready(function() {
       let reportable = $('#adding_property_is_reportable').prop('checked')
       let attributeClassId = $('#adding_property_attribute_class').val()
 
-      if(description){
+      if(description && attributeClassId){
         if(confirm('Are you sure to add this property?')){
             
             $.ajax({
@@ -4049,14 +4077,15 @@ $(document).ready(function() {
                   var resourceProperty = data['resourceProperty']
                   document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
                   var html = ''
-                  var resource_id_list = []
-                  resourceProperty.forEach(n => {
-                      if(!resource_id_list.includes(n.id)){
-                          resource_id_list.push(n.id)
-                          html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
-                          ' + n.modifier + '  (' + n.description +')</li>'
-                      }
-                  });
+                  all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
+                  let attributeClassesHavingProperty = all_attributeClass.filter(element =>{
+                      atcId = element.attribute_class_id
+                      if(resourceProperty.find(element => element.attribute_class_id == atcId))
+                          return true
+                      else
+                          return false
+                  })                
+                  html = createPropertyTree(resourceProperty, attributeClassesHavingProperty)
                   document.getElementById('all_resource_property_tree').innerHTML = html
                   $('.treeview-animated').mdbTreeview();
                 
@@ -4072,7 +4101,7 @@ $(document).ready(function() {
         }
         
       }else{
-        showErrorNotification('Description should not be empty string')
+        showErrorNotification('Description and Attribute Class should not be empty.')
       }
     })
   }
@@ -4109,15 +4138,15 @@ $(document).ready(function() {
                 var resourceProperty = data['resourceProperty']
                 document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
                 var html = ''
-                var resource_id_list = []
-                resourceProperty.forEach(n => {
-                    if(!resource_id_list.includes(n.id)){
-                        resource_id_list.push(n.id)
-                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
-                        ' + n.modifier + '  (' + n.description +')</li>'
-                    }
-                });
-            
+                all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
+                let attributeClassesHavingProperty = all_attributeClass.filter(element =>{
+                    atcId = element.attribute_class_id
+                    if(resourceProperty.find(element => element.attribute_class_id == atcId))
+                        return true
+                    else
+                        return false
+                })                
+                html = createPropertyTree(resourceProperty, attributeClassesHavingProperty)
                 document.getElementById('all_resource_property_tree').innerHTML = html
                 $('.treeview-animated').mdbTreeview();
 

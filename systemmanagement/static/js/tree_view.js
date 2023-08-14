@@ -1543,9 +1543,11 @@ $(document).ready(function() {
     selectedPropertyId = $(this).attr("data-propertyId")
     resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
     all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+    all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
     // display resource property detail
     selectedProperty= resourceProperty.find(element => element.id == selectedPropertyId)
     $("#resource_property_default_datatype").find('option').remove()
+    $('#resource_property_attribute_class').find('option').remove()
     
     $('#resource_property_id').val(selectedPropertyId)
     $('#resource_property_modifier').val(selectedProperty.modifier)
@@ -1573,6 +1575,17 @@ $(document).ready(function() {
       var p = new Option(element.label, element.id,  undefined, selected)
       $(p).html(element.label)
       $('#resource_property_default_datatype').append(p)
+    })
+
+    var p = new Option('none', '',  undefined, undefined)
+    $(p).html('none')
+    $('#resource_property_attribute_class').append(p)
+    
+    all_attributeClass.forEach(element => {
+      var selected = element.attribute_class_id === selectedProperty.attribute_class_id ? true: false
+      var p = new Option(element.attribute_class_label, element.attribute_class_id,  undefined, selected)
+      $(p).html(element.attribute_class_label)
+      $('#resource_property_attribute_class').append(p)
     })
 
     // display resources using this property

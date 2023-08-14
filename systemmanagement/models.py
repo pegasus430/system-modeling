@@ -340,6 +340,7 @@ class ResouceProperty(models.Model):
     description = models.TextField()
     default_value = models.TextField()
     default_datatype_id = models.BigIntegerField()
+    attribute_class_id = models.BigIntegerField()
     default_datatype_label = models.TextField()
     default_datatype_comment = models.TextField()
     is_reportable = models.BooleanField()
@@ -430,6 +431,7 @@ class AttributeClass(models.Model):
     attribute_class_description = models.TextField()
     attribute_class_comment = models.TextField()
     attribute_class_modified_at = models.DateTimeField()
+    is_used = models.BooleanField()
     class Meta:
         managed = False
         db_table = 'all_attribute_class'

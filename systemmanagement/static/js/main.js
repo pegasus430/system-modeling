@@ -1576,6 +1576,7 @@ $(document).ready(function() {
                     document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
                     showSuccessNotification('The target system has been updated successfully!')
                     showDataTypeTable(target_systems)
+                    $('#target_system_id').val('')
                   }
                   else{
                     showErrorNotification('The error happend while updating the target system!')
@@ -5209,6 +5210,15 @@ $(document).ready(function() {
     
   })
 
+  $('#target_systems_table').on('click', 'td', function(){    
+    let sTable = $('#target_systems_table').DataTable()
+    let cell = sTable.cell(this)
+    let row = cell.index().row;
+    let rowData = sTable.row(row).data()
+    let selectedId = rowData.id
+    console.log(selectedId)
+    $('#target_system_id').val(selectedId)
+  })
   // add target systems
   $('#targetSystemModal .btn-primary').on('click', function(){
     let label = $('#adding_system_settings_label').val()
@@ -5303,6 +5313,96 @@ $(document).ready(function() {
        })
     }else{
       showErrorNotification('The Label: ' + label + ' is exsting on the DB. Please check other label to be added.')
+    }
+  })
+  // delete target systems
+  $('#btn_delete_targetsystem').on('click', function(){
+    let selectedId = $('#target_system_id').val()
+    if(selectedId){
+      $.ajax({
+        type: "GET",
+        url: 'removeTargetSystemDetail',
+        data: {       
+          id: selectedId
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            target_systems = data['target_systems']
+            document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
+            showSuccessNotification('The target system has been removed successfully!')
+            $('#target_system_id').val('')
+            let tableData = []
+            target_systems.forEach(element => {
+                tableData.push({
+                  'id': element.system_settings_id,
+                  'label': element.label ,
+                  'value': element.value,
+                  'comment' : element.comment,
+                })
+            })
+
+            var targetSystemEditor = new DataTable.Editor({
+              idSrc:  'id',
+              fields: [
+                {
+                  label: 'id',
+                  name: 'id'
+                },
+                {
+                  label: 'label',
+                  name: 'label'
+                },
+                {
+                  label: 'value',
+                  name: 'value'
+                },
+                {
+                  label: 'comment',
+                  name: 'comment'
+                },
+              ],
+              table: '#target_systems_table'
+            })
+      
+            $('#target_systems_table').DataTable({
+              data:  tableData ,
+              destroy: true,
+              autoWidth: false,
+              columns: [
+                { data: 'id'},
+                { data: 'label' },
+                { data: 'value' },
+                { data: 'comment' },
+              
+              ],
+              order: [[1, 'asc']],
+              columnDefs: [
+                {
+                  targets: [0],
+                  visible: false
+                }
+              ]}
+            )
+
+            $('#target_systems_table').on('click', 'td:nth-child(n+2):nth-child(-n+4)', function(){
+              targetSystemEditor.inline(this)
+            })
+
+            showDataTypeTable(target_systems)
+            $('#targetSystemModal').modal('hide')
+          }
+          else{
+            showErrorNotification('The error happend while removing the target system!')
+          }
+        },
+        error: function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+       })
+    }else{
+      showErrorNotification('You should select the target system to be removed')
     }
   })
   

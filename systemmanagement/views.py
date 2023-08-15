@@ -2234,6 +2234,31 @@ def addTargetSystemDetail(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+
+def removeTargetSystemDetail(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        raw_query = "SELECT fn_remove_system_settings( {})".format(id)          
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        target_systems = list(TargetSystem.objects.order_by('label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'target_systems': target_systems,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
+
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

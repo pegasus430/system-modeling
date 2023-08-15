@@ -71,4 +71,5 @@ urlpatterns = [
     path(r'definitions/updateConnectionTypeDetail', views.updateConnectionTypeDetail, name='upateConnectionTypeDetail'),
     path(r'definitions/addConnectionType', views.addConnectionType, name='addConnectionType'),
     path(r'definitions/removeConnectionTypeDetail', views.removeConnectionTypeDetail, name='removeConnectionTypeDetail'),
+    path(r'definitions/updateTargetSystemDetail', views.updateTargetSystemDetail, name='updateTargetSystemDetail'),
 ]

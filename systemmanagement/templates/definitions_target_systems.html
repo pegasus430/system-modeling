@@ -10,29 +10,30 @@
             <div class="row">
                 <!-- Equipment Details table -->
                 <h5 class="card-title">Target Systems</h5>
-                <table class="nowrap table table-bordered text-center" id="target_systems_table">
+                <table class="display nowrap custom_datatable1 table-bordered" id="target_systems_table">
                     <thead style="background-color: #000; color: white; border: solid 1px;">
-                        <tr class="text-center">
-                            <th scope="col" class="text-center">Label</th>
-                            <th scope="col" class="text-center">Description</th>
-                            <th scope="col" class="text-center" >comment</th>
+                        <tr >
+                            <th>id</th>
+                            <th>Label</th>
+                            <th>Value</th>
+                            <th>comment</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="border: solid 1px">
-                            
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
                     </tbody>
                 </table><!-- End Equipment Details table -->
                 <!-- Buttons Section -->
-                <div class="col-xxl-12 col-lg-12 col-md-12">
-                    <div class="card-body buttons_section">
-                    <button type="button" class="btn btn-outline-secondary mr-3">Cancel</button>
-                    <button type="button" class="btn btn-outline-primary" id='commit'>Commit</button>
-                    </div>
+                <div class="row mt-1 p-2 pl-4">
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-success" id="btn_add_targetsystem" data-bs-toggle="modal" data-bs-target="#targetSystemModal">
+                            Add
+                        </button>
+                      </div>
+                      <div class="col-md-2">
+                      <button type="button" id="btn_delete_targetsystem" class="btn btn-danger">
+                          Delete 
+                      </button>
+                      </div>
                 </div><!-- End Buttons Section -->
             </div>
             <div class="row">

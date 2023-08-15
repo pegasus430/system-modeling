@@ -51,6 +51,68 @@ $(document).ready(function() {
     function validateNumber(value) {
       return /^\d+$/.test(value);
     }
+
+    function showDataTypeTable(target_systems){
+      all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+      // get the matched headers for datatype table
+      var columnHeaderMatch = {
+        'scada_1': target_systems.find(element => element.label ==='scada_1')? target_systems.find(element => element.label ==='scada_1').value :'',
+        'scada_2': target_systems.find(element => element.label ==='scada_2')? target_systems.find(element => element.label ==='scada_2').value :'',
+        'scada_3': target_systems.find(element => element.label ==='scada_3')? target_systems.find(element => element.label ==='scada_3').value :'',
+        'scada_4': target_systems.find(element => element.label ==='scada_4')? target_systems.find(element => element.label ==='scada_4').value :'',
+        'scada_5': target_systems.find(element => element.label ==='scada_5')? target_systems.find(element => element.label ==='scada_5').value :'',
+        'control_1': target_systems.find(element => element.label ==='control_1')? target_systems.find(element => element.label ==='control_1').value :'',
+        'control_2': target_systems.find(element => element.label ==='control_2')? target_systems.find(element => element.label ==='control_2').value :'',
+        'control_3': target_systems.find(element => element.label ==='control_3')? target_systems.find(element => element.label ==='control_3').value :'',
+        'control_4': target_systems.find(element => element.label ==='control_4')? target_systems.find(element => element.label ==='control_4').value :'',
+        'control_5': target_systems.find(element => element.label ==='control_5')? target_systems.find(element => element.label ==='control_5').value :'',
+      }
+      // filter the matched headers with not null string headers
+      columnHeaderMatch = Object.fromEntries(
+        Object.entries(columnHeaderMatch).filter(([key, value]) => value !== '')
+      );
+      
+      
+      var columnHeadersKeys = Object.keys(columnHeaderMatch)
+      var columnHeaders = Object.values(columnHeaderMatch)      
+     
+      // initialzie the system_datatype_table theader and emptry tbody
+      var html = '<thead style="background-color: #000; color: white; border: solid 1px;"><tr class="text-center">'
+      html += '<th>Label</th><th>Description</th>'
+      columnHeaders.forEach(element =>{
+        html += '<th scope="col" class="text-center">'+ element +'</th>'
+      })
+      html += '<th>Comment</th>'
+                
+      html += '</tr></thead><tbody><tr style="border: solid 1px">'
+      html += '<td></td><td></td>'
+      columnHeaders.forEach(element =>{
+        html += '<td></td>'
+      })
+      html += '<td></td>'
+      html += '</tr></tbody>'
+        
+      $('#system_datatype_table').html(html)
+
+      // put the system datatype table with real type data
+      if(all_datatype.length){
+        html = '<tr>'
+        all_datatype.forEach(element => {
+          html += '<td>'+ element.label +'</td>'
+          html += '<td>'+ element.description +'</td>'
+          columnHeadersKeys.forEach(headerkey => {
+            html += '<td>'+ element[headerkey] +'</td>'
+          })
+          html += '<td>'+ element.comment +'</td></tr>'
+
+        })
+        $('#system_datatype_table tbody').html(html)
+      }else{
+        var html  = 'No data'
+        $('#system_datatype_table tbody').html(html)
+      }
+
+    }
     
     
     if(document.getElementById('purchasing_overview_equipment')){
@@ -1430,18 +1492,41 @@ $(document).ready(function() {
       }
     })
 
+    //initialize the target systems page
     if(document.getElementById('target_systems')){
       target_systems = JSON.parse(document.getElementById('target_systems').textContent)
-      all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
-    
+
       if(target_systems.length){
         target_systems.forEach(element => {
               tableData.push({
-              'label': element.label ,
-              'description': element.value,
-              'comment' : element.comment,
-         
+                'id': element.system_settings_id,
+                'label': element.label ,
+                'value': element.value,
+                'comment' : element.comment,
               })
+          })
+
+          var targetSystemEditor = new DataTable.Editor({
+            idSrc:  'id',
+            fields: [
+              {
+                label: 'id',
+                name: 'id'
+              },
+              {
+                label: 'label',
+                name: 'label'
+              },
+              {
+                label: 'value',
+                name: 'value'
+              },
+              {
+                label: 'comment',
+                name: 'comment'
+              },
+            ],
+            table: '#target_systems_table'
           })
      
           $('#target_systems_table').DataTable({
@@ -1449,70 +1534,63 @@ $(document).ready(function() {
             destroy: true,
             autoWidth: false,
             columns: [
+              { data: 'id'},
               { data: 'label' },
-              { data: 'description' },
+              { data: 'value' },
               { data: 'comment' },
             
+            ],
+            columnDefs: [
+              {
+                targets: [0],
+                visible: false
+              }
             ]}
           )
 
-          var columnHeaderMatch = {
-            'scada_1': target_systems.find(element => element.label ==='scada_1')? target_systems.find(element => element.label ==='scada_1').value :'',
-            'scada_2': target_systems.find(element => element.label ==='scada_2')? target_systems.find(element => element.label ==='scada_2').value :'',
-            'scada_3': target_systems.find(element => element.label ==='scada_3')? target_systems.find(element => element.label ==='scada_3').value :'',
-            'scada_4': target_systems.find(element => element.label ==='scada_4')? target_systems.find(element => element.label ==='scada_4').value :'',
-            'scada_5': target_systems.find(element => element.label ==='scada_5')? target_systems.find(element => element.label ==='scada_5').value :'',
-            'control_1': target_systems.find(element => element.label ==='control_1')? target_systems.find(element => element.label ==='control_1').value :'',
-            'control_2': target_systems.find(element => element.label ==='control_2')? target_systems.find(element => element.label ==='control_2').value :'',
-            'control_3': target_systems.find(element => element.label ==='control_3')? target_systems.find(element => element.label ==='control_3').value :'',
-            'control_4': target_systems.find(element => element.label ==='control_4')? target_systems.find(element => element.label ==='control_4').value :'',
-            'control_5': target_systems.find(element => element.label ==='control_5')? target_systems.find(element => element.label ==='control_5').value :'',
-          }
-
-          columnHeaderMatch = Object.fromEntries(
-            Object.entries(columnHeaderMatch).filter(([key, value]) => value !== '')
-          );
-          
-          
-          var columnHeadersKeys = Object.keys(columnHeaderMatch)
-          var columnHeaders = Object.values(columnHeaderMatch)      
-         
-          
-          var html = '<thead style="background-color: #000; color: white; border: solid 1px;"><tr class="text-center">'
-          html += '<th>Label</th><th>Description</th>'
-          columnHeaders.forEach(element =>{
-            html += '<th scope="col" class="text-center">'+ element +'</th>'
+          $('#target_systems_table').on('click', 'td:nth-child(n+2):nth-child(-n+4)', function(){
+            targetSystemEditor.inline(this)
           })
-          html += '<th>Comment</th>'
-                    
-          html += '</tr></thead><tbody><tr style="border: solid 1px">'
-          html += '<td></td><td></td>'
-          columnHeaders.forEach(element =>{
-            html += '<td></td>'
+
+          targetSystemEditor.on('edit', function(e, datatable, cell) {
+            id = cell.id
+            label = cell.label
+            value = cell.value
+            comment = cell.comment
+            if(value){
+              $.ajax({
+                type: "GET",
+                url: 'updateTargetSystemDetail',
+                data: {
+                  id: id,
+                  label: label,
+                  value: value,
+                  comment: comment
+                },
+                success: function (data){
+                  data = JSON.parse(data)
+                  var result = data['result']
+                  if(result){
+                    target_systems = data['target_systems']
+                    document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
+                    showSuccessNotification('The target system has been updated successfully!')
+                    showDataTypeTable(target_systems)
+                  }
+                  else{
+                    showErrorNotification('The error happend while updating the target system!')
+                  }
+                },
+                error: function(){
+                  showErrorNotification('The error happend while requesting the server')
+                }
+               })
+            }else{
+              showErrorNotification('The target system value should not be empty.')
+            }
+
           })
-          html += '<td></td>'
-          html += '</tr></tbody>'
-            
-          $('#system_datatype_table').html(html)
 
-          
-          if(all_datatype.length){
-            html = '<tr>'
-            all_datatype.forEach(element => {
-              html += '<td>'+ element.label +'</td>'
-              html += '<td>'+ element.description +'</td>'
-              columnHeadersKeys.forEach(headerkey => {
-                html += '<td>'+ element[headerkey] +'</td>'
-              })
-              html += '<td>'+ element.comment +'</td></tr>'
-
-            })
-            $('#system_datatype_table tbody').html(html)
-          }else{
-            var html  = 'No data'
-            $('#system_datatype_table tbody').html(html)
-          }
-
+          showDataTypeTable(target_systems)
 
       }else{
           var html = '<tr> \

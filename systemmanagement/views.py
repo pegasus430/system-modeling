@@ -2201,6 +2201,39 @@ def updateTargetSystemDetail(request):
         )
         return HttpResponse(data) 
 
+def addTargetSystemDetail(request):
+    if request.method == 'GET':
+        label = request.GET['label']
+        value = request.GET['value']
+        comment = request.GET['comment']
+        if comment =='':
+            comment = 'NULL'
+        else:
+            comment = "'" + comment + "'"
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_add_system_settings('{}', '{}' , {}, '{}')".format(
+            label, value, comment, modified_at
+        )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        target_systems = list(TargetSystem.objects.order_by('label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'target_systems': target_systems,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

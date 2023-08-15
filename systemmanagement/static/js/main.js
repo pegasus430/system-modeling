@@ -1540,6 +1540,7 @@ $(document).ready(function() {
               { data: 'comment' },
             
             ],
+            order: [[1, 'asc']],
             columnDefs: [
               {
                 targets: [0],
@@ -2269,8 +2270,69 @@ $(document).ready(function() {
     })
       
     return html
-}
+  }
 
+  function showDataTypeTable(target_systems){
+    all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+    // get the matched headers for datatype table
+    var columnHeaderMatch = {
+      'scada_1': target_systems.find(element => element.label ==='scada_1')? target_systems.find(element => element.label ==='scada_1').value :'',
+      'scada_2': target_systems.find(element => element.label ==='scada_2')? target_systems.find(element => element.label ==='scada_2').value :'',
+      'scada_3': target_systems.find(element => element.label ==='scada_3')? target_systems.find(element => element.label ==='scada_3').value :'',
+      'scada_4': target_systems.find(element => element.label ==='scada_4')? target_systems.find(element => element.label ==='scada_4').value :'',
+      'scada_5': target_systems.find(element => element.label ==='scada_5')? target_systems.find(element => element.label ==='scada_5').value :'',
+      'control_1': target_systems.find(element => element.label ==='control_1')? target_systems.find(element => element.label ==='control_1').value :'',
+      'control_2': target_systems.find(element => element.label ==='control_2')? target_systems.find(element => element.label ==='control_2').value :'',
+      'control_3': target_systems.find(element => element.label ==='control_3')? target_systems.find(element => element.label ==='control_3').value :'',
+      'control_4': target_systems.find(element => element.label ==='control_4')? target_systems.find(element => element.label ==='control_4').value :'',
+      'control_5': target_systems.find(element => element.label ==='control_5')? target_systems.find(element => element.label ==='control_5').value :'',
+    }
+    // filter the matched headers with not null string headers
+    columnHeaderMatch = Object.fromEntries(
+      Object.entries(columnHeaderMatch).filter(([key, value]) => value !== '')
+    );
+    
+    
+    var columnHeadersKeys = Object.keys(columnHeaderMatch)
+    var columnHeaders = Object.values(columnHeaderMatch)      
+  
+    // initialzie the system_datatype_table theader and emptry tbody
+    var html = '<thead style="background-color: #000; color: white; border: solid 1px;"><tr class="text-center">'
+    html += '<th>Label</th><th>Description</th>'
+    columnHeaders.forEach(element =>{
+      html += '<th scope="col" class="text-center">'+ element +'</th>'
+    })
+    html += '<th>Comment</th>'
+              
+    html += '</tr></thead><tbody><tr style="border: solid 1px">'
+    html += '<td></td><td></td>'
+    columnHeaders.forEach(element =>{
+      html += '<td></td>'
+    })
+    html += '<td></td>'
+    html += '</tr></tbody>'
+      
+    $('#system_datatype_table').html(html)
+
+    // put the system datatype table with real type data
+    if(all_datatype.length){
+      html = '<tr>'
+      all_datatype.forEach(element => {
+        html += '<td>'+ element.label +'</td>'
+        html += '<td>'+ element.description +'</td>'
+        columnHeadersKeys.forEach(headerkey => {
+          html += '<td>'+ element[headerkey] +'</td>'
+        })
+        html += '<td>'+ element.comment +'</td></tr>'
+
+      })
+      $('#system_datatype_table tbody').html(html)
+    }else{
+      var html  = 'No data'
+      $('#system_datatype_table tbody').html(html)
+    }
+
+  }
   // remove equipment
   if(select('#btn_equipment_delete')){
     on('click','#btn_equipment_delete' , function(){
@@ -5146,6 +5208,104 @@ $(document).ready(function() {
       }
     
   })
+
+  // add target systems
+  $('#targetSystemModal .btn-primary').on('click', function(){
+    let label = $('#adding_system_settings_label').val()
+    let value = $('#adding_system_settings_value').val()
+    let comment = $('#adding_system_settings_comment').val()
+    let target_systems = JSON.parse(document.getElementById('target_systems').textContent)
+    let filter = target_systems.filter(element => element.label == label)
+
+    if(!filter.length){
+      $.ajax({
+        type: "GET",
+        url: 'addTargetSystemDetail',
+        data: {       
+          label: label,
+          value: value,
+          comment: comment
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            target_systems = data['target_systems']
+            document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
+            showSuccessNotification('The target system has been added successfully!')
+            let tableData = []
+            target_systems.forEach(element => {
+                tableData.push({
+                  'id': element.system_settings_id,
+                  'label': element.label ,
+                  'value': element.value,
+                  'comment' : element.comment,
+                })
+            })
+
+            var targetSystemEditor = new DataTable.Editor({
+              idSrc:  'id',
+              fields: [
+                {
+                  label: 'id',
+                  name: 'id'
+                },
+                {
+                  label: 'label',
+                  name: 'label'
+                },
+                {
+                  label: 'value',
+                  name: 'value'
+                },
+                {
+                  label: 'comment',
+                  name: 'comment'
+                },
+              ],
+              table: '#target_systems_table'
+            })
+      
+            $('#target_systems_table').DataTable({
+              data:  tableData ,
+              destroy: true,
+              autoWidth: false,
+              columns: [
+                { data: 'id'},
+                { data: 'label' },
+                { data: 'value' },
+                { data: 'comment' },
+              
+              ],
+              order: [[1, 'asc']],
+              columnDefs: [
+                {
+                  targets: [0],
+                  visible: false
+                }
+              ]}
+            )
+
+            $('#target_systems_table').on('click', 'td:nth-child(n+2):nth-child(-n+4)', function(){
+              targetSystemEditor.inline(this)
+            })
+
+            showDataTypeTable(target_systems)
+            $('#targetSystemModal').modal('hide')
+          }
+          else{
+            showErrorNotification('The error happend while adding the target system!')
+          }
+        },
+        error: function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+       })
+    }else{
+      showErrorNotification('The Label: ' + label + ' is exsting on the DB. Please check other label to be added.')
+    }
+  })
+  
 } )
 ();
 

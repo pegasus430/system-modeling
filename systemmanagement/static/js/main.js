@@ -2149,7 +2149,7 @@ $(document).ready(function() {
         html += '<li class="treeview-animated-items treeview-li"> \
                   <a class="closed"> \
                     <i class="fas fa-angle-right"></i> \
-                    <span class="ml-1 treeview-title" data-typeid="" data-typepath=""">'+ element.attribute_class_label + '  (' + element.attribute_class_description + ')</span> \
+                    <span class="ml-1 treeview-title" data-typeid="" data-typepath="">'+ element.attribute_class_label + '  (' + element.attribute_class_description + ')</span> \
                   </a> \
                   <ul class="nested">' 
         atcId = element.attribute_class_id
@@ -2167,6 +2167,31 @@ $(document).ready(function() {
       
     return html
   }
+
+  function createInterfaceTree(all_interfaces, interfaceClasesHavingInterface) {
+    let html = ''
+    var interface_id_list = []
+    interfaceClasesHavingInterface.forEach(element => {
+        html += '<li class="treeview-animated-items treeview-li"> \
+                  <a class="closed"> \
+                    <i class="fas fa-angle-right"></i> \
+                    <span class="ml-1 treeview-title" data-interfaceId="">'+ element.label + '  (' + element.description + ')</span> \
+                  </a> \
+                  <ul class="nested">' 
+        itcId = element.id
+        interfacesByClassID = all_interfaces.filter(interfaces => interfaces.interface_class_id == itcId)
+        interfacesByClassID.forEach( n => {
+            if(!interface_id_list.includes(n.id)){
+                interface_id_list.push(n.id)
+                html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
+                ' + n.identifier + '  (' + n.description +')</li>'
+            }
+        })
+        html += '</ul></li>'
+    })
+      
+    return html
+}
 
   // remove equipment
   if(select('#btn_equipment_delete')){
@@ -4547,50 +4572,55 @@ $(document).ready(function() {
       let interfaceClassId =  $('#equipment_interface_interface_class_label').val()
       let interfaceConnectingClassId =  $('#equipment_interface_connecting_class_label').val()
       let isIntermediate =  $('#equipment_interface_is_intermediate').prop('checked')
-      if(confirm('Are you sure to update this interface?')){
-        $.ajax({
-          type: "GET",
-          url: 'updateEquipmentInterfaceDetail',
-          data: {
-            selectedInterfaceId: selectedInterfaceId,
-            identifier: identifier,
-            description: description,
-            comment: comment,
-            interfaceClassId: interfaceClassId,
-            interfaceConnectingClassId: interfaceConnectingClassId,
-            isIntermediate: isIntermediate,
-          },
-          success: function (data){
-            data = JSON.parse(data)
-            var result = data['result']
-            if(result){
-              showSuccessNotification('The interface has been updated successfully!')
-             
-              var  all_interfaces = data['all_interfaces']
-              // update the resoruce proeprty and resouces with updated ones
-              document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
-             
-              // update the tree view
-              var html = ''
-              var interface_id_list = []
-              all_interfaces.forEach(n => {
-                  if(!interface_id_list.includes(n.id)){
-                      interface_id_list.push(n.id)
-                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
-                      ' + n.identifier + '  (' + n.description +')</li>'
-                  }
-              });
-              document.getElementById('equipment_interface_tree').innerHTML = html
+      if(identifier && interfaceClassId){
+        if(confirm('Are you sure to update this interface?')){
+          $.ajax({
+            type: "GET",
+            url: 'updateEquipmentInterfaceDetail',
+            data: {
+              selectedInterfaceId: selectedInterfaceId,
+              identifier: identifier,
+              description: description,
+              comment: comment,
+              interfaceClassId: interfaceClassId,
+              interfaceConnectingClassId: interfaceConnectingClassId,
+              isIntermediate: isIntermediate,
+            },
+            success: function (data){
+              data = JSON.parse(data)
+              var result = data['result']
+              if(result){
+                showSuccessNotification('The interface has been updated successfully!')
+               
+                var  all_interfaces = data['all_interfaces']
+                // update the resoruce proeprty and resouces with updated ones
+                document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
+               
+                // update the tree view                
+                all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+                let interfaceClasesHavingInterface = all_interface_classes.filter( element => {
+                    itcId = element.id
+                    if(all_interfaces.find(element => element.interface_class_id == itcId))
+                        return true
+                    else
+                        return false
+                })
+                let html = createInterfaceTree(all_interfaces, interfaceClasesHavingInterface)
+                document.getElementById('equipment_interface_tree').innerHTML = html
+                $('.treeview-animated').mdbTreeview();
+              }
+              else{
+                showErrorNotification('The error happend while updating the interface!')
+              }
+            },
+            error:function(){
+              showErrorNotification('The error happend while requesting the server')
             }
-            else{
-              showErrorNotification('The error happend while updating the interface!')
-            }
-          },
-          error:function(){
-            showErrorNotification('The error happend while requesting the server')
-          }
-        })
-      }
+          })
+        }
+      }else[
+        showErrorNotification('Indentifier and Interface Class should not be empty.')
+      ]
     }else{
       showErrorNotification('You should select the interface to be updated')
     }
@@ -4602,7 +4632,7 @@ $(document).ready(function() {
     $('#adding_interface_connecting_class_label').find('option').remove()
     let all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
     // initialize the drop down list for class labels
-    var p = new Option('none', 'none', undefined, undefined)
+    var p = new Option('none', undefined, undefined, undefined)
     $(p).html('none')
     $('#adding_interface_class_label').append(p)
     all_interface_classes.forEach(element => {
@@ -4629,7 +4659,7 @@ $(document).ready(function() {
     let connectingClassId = $('#adding_interface_connecting_class_label').val()
     let comment = $('#adding_interface_comment').val()
     let isIntermediate= $('#adding_interface_is_intermediate').prop('checked')
-    if(identifier){
+    if(identifier && classId){
       $.ajax({
         type: "GET",
         url: 'addInterfaceDetail',
@@ -4652,16 +4682,18 @@ $(document).ready(function() {
             document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
            
             // update the tree view
-            var html = ''
-            var interface_id_list = []
-            all_interfaces.forEach(n => {
-                if(!interface_id_list.includes(n.id)){
-                    interface_id_list.push(n.id)
-                    html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
-                    ' + n.identifier + '  (' + n.description +')</li>'
-                }
-            });
+            all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+                let interfaceClasesHavingInterface = all_interface_classes.filter( element => {
+                    itcId = element.id
+                    if(all_interfaces.find(element => element.interface_class_id == itcId))
+                        return true
+                    else
+                        return false
+                })
+                let html = createInterfaceTree(all_interfaces, interfaceClasesHavingInterface)
+           
             document.getElementById('equipment_interface_tree').innerHTML = html
+            $('.treeview-animated').mdbTreeview();
           }
           else{
             showErrorNotification('The error happend while adding the interface!')
@@ -4672,7 +4704,7 @@ $(document).ready(function() {
         }
       })
     }else{
-      showErrorNotification('The identifier should not be empty string.')
+      showErrorNotification('The identifier and interface class should not be empty.')
     }
   })
 
@@ -4698,16 +4730,17 @@ $(document).ready(function() {
               document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
              
               // update the tree view
-              var html = ''
-              var interface_id_list = []
-              all_interfaces.forEach(n => {
-                  if(!interface_id_list.includes(n.id)){
-                      interface_id_list.push(n.id)
-                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
-                      ' + n.identifier + '  (' + n.description +')</li>'
-                  }
-              });
+              all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+                let interfaceClasesHavingInterface = all_interface_classes.filter( element => {
+                    itcId = element.id
+                    if(all_interfaces.find(element => element.interface_class_id == itcId))
+                        return true
+                    else
+                        return false
+                })
+                let html = createInterfaceTree(all_interfaces, interfaceClasesHavingInterface)
               document.getElementById('equipment_interface_tree').innerHTML = html
+              $('.treeview-animated').mdbTreeview();
             }
             else{
               showErrorNotification('The error happend while removing the interface!')

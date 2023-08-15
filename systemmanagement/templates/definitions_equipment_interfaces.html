@@ -166,17 +166,42 @@
     </div>
     <script>
         all_interfaces = JSON.parse(document.getElementById('all_interfaces').textContent)
-        
-        var html = ''
-        var interface_id_list = []
-        all_interfaces.forEach(n => {
-            if(!interface_id_list.includes(n.id)){
-                interface_id_list.push(n.id)
-                html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
-                ' + n.identifier + '  (' + n.description +')</li>'
-            }
-        });
+        all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+
+        let interfaceClasesHavingInterface = all_interface_classes.filter( element => {
+            itcId = element.id
+            if(all_interfaces.find(element => element.interface_class_id == itcId))
+                return true
+            else
+                return false
+        })
+
+        function createInterfaceTree(all_interfaces, interfaceClasesHavingInterface) {
+            let html = ''
+            var interface_id_list = []
+            interfaceClasesHavingInterface.forEach(element => {
+                html += '<li class="treeview-animated-items treeview-li"> \
+                          <a class="closed"> \
+                            <i class="fas fa-angle-right"></i> \
+                            <span class="ml-1 treeview-title" data-interfaceId="">'+ element.label + '  (' + element.description + ')</span> \
+                          </a> \
+                          <ul class="nested">' 
+                itcId = element.id
+                interfacesByClassID = all_interfaces.filter(interface => interface.interface_class_id == itcId)
+                interfacesByClassID.forEach( n => {
+                    if(!interface_id_list.includes(n.id)){
+                        interface_id_list.push(n.id)
+                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-interfaceId="'+ n.id + '"> \
+                        ' + n.identifier + '  (' + n.description +')</li>'
+                    }
+                })
+                html += '</ul></li>'
+            })
+              
+            return html
+        }
     
+        let html = createInterfaceTree(all_interfaces, interfaceClasesHavingInterface)
         document.getElementById('equipment_interface_tree').innerHTML = html
     </script>
 {% endblock %}

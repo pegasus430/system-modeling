@@ -2258,7 +2258,110 @@ def removeTargetSystemDetail(request):
         )
         return HttpResponse(data) 
 
+def updateDataTypeDetail(request):
+     if request.method == 'GET':
+        id = request.GET['id']
+        label = request.GET['label']
+        control_1 = request.GET['control_1']
+        control_2 = request.GET['control_2']
+        control_3 = request.GET['control_3']
+        control_4 = request.GET['control_4']
+        control_5 = request.GET['control_5']
+        scada_1 = request.GET['scada_1']
+        scada_2 = request.GET['scada_2']
+        scada_3 = request.GET['scada_3']
+        scada_4 = request.GET['scada_4']
+        scada_5 = request.GET['scada_5']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_update_datatype({},  '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}' , '{}', '{}', '{}')".format(
+           id, label, scada_1, scada_2, scada_3, scada_4, scada_5, control_1, control_2, control_3, control_4, control_5, comment, modified_at, description
+        )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
 
+        all_datatype = list(DataType.objects.values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_datatype': all_datatype ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
+def addDataType(request):
+    if request.method == 'GET':
+        label = request.GET['label']
+        control_1 = request.GET['control_1']
+        control_2 = request.GET['control_2']
+        control_3 = request.GET['control_3']
+        control_4 = request.GET['control_4']
+        control_5 = request.GET['control_5']
+        scada_1 = request.GET['scada_1']
+        scada_2 = request.GET['scada_2']
+        scada_3 = request.GET['scada_3']
+        scada_4 = request.GET['scada_4']
+        scada_5 = request.GET['scada_5']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_add_datatype('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}' , '{}', '{}', '{}')".format(
+           label, scada_1, scada_2, scada_3, scada_4, scada_5, control_1, control_2, control_3, control_4, control_5, comment, modified_at, description
+        )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_datatype = list(DataType.objects.values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_datatype': all_datatype ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
+def removeDataTypeDetail(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        raw_query = "SELECT fn_remove_datatype({})".format( id )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_datatype = list(DataType.objects.values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_datatype': all_datatype ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

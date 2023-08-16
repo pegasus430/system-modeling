@@ -52,8 +52,8 @@ $(document).ready(function() {
       return /^\d+$/.test(value);
     }
 
-    function showDataTypeTable(target_systems){
-      all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+    function showDataTypeTable(target_systems, all_datatype){
+      
       // get the matched headers for datatype table
       var columnHeaderMatch = {
         'scada_1': target_systems.find(element => element.label ==='scada_1')? target_systems.find(element => element.label ==='scada_1').value :'',
@@ -82,14 +82,14 @@ $(document).ready(function() {
       columnHeaders.forEach(element =>{
         html += '<th scope="col" class="text-center">'+ element +'</th>'
       })
-      html += '<th>Comment</th>'
+      html += '<th>Comment</th><th></th>'
                 
       html += '</tr></thead><tbody><tr style="border: solid 1px">'
       html += '<td></td><td></td>'
       columnHeaders.forEach(element =>{
         html += '<td></td>'
       })
-      html += '<td></td>'
+      html += '<td></td><td></td>'
       html += '</tr></tbody>'
         
       $('#system_datatype_table').html(html)
@@ -103,7 +103,11 @@ $(document).ready(function() {
           columnHeadersKeys.forEach(headerkey => {
             html += '<td>'+ element[headerkey] +'</td>'
           })
-          html += '<td>'+ element.comment +'</td></tr>'
+          html += '<td>'+ element.comment +'</td>'
+          html += '<td><div class="inner-flex">\
+          <span class="bi bi-pencil  p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
+          <span class="bi bi-trash  p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
+          </div></td></tr>'
 
         })
         $('#system_datatype_table tbody').html(html)
@@ -1495,7 +1499,7 @@ $(document).ready(function() {
     //initialize the target systems page
     if(document.getElementById('target_systems')){
       target_systems = JSON.parse(document.getElementById('target_systems').textContent)
-
+      all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
       if(target_systems.length){
         target_systems.forEach(element => {
               tableData.push({
@@ -1575,7 +1579,8 @@ $(document).ready(function() {
                     target_systems = data['target_systems']
                     document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
                     showSuccessNotification('The target system has been updated successfully!')
-                    showDataTypeTable(target_systems)
+                    let all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+                    showDataTypeTable(target_systems, all_datatype)
                     $('#target_system_id').val('')
                   }
                   else{
@@ -1592,7 +1597,7 @@ $(document).ready(function() {
 
           })
 
-          showDataTypeTable(target_systems)
+          showDataTypeTable(target_systems, all_datatype)
 
       }else{
           var html = '<tr> \
@@ -2273,8 +2278,7 @@ $(document).ready(function() {
     return html
   }
 
-  function showDataTypeTable(target_systems){
-    all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+  function showDataTypeTable(target_systems, all_datatype){
     // get the matched headers for datatype table
     var columnHeaderMatch = {
       'scada_1': target_systems.find(element => element.label ==='scada_1')? target_systems.find(element => element.label ==='scada_1').value :'',
@@ -2296,21 +2300,21 @@ $(document).ready(function() {
     
     var columnHeadersKeys = Object.keys(columnHeaderMatch)
     var columnHeaders = Object.values(columnHeaderMatch)      
-  
+   
     // initialzie the system_datatype_table theader and emptry tbody
     var html = '<thead style="background-color: #000; color: white; border: solid 1px;"><tr class="text-center">'
     html += '<th>Label</th><th>Description</th>'
     columnHeaders.forEach(element =>{
       html += '<th scope="col" class="text-center">'+ element +'</th>'
     })
-    html += '<th>Comment</th>'
+    html += '<th>Comment</th><th></th>'
               
     html += '</tr></thead><tbody><tr style="border: solid 1px">'
     html += '<td></td><td></td>'
     columnHeaders.forEach(element =>{
       html += '<td></td>'
     })
-    html += '<td></td>'
+    html += '<td></td><td></td>'
     html += '</tr></tbody>'
       
     $('#system_datatype_table').html(html)
@@ -2324,10 +2328,15 @@ $(document).ready(function() {
         columnHeadersKeys.forEach(headerkey => {
           html += '<td>'+ element[headerkey] +'</td>'
         })
-        html += '<td>'+ element.comment +'</td></tr>'
+        html += '<td>'+ element.comment +'</td>'
+        html += '<td><div class="inner-flex">\
+        <span class="bi bi-pencil  p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
+        <span class="bi bi-trash  p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
+        </div></td></tr>'
 
       })
       $('#system_datatype_table tbody').html(html)
+      
     }else{
       var html  = 'No data'
       $('#system_datatype_table tbody').html(html)
@@ -5216,7 +5225,7 @@ $(document).ready(function() {
     let row = cell.index().row;
     let rowData = sTable.row(row).data()
     let selectedId = rowData.id
-    console.log(selectedId)
+    
     $('#target_system_id').val(selectedId)
   })
   // add target systems
@@ -5299,8 +5308,8 @@ $(document).ready(function() {
             $('#target_systems_table').on('click', 'td:nth-child(n+2):nth-child(-n+4)', function(){
               targetSystemEditor.inline(this)
             })
-
-            showDataTypeTable(target_systems)
+            all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+            showDataTypeTable(target_systems, all_datatype)
             $('#targetSystemModal').modal('hide')
           }
           else{
@@ -5389,8 +5398,8 @@ $(document).ready(function() {
             $('#target_systems_table').on('click', 'td:nth-child(n+2):nth-child(-n+4)', function(){
               targetSystemEditor.inline(this)
             })
-
-            showDataTypeTable(target_systems)
+            all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+            showDataTypeTable(target_systems, all_datatype)
             $('#targetSystemModal').modal('hide')
           }
           else{
@@ -5405,7 +5414,229 @@ $(document).ready(function() {
       showErrorNotification('You should select the target system to be removed')
     }
   })
-  
+
+  //remove the datatype
+  $('#system_datatype_table').on('click', '.bi-trash', function(){
+    if(confirm('Are you sure to remove this datatype?')){
+      let selectedId = this.getAttribute('data-id')
+      $.ajax({
+        type: "GET",
+        url: 'removeDataTypeDetail',
+        data: {       
+          id: selectedId,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            showSuccessNotification('The datatype has been removed successfully!')
+            all_datatype = data['all_datatype']
+            document.getElementById('all_datatype').textContent = JSON.stringify(all_datatype)
+            target_systems = JSON.parse(document.getElementById('target_systems').textContent)
+            showDataTypeTable(target_systems, all_datatype)
+            
+          }
+          else{
+            showErrorNotification('The error happend while removing the data type!')
+          }
+        },
+        error: function(){
+          showErrorNotification('The error happend while requesting the server')
+        }
+       })
+
+      
+    }
+  })
+
+  //show edit modal for the datatype
+  $('#system_datatype_table').on('click', '.bi-pencil', function(){
+    let selectedId = this.getAttribute('data-id')
+    $('#datatype_id').val(selectedId)
+    target_systems = JSON.parse(document.getElementById('target_systems').textContent) 
+    all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+    let selectedDatatype = all_datatype.find(element => element.id == selectedId)
+    $('#datatype_label').val(selectedDatatype.label)
+    $('#datatype_description').val(selectedDatatype.description)
+    $('#datatype_comment').val(selectedDatatype.comment)
+    // get the matched headers for datatype table
+    var columnHeaderMatch = {
+      'scada_1': target_systems.find(element => element.label ==='scada_1')? target_systems.find(element => element.label ==='scada_1').value :'',
+      'scada_2': target_systems.find(element => element.label ==='scada_2')? target_systems.find(element => element.label ==='scada_2').value :'',
+      'scada_3': target_systems.find(element => element.label ==='scada_3')? target_systems.find(element => element.label ==='scada_3').value :'',
+      'scada_4': target_systems.find(element => element.label ==='scada_4')? target_systems.find(element => element.label ==='scada_4').value :'',
+      'scada_5': target_systems.find(element => element.label ==='scada_5')? target_systems.find(element => element.label ==='scada_5').value :'',
+      'control_1': target_systems.find(element => element.label ==='control_1')? target_systems.find(element => element.label ==='control_1').value :'',
+      'control_2': target_systems.find(element => element.label ==='control_2')? target_systems.find(element => element.label ==='control_2').value :'',
+      'control_3': target_systems.find(element => element.label ==='control_3')? target_systems.find(element => element.label ==='control_3').value :'',
+      'control_4': target_systems.find(element => element.label ==='control_4')? target_systems.find(element => element.label ==='control_4').value :'',
+      'control_5': target_systems.find(element => element.label ==='control_5')? target_systems.find(element => element.label ==='control_5').value :'',
+    }
+    // filter the matched headers with not null string headers
+    columnHeaderMatch = Object.fromEntries(
+      Object.entries(columnHeaderMatch).filter(([key, value]) => value !== '')
+    );
+    var columnHeadersKeys = Object.keys(columnHeaderMatch)
+    var columnHeaders = Object.values(columnHeaderMatch) 
+    // initialize the datatype filed on the modal
+    let html = ''
+    columnHeadersKeys.forEach((element, index) =>{
+      html += '<div class="row mt-1"> \
+      <label class="col-md-5 col-form-label text-secondary">'+ columnHeaders[index] + ' ('+  element +')' +'</label>\
+      <div class="col-md-7">\
+        <input type="text" class="form-control" value="'+ selectedDatatype[element] +'" id="datatype_'+ element +'">\
+      </div>\
+    </div>'
+    })
+    $('#datatype_field').html(html)
+    $('#datatypeModal').modal('show')
+  })
+
+  //show add modal for the datatype
+  $('#btn_add_datatype').on('click', function(){
+    $('#datatype_id').val('')
+    target_systems = JSON.parse(document.getElementById('target_systems').textContent) 
+    all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+    
+    $('#datatype_label').val('')
+    $('#datatype_description').val('')
+    $('#datatype_comment').val('')
+    // get the matched headers for datatype table
+    var columnHeaderMatch = {
+      'scada_1': target_systems.find(element => element.label ==='scada_1')? target_systems.find(element => element.label ==='scada_1').value :'',
+      'scada_2': target_systems.find(element => element.label ==='scada_2')? target_systems.find(element => element.label ==='scada_2').value :'',
+      'scada_3': target_systems.find(element => element.label ==='scada_3')? target_systems.find(element => element.label ==='scada_3').value :'',
+      'scada_4': target_systems.find(element => element.label ==='scada_4')? target_systems.find(element => element.label ==='scada_4').value :'',
+      'scada_5': target_systems.find(element => element.label ==='scada_5')? target_systems.find(element => element.label ==='scada_5').value :'',
+      'control_1': target_systems.find(element => element.label ==='control_1')? target_systems.find(element => element.label ==='control_1').value :'',
+      'control_2': target_systems.find(element => element.label ==='control_2')? target_systems.find(element => element.label ==='control_2').value :'',
+      'control_3': target_systems.find(element => element.label ==='control_3')? target_systems.find(element => element.label ==='control_3').value :'',
+      'control_4': target_systems.find(element => element.label ==='control_4')? target_systems.find(element => element.label ==='control_4').value :'',
+      'control_5': target_systems.find(element => element.label ==='control_5')? target_systems.find(element => element.label ==='control_5').value :'',
+    }
+    // filter the matched headers with not null string headers
+    columnHeaderMatch = Object.fromEntries(
+      Object.entries(columnHeaderMatch).filter(([key, value]) => value !== '')
+    );
+    var columnHeadersKeys = Object.keys(columnHeaderMatch)
+    var columnHeaders = Object.values(columnHeaderMatch) 
+    let html = ''
+    // initialize the datatype filed on the modal
+    columnHeadersKeys.forEach((element, index) =>{
+      html += '<div class="row mt-1"> \
+      <label class="col-md-5 col-form-label text-secondary">'+ columnHeaders[index] + ' ('+  element +')' +'</label>\
+      <div class="col-md-7">\
+        <input type="text" class="form-control" value="" id="datatype_'+ element +'">\
+      </div>\
+    </div>'
+    })
+    $('#datatype_field').html(html)
+    $('#datatypeModal').modal('show')
+  })
+
+  // click save the datatype on the modal
+  $('#datatypeModal .btn-primary').on('click', function(){
+    let selectedId = $('#datatype_id').val()
+    let label = $('#datatype_label').val()
+    if(label){
+      let description = $('#datatype_description').val()
+      let comment = $('#datatype_comment').val()
+      
+      let control_1 = select('#datatype_control_1')? $('#datatype_control_1').val(): ''
+      let control_2 =  select('#datatype_control_2')? $('#datatype_control_2').val(): ''
+      let control_3 =  select('#datatype_control_3')? $('#datatype_control_3').val(): ''
+      let control_4 =  select('#datatype_control_4')? $('#datatype_control_4').val(): ''
+      let control_5 =  select('#datatype_control_5')? $('#datatype_control_5').val(): ''
+      let scada_1 = select('#datatype_scada_1')? $('#datatype_scada_1').val(): ''
+      let scada_2 = select('#datatype_scada_2')? $('#datatype_scada_2').val(): ''
+      let scada_3 = select('#datatype_scada_3')? $('#datatype_scada_3').val(): ''
+      let scada_4 = select('#datatype_scada_4')? $('#datatype_scada_4').val(): ''
+      let scada_5 = select('#datatype_scada_5')? $('#datatype_scada_5').val(): ''
+      if(selectedId){
+        // update the datatype
+        $.ajax({
+          type: "GET",
+          url: 'updateDataTypeDetail',
+          data: {       
+            id: selectedId,
+            label: label,
+            description: description,
+            comment: comment,
+            control_1: control_1,
+            control_2: control_2,
+            control_3: control_3,
+            control_4: control_4,
+            control_5: control_5,
+            scada_1: scada_1,
+            scada_2: scada_2,
+            scada_3: scada_3,
+            scada_4: scada_4,
+            scada_5: scada_5,
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            if(result){
+              showSuccessNotification('The datatype has been updated successfully!')
+              all_datatype = data['all_datatype']
+              document.getElementById('all_datatype').textContent = JSON.stringify(all_datatype)
+              target_systems = JSON.parse(document.getElementById('target_systems').textContent)
+              showDataTypeTable(target_systems, all_datatype)
+              $('#datatypeModal').modal('hide')
+            }
+            else{
+              showErrorNotification('The error happend while updating the data type!')
+            }
+          },
+          error: function(){
+            showErrorNotification('The error happend while requesting the server')
+          }
+         })
+      }else{
+        // add the datatype
+        $.ajax({
+          type: "GET",
+          url: 'addDataType',
+          data: {       
+            label: label,
+            description: description,
+            comment: comment,
+            control_1: control_1,
+            control_2: control_2,
+            control_3: control_3,
+            control_4: control_4,
+            control_5: control_5,
+            scada_1: scada_1,
+            scada_2: scada_2,
+            scada_3: scada_3,
+            scada_4: scada_4,
+            scada_5: scada_5,
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            if(result){
+              showSuccessNotification('The new datatype has been added successfully!')
+              all_datatype = data['all_datatype']
+              document.getElementById('all_datatype').textContent = JSON.stringify(all_datatype)
+              target_systems = JSON.parse(document.getElementById('target_systems').textContent)
+              showDataTypeTable(target_systems, all_datatype)
+              $('#datatypeModal').modal('hide')
+            }
+            else{
+              showErrorNotification('The error happend while updating the data type!')
+            }
+          },
+          error: function(){
+            showErrorNotification('The error happend while requesting the server')
+          }
+         })
+      }
+    }else{
+      showErrorNotification('The label should not be empty string.')
+    }
+    
+  })
 } )
 ();
 

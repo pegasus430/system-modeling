@@ -74,4 +74,7 @@ urlpatterns = [
     path(r'definitions/updateTargetSystemDetail', views.updateTargetSystemDetail, name='updateTargetSystemDetail'),
     path(r'definitions/addTargetSystemDetail', views.addTargetSystemDetail, name='addTargetSystemDetail'),
     path(r'definitions/removeTargetSystemDetail', views.removeTargetSystemDetail, name='removeTargetSystemDetail'),
+    path(r'definitions/updateDataTypeDetail', views.updateDataTypeDetail, name='updateDataTypeDetail'),
+    path(r'definitions/addDataType', views.addDataType, name='addDataType'),
+    path(r'definitions/removeDataTypeDetail', views.removeDataTypeDetail, name='removeDataTypeDetail'),
 ]

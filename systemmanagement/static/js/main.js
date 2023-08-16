@@ -1637,6 +1637,29 @@ $(document).ready(function() {
              
              })
           })
+
+          let authorityEditor =  new DataTable.Editor({
+            idSrc:  'id',
+            fields: [
+              {
+                label: 'id',
+                name: 'id'
+              },
+              {
+                label: 'label',
+                name: 'label'
+              },
+              {
+                label: 'description',
+                name: 'description'
+              },
+              {
+                label: 'comment',
+                name: 'comment'
+              },
+            ],
+            table: '#authority_table'
+          })
           
           $('#authority_table').DataTable({
             data:  tableData ,
@@ -1655,6 +1678,85 @@ $(document).ready(function() {
             ]
           }
           )
+
+          $('#authority_table').on('click', 'td', function(){
+            authorityEditor.inline(this)
+            let sTable = $('#authority_table').DataTable()
+            let cell = sTable.cell(this)
+            let row = cell.index().row;
+            let rowData = sTable.row(row).data()
+            let selectedResourceId = rowData.id
+            $('#authority_id').val(selectedResourceId)
+          })
+
+          authorityEditor.on('edit', function(e, datatable , cell){
+            id = cell.id
+            label = cell.label
+            description = cell.description
+            comment = cell.comment
+            if(label && description){
+              $.ajax({
+                type: "GET",
+                url: 'updateAuthorityDetail',
+                data: {
+                  id: id,
+                  label: label,
+                  description: description,
+                  comment: comment
+                },
+                success: function (data){
+                  data = JSON.parse(data)
+                  var result = data['result']
+                  
+                  if(result){
+                    showSuccessNotification('The authority has been updated successfully!')
+                    let all_authority = data['all_authority']
+                    document.getElementById('all_authority').textContent = JSON.stringify(all_authority)
+                    if(all_authority.length){
+                      let tableData = []
+                      all_authority.forEach(element => {
+                           tableData.push({
+                            'id': element.authority_id,
+                            'label': element.authority_label ,
+                            'description': element.authority_description,
+                            'comment': element.authority_comment,
+                           })
+                        })
+
+                        $('#authority_table').DataTable({
+                          data:  tableData ,
+                          destroy: true,
+                          columns: [
+                            { data: 'id' },
+                            { data: 'label' },
+                            { data: 'description' },
+                            { data: 'comment' },
+                          ],
+                          columnDefs: [
+                            {
+                              targets: [0], 
+                              visible: false 
+                            }
+                          ]
+                        }
+                        )
+                        
+                    }
+
+                  }
+                  else{
+                    showErrorNotification('The error happend while updating the authority detail!')
+                  }
+                },
+                error: function(e){
+                  showErrorNotification('The error happend while requesting the server')
+                }
+              })
+            }else{
+              showErrorNotification('Label and description should not be empty string.')
+            }
+          })
+
       }else{
         html = '<tr><td style="display:none"></td><td></td><td>No data</td><td></td></tr>'
         $('#authority_table tbody').html(html)
@@ -5636,6 +5738,133 @@ $(document).ready(function() {
       showErrorNotification('The label should not be empty string.')
     }
     
+  })
+
+  // add authority from the modal
+  $('#authorityModal .btn-primary').on('click', function(){
+    let label = $('#adding_auth_label').val()
+    let description = $('#adding_auth_description').val()
+    let comment = $('#adding_auth_comment').val()
+    if(label && description){
+      $.ajax({
+        type: "GET",
+        url: 'addAuthority',
+        data: {
+          label: label,
+          description: description,
+          comment: comment
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          
+          if(result){
+            showSuccessNotification('The authority has been added successfully!')
+            $('#authorityModal').modal('hide')
+            let all_authority = data['all_authority']
+            document.getElementById('all_authority').textContent = JSON.stringify(all_authority)
+            if(all_authority.length){
+              let tableData = []
+              all_authority.forEach(element => {
+                   tableData.push({
+                    'id': element.authority_id,
+                    'label': element.authority_label ,
+                    'description': element.authority_description,
+                    'comment': element.authority_comment,
+                   })
+                })
+
+                $('#authority_table').DataTable({
+                  data:  tableData ,
+                  destroy: true,
+                  columns: [
+                    { data: 'id' },
+                    { data: 'label' },
+                    { data: 'description' },
+                    { data: 'comment' },
+                  ],
+                  columnDefs: [
+                    {
+                      targets: [0], 
+                      visible: false 
+                    }
+                  ]
+                })
+            }
+          }
+          else{
+            showErrorNotification('The error happend while adding the authority detail!')
+          }
+        },
+        error: function(e){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }else{
+      showErrorNotification('Label and description should not be empty string.')
+    }
+  })
+
+  //remove authority
+  $('#btn_authority_delete').on('click', function(){
+    let id = $('#authority_id').val()
+    if(id){
+      $.ajax({
+        type: "GET",
+        url: 'removeAuthorityDetail',
+        data: {
+          id: id
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          
+          if(result){
+            showSuccessNotification('The authority has been removed successfully!')
+          
+            let all_authority = data['all_authority']
+            document.getElementById('all_authority').textContent = JSON.stringify(all_authority)
+            $('#authority_id').val('')
+            if(all_authority.length){
+              let tableData = []
+              all_authority.forEach(element => {
+                   tableData.push({
+                    'id': element.authority_id,
+                    'label': element.authority_label ,
+                    'description': element.authority_description,
+                    'comment': element.authority_comment,
+                   })
+                })
+
+                $('#authority_table').DataTable({
+                  data:  tableData ,
+                  destroy: true,
+                  columns: [
+                    { data: 'id' },
+                    { data: 'label' },
+                    { data: 'description' },
+                    { data: 'comment' },
+                  ],
+                  columnDefs: [
+                    {
+                      targets: [0], 
+                      visible: false 
+                    }
+                  ]
+                })
+            }
+          }
+          else{
+            showErrorNotification('The error happend while removing the authority detail!')
+          }
+        },
+        error: function(e){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }else{
+      showErrorNotification('You should select the authority to be removed.')
+    }
   })
 } )
 ();

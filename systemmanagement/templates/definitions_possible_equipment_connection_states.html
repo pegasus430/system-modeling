@@ -36,19 +36,14 @@
                 <!-- Buttons Section -->
                 <div class="row mt-3 p-2 pl-4" style="float: right;">
                     <div class="col-md-2">
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
-                        Add
-                    </button>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#stateModal">
+                            Add
+                        </button>
                     </div>
                     <div class="col-md-2">
-                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
-                        Update
-                    </button>
-                    </div>
-                    <div class="col-md-2">
-                    <button type="button" id="btn_equipment_delete" class="btn btn-danger">
-                        Delete
-                    </button>
+                        <button type="button" id="btn_possible_state_delete" class="btn btn-danger">
+                            Delete
+                        </button>
                     </div>
                     
                 </div>
@@ -56,6 +51,7 @@
             <div class="row">
                 <!-- Equipment Details table -->
                 <h5 class="card-title">State Transition Authorities</h5>
+                <input type="text" style="display: none;" id="authority_id" >
                 <table class="table table-bordered text-center" id="authority_table">
                     <thead style="background-color: #000; color: white; border: solid 1px;">
                         <tr>
@@ -79,17 +75,13 @@
                  <!-- Buttons Section -->
                  <div class="row mt-3 p-2 pl-4" style="float: right;">
                     <div class="col-md-2">
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#authorityModal">
                         Add
                     </button>
                     </div>
+                   
                     <div class="col-md-2">
-                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#resourcegroupmodal">
-                        Update
-                    </button>
-                    </div>
-                    <div class="col-md-2">
-                    <button type="button" id="btn_equipment_delete" class="btn btn-danger">
+                    <button type="button" id="btn_authority_delete" class="btn btn-danger">
                         Delete
                     </button>
                     </div>
@@ -99,5 +91,86 @@
             </div>
         </div>
     </div><!-- End Right Overview -->
-
+    <div class="modal fade" id="stateModal" tabindex="-1" aria-labelledby="stateModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="stateModalLabel">System Settings</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Label:</label>
+                <div class="col-md-8">
+                  <select class="form-select" id="adding_system_settings_label">
+                    <option value="control_1">control_1</option>
+                    <option value="control_2">control_2</option>
+                    <option value="control_3">control_3</option>
+                    <option value="control_4">control_4</option>
+                    <option value="control_5">control_5</option>
+                    <option value="scada_1">scada_1</option>
+                    <option value="scada_2">scada_2</option>
+                    <option value="scada_3">scada_3</option>
+                    <option value="scada_4">scada_4</option>
+                    <option value="scada_5">scada_5</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Value:</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" placeholder="value" value="" id="adding_system_settings_value">
+                </div>
+              </div>
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Comment:</label>
+                <div class="col-md-8">
+                  <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="adding_system_settings_comment"></textarea>
+                </div>
+              </div>
+            
+             
+             
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="authorityModal" tabindex="-1" aria-labelledby="authorityModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="authorityModalLabel">Authority</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Label:</label>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" placeholder="label" value="" id="adding_auth_label">
+                </div>
+              </div>
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Description:</label>
+                <div class="col-md-8">
+                  <input type="text" class="form-control" placeholder="description" value="" id="adding_auth_description">
+                </div>
+              </div>
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Comment:</label>
+                <div class="col-md-8">
+                  <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="adding_auth_comment"></textarea>
+                </div>
+              </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}

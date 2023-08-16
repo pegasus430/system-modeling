@@ -2362,6 +2362,91 @@ def removeDataTypeDetail(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+
+def updateAuthorityDetail(request):
+     if request.method == 'GET':
+        id = request.GET['id']
+        label = request.GET['label']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_update_authority({},  '{}', '{}', '{}', '{}')".format(
+           id, label, description, comment, modified_at
+        )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_authority = list(Authority.objects.order_by('authority_label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_authority': all_authority ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
+def addAuthority(request):
+    if request.method == 'GET':
+        label = request.GET['label']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_add_authority('{}', '{}', '{}', '{}')".format(
+           label, description, comment, modified_at
+        )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_authority = list(Authority.objects.order_by('authority_label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_authority': all_authority ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
+def removeAuthorityDetail(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        raw_query = "SELECT fn_remove_authority({})".format(id)  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_authority = list(Authority.objects.order_by('authority_label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_authority': all_authority ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

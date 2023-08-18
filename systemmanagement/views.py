@@ -2447,6 +2447,99 @@ def removeAuthorityDetail(request):
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
+
+def updateStateDetail(request):
+     if request.method == 'GET':
+        id = request.GET['id']
+        label = request.GET['label']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        equipmentState = request.GET['equipmentState']
+        connectionState = request.GET['connectionState']
+        authId = request.GET['authId']
+
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_update_possible_state({},  '{}', '{}', {}, {}, '{}', {}, '{}')".format(
+           id, label, description, connectionState,  equipmentState , comment, authId, modified_at
+        )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_possible_state = list(PossibleState.objects.order_by('state_label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_possible_state': all_possible_state ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+
+def addState(request):
+     if request.method == 'GET':            
+        label = request.GET['label']
+        description = request.GET['description']
+        comment = request.GET['comment']
+        equipmentState = request.GET['equipmentState']
+        connectionState = request.GET['connectionState']
+        authId = request.GET['authId']
+
+        current_time = datetime.datetime.now(pytz.utc)
+        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        raw_query = "SELECT fn_add_possible_state('{}', '{}', {}, {}, '{}', {}, '{}')".format(
+           label, description, connectionState,  equipmentState , comment, authId, modified_at
+        )  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_possible_state = list(PossibleState.objects.order_by('state_label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_possible_state': all_possible_state ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
+     
+def removeStateDetail(request):
+    if request.method == 'GET':            
+        id = request.GET['id']
+        raw_query = "SELECT fn_remove_possible_state({})".format(id)  
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(raw_query)
+                results = cursor.fetchone()
+            result = True
+        except Exception as e:
+            print(e)
+            result = False
+
+        all_possible_state = list(PossibleState.objects.order_by('state_label').values())
+        data = json.dumps(
+            {
+                'result': result,  
+                'all_possible_state': all_possible_state ,
+            } ,
+            cls=DateTimeEncoder
+        )
+        return HttpResponse(data) 
 # Custom JSON encoder to handle datetime objects
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):

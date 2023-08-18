@@ -80,4 +80,7 @@ urlpatterns = [
     path(r'definitions/updateAuthorityDetail', views.updateAuthorityDetail, name='updateAuthorityDetail'),
     path(r'definitions/addAuthority', views.addAuthority, name='addAuthority'),
     path(r'definitions/removeAuthorityDetail', views.removeAuthorityDetail, name='removeAuthorityDetail'),
+    path(r'definitions/updateStateDetail', views.updateStateDetail, name='updateStateDetail'),
+    path(r'definitions/addState', views.addState, name='addState'),
+    path(r'definitions/removeStateDetail', views.removeStateDetail, name='removeStateDetail'),
 ]

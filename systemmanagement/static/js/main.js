@@ -1740,7 +1740,6 @@ $(document).ready(function() {
                           ]
                         }
                         )
-                        
                     }
 
                   }
@@ -1767,8 +1766,6 @@ $(document).ready(function() {
       var all_possible_state = JSON.parse(document.getElementById('all_possible_state').textContent)
       var all_authority = JSON.parse(document.getElementById('all_authority').textContent)
 
-      
-      
       var tableData = []
       if(all_possible_state.length){
         all_possible_state.forEach(element => {
@@ -1776,12 +1773,43 @@ $(document).ready(function() {
              tableData.push({
               'id': element.state_id,
               'label': element.state_label ,
-              'description': element.state_description,
-              'comment': element.authority_comment,
+              'description': element.state_description,              
               'equipment_state': element.valid_for_equipment,
               'connection_state': element.valid_for_connection,
+              'comment': element.state_comment,
               'authority_label': element.authority_label
              })
+          })
+
+          let stateEditor =  new DataTable.Editor({
+            idSrc:  'id',
+            fields: [
+              {
+                label: 'id',
+                name: 'id'
+              },
+              {
+                label: 'label',
+                name: 'label'
+              },
+              {
+                label: 'description',
+                name: 'description'
+              },
+              {
+                label: 'equipment_state',
+                name: 'equipment_state'
+              },
+              {
+                label: 'connection_state',
+                name: 'connection_state'
+              },
+              {
+                label: 'comment',
+                name: 'comment'
+              },
+            ],
+            table: '#possible_state_table'
           })
           
           $('#possible_state_table').DataTable({
@@ -1793,19 +1821,20 @@ $(document).ready(function() {
               { data: 'description' },
               { data: 'equipment_state'},
               { data: 'connection_state'},
+              { data: 'comment'},
               { 
                 data: 'authority_label' ,
-                render: function (data){
+                render: function (data, type, rowData){
                   var selectOptions = all_authority.map(option => {
                     if(option.authority_label === data){
-                        return  `<option value="${option.authority_label}" selected>${option.authority_label}</option>`
+                        return  `<option value="${option.authority_id}" selected>${option.authority_label}</option>`
                     }
                     else{
-                        return  `<option value="${option.authority_label}">${option.authority_label}</option>`
+                        return  `<option value="${option.authority_id}">${option.authority_label}</option>`
                     }
                   }
                   ).join('');
-                  return `<select style="width: 100%">${selectOptions}</select>`;
+                  return `<select data-id="`+ rowData.id +`"style="width: 100%">${selectOptions}</select>`;
                 
                 }
               },
@@ -1819,6 +1848,116 @@ $(document).ready(function() {
             ]
           }
           )
+          $('#possible_state_table').on('click', 'td:nth-child(n):nth-child(-n+5)', function(){
+            stateEditor.inline(this)
+            let sTable = $('#possible_state_table').DataTable()
+            let cell = sTable.cell(this)
+            let row = cell.index().row;
+            let rowData = sTable.row(row).data()
+            let selectedStateId = rowData.id
+            console.log(selectedStateId)
+            $('#state_id').val(selectedStateId)
+          })
+
+          stateEditor.on('edit', function(e, datatable , cell){
+            id = cell.id
+            label = cell.label
+            description = cell.description
+            equipmentState = cell.equipment_state
+            connectionState = cell.connection_state
+            comment = cell.comment
+            authLabel = cell.authority_label
+            selectedAuth = all_authority.find(element => element.authority_label == authLabel)
+            authId = selectedAuth.authority_id
+            if(label && description){
+              $.ajax({
+                type: "GET",
+                url: 'updateStateDetail',
+                data: {
+                  id: id,
+                  label: label,
+                  description: description,
+                  comment: comment,
+                  equipmentState: equipmentState,
+                  connectionState: connectionState,
+                  authId: authId,
+                },
+                success: function (data){
+                  data = JSON.parse(data)
+                  var result = data['result']
+                  
+                  if(result){
+                    showSuccessNotification('The state has been updated successfully!')
+                    let all_possible_state = data['all_possible_state']
+                    document.getElementById('all_possible_state').textContent = JSON.stringify(all_possible_state)
+                    if(all_possible_state.length){
+                      let tableData = []
+                      all_possible_state.forEach(element => {
+
+                        tableData.push({
+                         'id': element.state_id,
+                         'label': element.state_label ,
+                         'description': element.state_description,              
+                         'equipment_state': element.valid_for_equipment,
+                         'connection_state': element.valid_for_connection,
+                         'comment': element.state_comment,
+                         'authority_label': element.authority_label
+                        })
+                     })
+
+                     $('#possible_state_table').DataTable({
+                       data:  tableData ,
+                       destroy: true,
+                       columns: [
+                         { data: 'id' },
+                         { data: 'label' },
+                         { data: 'description' },
+                         { data: 'equipment_state'},
+                         { data: 'connection_state'},
+                         { data: 'comment'},
+                         { 
+                           data: 'authority_label' ,
+                           render: function (data, type, rowData){
+                             var selectOptions = all_authority.map(option => {
+                               if(option.authority_label === data){
+                                   return  `<option value="${option.authority_id}" selected>${option.authority_label}</option>`
+                               }
+                               else{
+                                   return  `<option value="${option.authority_id}">${option.authority_label}</option>`
+                               }
+                             }
+                             ).join('');
+                             return `<select data-id="`+ rowData.id +`"style="width: 100%">${selectOptions}</select>`;
+                           
+                           }
+                         },
+                         
+                       ],
+                       columnDefs: [
+                         {
+                           targets: [0], 
+                           visible: false 
+                         }
+                       ]
+                     }
+                     )
+
+                    }
+                  }
+                  else{
+                    showErrorNotification('The error happend while updating the state detail!')
+                  }
+                },
+                error: function(e){
+                  showErrorNotification('The error happend while requesting the server')
+                }
+              })
+            }else{
+              showErrorNotification('Label and description should not be empty string.')
+            }
+          })
+          
+
       }else{
         html = 'No data'
         $('#possible_state_table tbody').html(html)
@@ -5864,6 +6003,295 @@ $(document).ready(function() {
       })
     }else{
       showErrorNotification('You should select the authority to be removed.')
+    }
+  })
+
+  // update state by changing authority label  event
+  $('#possible_state_table').on('change', 'select', function(){
+    
+    let selectedStateId = this.getAttribute('data-id')
+    var authId = $(this).val()
+    var all_possible_state = JSON.parse(document.getElementById('all_possible_state').textContent)
+    let selectedState = all_possible_state.find(element => element.state_id == selectedStateId)
+    let label = selectedState.state_label
+    let description =  selectedState.state_description
+    let equipment_state =  selectedState.valid_for_equipment
+    let connection_state =  selectedState.valid_for_connection
+    let comment =  selectedState.state_comment
+
+    $.ajax({
+      type: "GET",
+      url: 'updateStateDetail',
+      data: {
+        id: selectedStateId,
+        label: label,
+        description: description,
+        comment: comment,
+        equipmentState: equipment_state,
+        connectionState: connection_state,
+        authId: authId,
+      },
+      success: function (data){
+        data = JSON.parse(data)
+        var result = data['result']
+        
+        if(result){
+          showSuccessNotification('The state has been updated successfully!')
+          let all_possible_state = data['all_possible_state']
+          let all_authority = JSON.parse(document.getElementById('all_authority').textContent )
+          document.getElementById('all_possible_state').textContent = JSON.stringify(all_possible_state)
+          if(all_possible_state.length){
+            let tableData = []
+            all_possible_state.forEach(element => {
+              tableData.push({
+               'id': element.state_id,
+               'label': element.state_label ,
+               'description': element.state_description,              
+               'equipment_state': element.valid_for_equipment,
+               'connection_state': element.valid_for_connection,
+               'comment': element.state_comment,
+               'authority_label': element.authority_label
+              })
+           })
+
+           $('#possible_state_table').DataTable({
+             data:  tableData ,
+             destroy: true,
+             columns: [
+               { data: 'id' },
+               { data: 'label' },
+               { data: 'description' },
+               { data: 'equipment_state'},
+               { data: 'connection_state'},
+               { data: 'comment'},
+               { 
+                 data: 'authority_label' ,
+                 render: function (data, type, rowData){
+                   var selectOptions = all_authority.map(option => {
+                     if(option.authority_label === data){
+                         return  `<option value="${option.authority_id}" selected>${option.authority_label}</option>`
+                     }
+                     else{
+                         return  `<option value="${option.authority_id}">${option.authority_label}</option>`
+                     }
+                   }
+                   ).join('');
+                   return `<select data-id="`+ rowData.id +`"style="width: 100%">${selectOptions}</select>`;
+                 
+                 }
+               },
+               
+             ],
+             columnDefs: [
+               {
+                 targets: [0], 
+                 visible: false 
+               }
+             ]
+           }
+           )
+
+          }
+        }
+        else{
+          showErrorNotification('The error happend while updating the state detail!')
+        }
+      },
+      error: function(e){
+        showErrorNotification('The error happend while requesting the server')
+      }
+    })
+
+  })
+
+  // show add state modal
+  $('#add_state_btn').on('click', function(){
+    $("#state_auth_label").find('option').remove();
+    let all_authority = JSON.parse(document.getElementById('all_authority').textContent)    
+    all_authority.forEach(element => {
+      
+      var o = new Option(element.authority_label, element.authority_id, undefined, undefined);
+      $(o).html(element.authority_label);
+      $("#state_auth_label").append(o);
+    })
+  })
+
+  // add state from the modal
+  $('#stateModal .btn-primary').on('click', function(){
+    let label = $('#state_label').val()
+    let description = $('#state_description').val()
+    let equipmentState = $('#state_equipment_state').prop('checked')
+    let connectionState = $('#state_connection_state').prop('checked')
+    let comment = $('#state_comment').val()
+    let authId = $('#state_auth_label').val()
+    if(label && description){
+      $.ajax({
+        type: "GET",
+        url: 'addState',
+        data: {
+          label: label,
+          description: description,
+          comment: comment,
+          equipmentState: equipmentState,
+          connectionState: connectionState,
+          authId: authId,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          
+          if(result){
+            showSuccessNotification('The state has been added successfully!')
+            $('#stateModal').modal('hide')
+            let all_possible_state = data['all_possible_state']
+            let all_authority = JSON.parse(document.getElementById('all_authority').textContent )
+            document.getElementById('all_possible_state').textContent = JSON.stringify(all_possible_state)
+            if(all_possible_state.length){
+              let tableData = []
+              all_possible_state.forEach(element => {
+                tableData.push({
+                 'id': element.state_id,
+                 'label': element.state_label ,
+                 'description': element.state_description,              
+                 'equipment_state': element.valid_for_equipment,
+                 'connection_state': element.valid_for_connection,
+                 'comment': element.state_comment,
+                 'authority_label': element.authority_label
+                })
+             })
+  
+             $('#possible_state_table').DataTable({
+               data:  tableData ,
+               destroy: true,
+               columns: [
+                 { data: 'id' },
+                 { data: 'label' },
+                 { data: 'description' },
+                 { data: 'equipment_state'},
+                 { data: 'connection_state'},
+                 { data: 'comment'},
+                 { 
+                   data: 'authority_label' ,
+                   render: function (data, type, rowData){
+                     var selectOptions = all_authority.map(option => {
+                       if(option.authority_label === data){
+                           return  `<option value="${option.authority_id}" selected>${option.authority_label}</option>`
+                       }
+                       else{
+                           return  `<option value="${option.authority_id}">${option.authority_label}</option>`
+                       }
+                     }
+                     ).join('');
+                     return `<select data-id="`+ rowData.id +`"style="width: 100%">${selectOptions}</select>`;
+                   }
+                 },                 
+               ],
+               columnDefs: [
+                 {
+                   targets: [0], 
+                   visible: false 
+                 }
+               ]
+             }
+             )
+  
+            }
+          }
+          else{
+            showErrorNotification('The error happend while adding the state detail!')
+          }
+        },
+        error: function(e){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }
+    else{
+      showErrorNotification('The label and description should not be empty string.')
+    }
+  })
+
+  //remove state 
+  $('#btn_possible_state_delete').on('click', function(){
+    let selectedStateId = $('#state_id').val()
+    if(selectedStateId){
+      $.ajax({
+        type: "GET",
+        url: 'removeStateDetail',
+        data: {
+          id: selectedStateId
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          
+          if(result){
+            showSuccessNotification('The state has been removed successfully!')
+            $('#state_id').val('')
+            let all_possible_state = data['all_possible_state']
+            let all_authority = JSON.parse(document.getElementById('all_authority').textContent )
+            document.getElementById('all_possible_state').textContent = JSON.stringify(all_possible_state)
+            if(all_possible_state.length){
+              let tableData = []
+              all_possible_state.forEach(element => {
+                tableData.push({
+                 'id': element.state_id,
+                 'label': element.state_label ,
+                 'description': element.state_description,              
+                 'equipment_state': element.valid_for_equipment,
+                 'connection_state': element.valid_for_connection,
+                 'comment': element.state_comment,
+                 'authority_label': element.authority_label
+                })
+             })
+  
+             $('#possible_state_table').DataTable({
+               data:  tableData ,
+               destroy: true,
+               columns: [
+                 { data: 'id' },
+                 { data: 'label' },
+                 { data: 'description' },
+                 { data: 'equipment_state'},
+                 { data: 'connection_state'},
+                 { data: 'comment'},
+                 { 
+                   data: 'authority_label' ,
+                   render: function (data, type, rowData){
+                     var selectOptions = all_authority.map(option => {
+                       if(option.authority_label === data){
+                           return  `<option value="${option.authority_id}" selected>${option.authority_label}</option>`
+                       }
+                       else{
+                           return  `<option value="${option.authority_id}">${option.authority_label}</option>`
+                       }
+                     }
+                     ).join('');
+                     return `<select data-id="`+ rowData.id +`"style="width: 100%">${selectOptions}</select>`;
+                   }
+                 },                 
+               ],
+               columnDefs: [
+                 {
+                   targets: [0], 
+                   visible: false 
+                 }
+               ]
+             }
+             )
+  
+            }
+          }
+          else{
+            showErrorNotification('The error happend while removing the state detail!')
+          }
+        },
+        error: function(e){
+          showErrorNotification('The error happend while requesting the server')
+        }
+      })
+    }else{
+      showErrorNotification('You should select the state to be removed')
     }
   })
 } )

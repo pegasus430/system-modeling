@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_ltree_field'
+    'django_ltree_field',
+    #
+    'allauth',
+    'allauth.account',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'systemmanagement.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'SMM.urls'
@@ -131,3 +135,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_FORMS = {}
+ACCOUNT_EMAIL_VERIFICATION="none"
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_LOGOUT_ON_GET= True
+
+LOGIN_URL="/accounts/login/"
+LOGIN_REDIRECT_URL = '/'

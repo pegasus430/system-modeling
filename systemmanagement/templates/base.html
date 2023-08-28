@@ -1,60 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "basic.html" %}
+{% load static %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  {% block title %}
-    <title>{{ title }}</title>
-  {% endblock %}
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-
-  <!-- Favicons -->
-  {% load static %}
-  <link href="{% static 'img/favicon.png' %}" rel="icon">
-  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
-
-  <!-- Vendor CSS Files -->
-  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/quill/quill.snow.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/quill/quill.bubble.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet">
-  <!-- <link href="{% static 'vendor/simple-datatables/style.css' %}" rel="stylesheet"> -->
-  <link href="https://cdn.datatables.net/v/dt/dt-1.13.5/datatables.min.css" rel="stylesheet">
-  <link href="{% static 'css/editor.dataTables.min.css' %}" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/jquery.toast.min.css' %}" />
- 
-  <!-- Font Awesome -->
-  <link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  rel="stylesheet"
-  />
-  <!-- Google Fonts -->
-  <link
-  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-  rel="stylesheet"
-  />
-  <!-- MDB -->
-  <link
-  href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css"
-  rel="stylesheet"
-  />
-
-   <!-- Template Main CSS File -->
-   <link href="{% static 'css/style.css' %}" rel="stylesheet">
-   <link href="{% static 'css/tree_view.css' %}" rel="stylesheet">
- 
-
-</head>
-
-<body>
-
-  <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
+{% block body %}
+   <!-- ======= Header ======= -->
+   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="{% url 'system' %}" class="logo d-flex align-items-center">
@@ -133,7 +82,7 @@
             <li><hr class="dropdown-divider"></li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'account_logout' %}">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -163,33 +112,4 @@
       Designed by <a href="#">SMM</a>
     </div>
   </footer><!-- End Footer -->
-
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Vendor JS Files -->
-  <script src="{% static 'js/jquery.min.js' %}"></script>
-  <script src="{% static 'vendor/apexcharts/apexcharts.min.js' %}"></script>
-  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'vendor/chart.js/chart.umd.js' %}"></script>
-  <script src="{% static 'vendor/echarts/echarts.min.js' %}"></script>
-  <script src="{% static 'vendor/quill/quill.min.js' %}"></script>
-  <!-- <script src="{% static 'vendor/simple-datatables/simple-datatables.js' %}"></script> -->
-  <script src="{% static 'vendor/tinymce/tinymce.min.js' %}"></script>
-  <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
-  <script src="https://cdn.datatables.net/v/dt/dt-1.13.5/datatables.min.js"></script>
-  <script src="{% static 'js/dataTables.editor.min.js' %}"></script>
-  <script src="{% static 'js/datatable_custom.js' %}"></script>
-  <script src="{% static 'js/jquery.toast.min.js' %}"></script>
-  <!-- MDB -->
-  
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
-  <!-- Template Main JS File -->
-  <script src="{% static 'js/main.js' %}"></script>
-  <script src="{% static 'js/tree_view.js' %}"></script>
-
-  
-
-
-</body>
-
-</html>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block body %}
+<main>
+    <div class="container">
+
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+              <div class="d-flex justify-content-center py-4">
+                <a href="index.html" class="logo d-flex align-items-center w-auto">
+                  <img src="{% static 'img/logo.png' %}" alt="">
+                  <span class="d-none d-lg-block">SMM</span>
+                </a>
+              </div><!-- End Logo -->
+
+              <div class="card mb-3">
+
+                <div class="card-body">
+
+                  <div class="pt-4 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                    <p class="text-center small">Enter your personal details to create account</p>
+                  </div>
+                  {% for message in messages%}
+                    <p><small style="color:red;">{{ message }}</small></p>
+                  {%endfor%}
+
+                  <p><small style="color:red;">{{ form.non_field_errors }}</small></p>
+                  <p><small style="color:red;">{{ form.field_name.errors }}</small></p>
+
+                  <form method="POST" action="{% url 'account_signup'%}" class="row g-3 needs-validation" >
+                    {% csrf_token %}
+                    <div class="col-12">
+                      <label for="username" class="form-label">User Name</label>
+                      <input class="form-control" type="text" name="username" placeholder="Username" autocomplete="username" minlength="1" maxlength="150" required="" id="id_username">
+                      <div class="invalid-feedback">Please, enter your name!</div>
+                      <small style="color:red;">{{ form.username.errors }}</small>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="email" class="form-label">Email</label>
+                      <input class="form-control" type="email" name="email" placeholder="Email address" autocomplete="email" id="id_email" required>
+                      <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                      <small style="color:red;">{{ form.email.errors }}</small>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="password1" class="form-label">Password</label>
+                      <input class="form-control" type="password" name="password1" placeholder="Password" autocomplete="new-password" required="" id="id_password1">
+                      <small style="color:red;">{{ form.password1.errors }}</small>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="password2" class="form-label">Confirm Password</label>
+                      <input class="form-control" type="password" name="password2" placeholder="Confirm Password" autocomplete="new-password" required="" id="id_password2">
+                      <small style="color:red;">{{ form.password2.errors }}</small>
+                    </div>
+
+                  
+                    <div class="col-12">
+                      <button class="btn register btn-primary w-100" type="submit">Create Account</button>
+                    </div>
+                    
+                    <div class="col-12">
+                      <p class="small mb-0">Already have an account? <a href="/accounts/login">Log in</a></p>
+                    </div>
+
+                    {% if redirect_field_value %}
+                      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+
+                  </form>
+
+                </div>
+              </div>
+
+              <div class="credits">
+                Designed by <a href="https://bootstrapmade.com/">SMM</a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main><!-- End #main -->
+{% endblock %}

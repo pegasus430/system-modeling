@@ -1332,10 +1332,10 @@ a.nav-link.active {
   color: black
 }
 
-.form-control{
+.system .form-control{
   padding: 0 0.75rem !important
 }
-.form-select{
+.system .form-select{
   padding: 0 0.75rem !important
 }
 table.table th, table.table td {
@@ -1361,4 +1361,8 @@ table#equipment_type_interface_table tbody{
 
 table#equipment_type_interface_table tbody tr:hover{
   background-color: #eee;
+}
+
+.login.btn, .register.btn {
+  margin: 0px !important
 }

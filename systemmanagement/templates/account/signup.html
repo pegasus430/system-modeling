@@ -49,6 +49,20 @@
                     </div>
 
                     <div class="col-12">
+                      <label for="first_name" class="form-label">First Name</label>
+                      <input class="form-control" type="text" name="first_name" placeholder="First Name" autocomplete="first_name" minlength="1" maxlength="30" required="" id="id_first_name">
+                      <div class="invalid-feedback">Please, enter your first name!</div>
+                      <small style="color:red;">{{ form.first_name.errors }}</small>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="last_name" class="form-label">Last Name</label>
+                      <input class="form-control" type="text" name="last_name" placeholder="Last Name" autocomplete="last_name" minlength="1" maxlength="30" required="" id="id_last_name">
+                      <div class="invalid-feedback">Please, enter your first name!</div>
+                      <small style="color:red;">{{ form.last_name.errors }}</small>
+                    </div>
+
+                    <div class="col-12">
                       <label for="password1" class="form-label">Password</label>
                       <input class="form-control" type="password" name="password1" placeholder="Password" autocomplete="new-password" required="" id="id_password1">
                       <small style="color:red;">{{ form.password1.errors }}</small>

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     #
     'allauth',
     'allauth.account',
+
 ]
 
 MIDDLEWARE = [
@@ -142,6 +143,46 @@ ACCOUNT_EMAIL_VERIFICATION="none"
 # ACCOUNT_EMAIL_REQUIRED = True
 # ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_LOGOUT_ON_GET= True
+ACCOUNT_FORMS = {"signup": "systemmanagement.forms.UserRegisterForm"}
+
 
 LOGIN_URL="/accounts/login/"
 LOGIN_REDIRECT_URL = '/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'database_log.log',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'ERROR',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,  # Prevents log messages from propagating to the root logger
+        },
+        'db': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': False,  # Prevents log messages from propagating to the root logger
+        },
+    },
+    'filters': {
+        'include_db_messages': {  # Define a custom filter
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: record.getMessage().startswith('DB:'),
+        },
+    },
+}

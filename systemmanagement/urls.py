@@ -83,4 +83,6 @@ urlpatterns = [
     path(r'definitions/updateStateDetail', views.updateStateDetail, name='updateStateDetail'),
     path(r'definitions/addState', views.addState, name='addState'),
     path(r'definitions/removeStateDetail', views.removeStateDetail, name='removeStateDetail'),
+    # 
+    path('history/', views.history, name='history'),
 ]

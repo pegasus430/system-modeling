@@ -1366,3 +1366,10 @@ table#equipment_type_interface_table tbody tr:hover{
 .login.btn, .register.btn {
   margin: 0px !important
 }
+
+table#history_table tr td:nth-child(4), table#history_table tr td:nth-child(5) {
+  border: 1px solid #dfdbdb;
+  padding: 5px;
+  background: #e9e5e5;
+  color: #3f3c3c !important;
+}

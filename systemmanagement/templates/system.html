@@ -79,7 +79,8 @@
                               <div class="row mt-1">
                                 <label class="col-md-3 col-form-label text-secondary">Name:</label>
                                 <div class="col-md-4">
-                                  <input type="text" class="form-control" placeholder="Name" value="Anderson">
+                                  <input type="text" class="form-control" placeholder="Name" value="{{user.first_name|add:' '|add:user.last_name}}">
+                                  
                                 </div>
                                 <div class="col-md-4">
                                   <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
@@ -104,7 +105,7 @@
                               <div class="row mt-1">
                                 <label class="col-md-3 col-form-label text-secondary">Contact Email:</label>
                                 <div class="col-md-8">
-                                  <input type="text" class="form-control" placeholder="Contact Email" value="contact@email.com">
+                                  <input type="text" class="form-control" placeholder="Contact Email" value="{{user.email}}">
                                 </div>
                               </div>
                               <div class="row mt-1">

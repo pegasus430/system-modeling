@@ -26,6 +26,9 @@
       <li class="nav-item">
         <a class="nav-link {% if page == 'definitions' %} active {% else %} nav {% endif %}" href="{% url 'definitions' %}">Definitions</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link {% if page == 'history' %} active {% else %} nav {% endif %}" href="{% url 'history' %}">History</a>
+      </li>
     </ul>
 
     <ul class="nav ml-5">
@@ -49,11 +52,11 @@
         <li class="nav-item dropdown pe-3">
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="{% static 'img/profile-img.jpg' %}" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{request.user|capfirst}}</span>
           </a><!-- End Profile Iamge Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
+              <h6>{{request.user.first_name}} {{request.user.last_name}}</h6>
               <span>Web Designer</span>
             </li>
             <li><hr class="dropdown-divider"></li>

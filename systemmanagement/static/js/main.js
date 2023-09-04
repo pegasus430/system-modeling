@@ -1963,6 +1963,62 @@ $(document).ready(function() {
         $('#possible_state_table tbody').html(html)
       }
     }
+
+    // History
+    if(document.getElementById('history_logs')){
+  
+      var history_logs = JSON.parse(document.getElementById('history_logs').textContent)
+      
+      var tableData = []
+
+      history_logs.forEach(element => {
+         tableData.push({
+          'log_time': element.log_time,
+          'item': element.item ,
+          'action': element.action,
+          'before': element.old,
+          'after': element.new
+         })
+      })
+
+      var history_table = $('#history_table').DataTable({
+        data:  tableData ,
+        dom: 'Bfrtip',
+        destroy: true,
+        columns: [
+          { data: 'log_time' },
+          { data: 'item' },
+          { data: 'action' },
+          { data: 'before',
+            render: function(data, type, row) {
+              return '<span style="white-space:normal">' + data + "</span>";
+            }
+          },
+          { data: 'after',
+            render: function(data, type, row) {
+              return '<span style="white-space:normal">' + data + "</span>";
+            }
+          }
+        ],
+        "order": [[ 1, "desc" ]]
+      })
+    }
+    
+    let selected_function = "all";
+
+    $('#all_history_tree').on('click', '.function-item', function(e){
+      var item = $(this).text().trim();
+      if(selected_function != item) {
+        selected_function = item;
+        new_tableData = []
+        tableData.forEach(e => {
+          if(e.item == selected_function) new_tableData.push(e)
+        })
+        history_table.clear();
+        history_table.rows.add(new_tableData);
+        history_table.draw();
+      }
+    });
 });
 
 (function() {

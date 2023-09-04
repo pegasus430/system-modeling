@@ -5,6 +5,9 @@ from django.db import connection
 import datetime
 import json
 import pytz
+import logging
+# Get the root logger
+logger = logging.getLogger('db')
 
 # Create your views here.
 def system(request):
@@ -500,6 +503,20 @@ def getEquipmentTypesInterface(request):
         )
         return HttpResponse(data)
 
+def get_record_to_json(cursor, query):
+    cursor.execute(query)
+    columns =  [column[0] for column in cursor.description]
+    record = cursor.fetchone()
+    record_dict = dict(zip(columns, record))
+    del record_dict['modified_at']
+    json_dump = json.dumps(record_dict)
+    return json_dump
+
+def put_db_log(action, item, old, new):
+    current_time = datetime.datetime.now(pytz.utc)
+    formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+    logger.info(formatted_time + "#"+action + "#" + item + "#" + old + "#" + new)
+
 def update_equipment_detail(request):
     if request.method == 'GET':
         equipment_id = request.GET['equipment_id']
@@ -530,14 +547,21 @@ def update_equipment_detail(request):
             + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
             + equipment_modified_at + "')" 
         
+        # Log an info message
+        query = "SELECT * FROM equipment WHERE id = '" + equipment_id + "'"
+
         try:
             with connection.cursor() as cursor:
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
-                results = cursor.fetchall()
+                new = get_record_to_json(cursor, query)
+                put_db_log('update', 'equipment', old, new)
+
             result = True
         except Exception as e:
-            print(result)
+            print(e)
             result = False
+            print(result)
         all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
         
         data = json.dumps(
@@ -2546,3 +2570,27 @@ class DateTimeEncoder(json.JSONEncoder):
         if isinstance(obj, datetime.date):
             return obj.isoformat()
         return super().default(obj)
+
+# History
+def history(request):
+    page = 'history'
+    history_logs = []
+
+    with open('database_log.log', 'r') as file:
+        for line in file:
+            temp = line.strip().split('#')
+            if len(temp) > 1:
+                history_logs.append({
+                    'log_time': temp[0],
+                    'action': temp[1],
+                    'item': temp[2],
+                    'old': temp[3],
+                    'new': temp[4]
+                })
+    context = {
+        'title': 'History',
+        'page': page,
+        'history_logs': history_logs
+    }
+    
+    return render(request, 'history.html', context=context)

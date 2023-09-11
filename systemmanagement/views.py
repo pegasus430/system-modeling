@@ -547,21 +547,23 @@ def update_equipment_detail(request):
             + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
             + equipment_modified_at + "')" 
         
-        # Log an info message
-        query = "SELECT * FROM equipment WHERE id = '" + equipment_id + "'"
-
+       
         try:
+             # Log an info message
+            query = "SELECT * FROM equipment WHERE id = '" + equipment_id + "'"
+
             with connection.cursor() as cursor:
                 old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 new = get_record_to_json(cursor, query)
-                put_db_log('update', 'equipment', old, new)
+                put_db_log('UPDATE', 'Equipment', old, new)
 
             result = True
         except Exception as e:
             print(e)
             result = False
             print(result)
+        
         all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
         
         data = json.dumps(
@@ -608,10 +610,21 @@ def add_equipment_detail(request):
                 + equipment_local_identifier + "', '" + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
                 + equipment_modified_at + "')" 
 
-            with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
-            return_result = True
+
+            try:
+                
+                with connection.cursor() as cursor:
+                    old = ""
+                    cursor.execute(raw_query)
+                    results = cursor.fetchall()
+                    query = "SELECT * FROM equipment WHERE id = '" + str(new_equipment_id) + "'"
+                    new = get_record_to_json(cursor, query)
+                    put_db_log('CREATE', 'Equipment', old, new)
+
+                return_result = True
+            except Exception as e:
+                print(e)
+                return_result = False
         except Exception as e:
             print(e)
             return_result = False
@@ -689,8 +702,14 @@ def remove_equipment(request):
         try:
             result = True
             with connection.cursor() as cursor:
+                query = "SELECT * FROM equipment WHERE id = '" + str(equipment_id) + "'"
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchall()
+                new = ""
+                put_db_log('DELETE', 'Equipment', old, new)
+
+                
         except Exception as e:
             print(e)
             result = False
@@ -1233,8 +1252,13 @@ def updateEquipmentTypeDetail(request):
         
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM equipment_type WHERE id='"+p_equipment_type_id+"'"
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchall()
+                new = get_record_to_json(cursor, query)
+                put_db_log("UPDATE", "Equipment Types", old, new)
+
             result = True
         except Exception as e:
             print(e)
@@ -1286,8 +1310,12 @@ def addEquipmentType(request):
             ) 
            
             with connection.cursor() as cursor:
+                old = ""
                 cursor.execute(raw_query)
+                query = "SELECT * FROM equipment_type WHERE id='"+str(new_equipment_type_id)+"'"
                 results = cursor.fetchall()
+                new = get_record_to_json(cursor, query)
+                put_db_log("CREATE", "Equipment Types", old, new)
             return_result = True
         except Exception as e:
             print(e)
@@ -1312,8 +1340,12 @@ def removeEquipmentType(request):
         )
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM equipment_type WHERE id='"+str(selectedEquipmentTypeId)+"'"
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
-                results = cursor.fetchone()
+                results = cursor.fetchall()
+                new = ""
+                put_db_log("DELETE", "Equipment Types", old, new)
             result = True
                            
         except Exception as e:
@@ -1810,14 +1842,19 @@ def updateResourcePropertyDetail(request):
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                # query = "SELECT * FROM resource_property WHERE id = {}".format(resourceId)
+                # old = get_record_to_json(cursor, query)
+                
                 raw_query = "SELECT fn_update_resource_property({}, {}, '{}', {} , '{}', '{}')".format(
                     resourceId, propertyId, resourcePropertyDefaultValue, resourcePropertyDatatypeId, resourcePropertyComment, modified_at
                 )
                 
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
+
+                # new = get_record_to_json(cursor, query)
+                # put_db_log("CREATE", "Equipment Resources", old, new)
+
             result = True
 
         except Exception as e:
@@ -1853,9 +1890,14 @@ def addResourceProperty(request):
                 )  
         try:
             with connection.cursor() as cursor:
+                # old = ""
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
                 id = results[0]
+                # query = "SELECT * FROM resource_property WHERE id = {}".format(resourceId)
+                # new = get_record_to_json(cursor, query)
+                # put_db_log("CREATE", "Equipment Resources", old, new)
+
             result = True
         except Exception as e:
             print(e)
@@ -1878,6 +1920,7 @@ def removeResourceProperty(request):
         raw_query = "SELECT fn_remove_resource_property({}, {})".format(resourceId, propertyId)  
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM resource_property WHERE id = {}".format(propertyId)
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
               
@@ -1917,8 +1960,13 @@ def updateEquipmentInterfaceDetail(request):
         )  
         try:
             with connection.cursor() as cursor:
+
+                query = "SELECT * FROM interface WHERE id = {}".format(selectedInterfaceId)
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
+                new = get_record_to_json(cursor, query)
+                put_db_log("UPDATE", "Equipment Interfaces", old, new)
               
             result = True
         except Exception as e:
@@ -1955,9 +2003,21 @@ def addInterfaceDetail(request):
         )  
         try:
             with connection.cursor() as cursor:
+                old = ""
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
               
+                query  = 'SELECT max(id) FROM all_interface'
+
+                cursor.execute(query)
+                result = cursor.fetchone()
+                    
+                maximun_id = result[0]
+                query = 'SELECT * FROM interface WHERE id = {}'.format(str(maximun_id))
+                print(maximun_id)
+                new = get_record_to_json(cursor, query)
+                put_db_log('CREATE', 'Equipment Interfaces', old, new)
+
             result = True
         except Exception as e:
             print(e)
@@ -1980,8 +2040,13 @@ def removeEquipmentInterface(request):
         raw_query = "SELECT fn_remove_interface({})".format(selectedInterfaceId)  
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM interface WHERE id = {}".format(selectedInterfaceId)
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
+                new = ""
+                put_db_log("DELETE", "Equipment Interfaces", old, new)
+
               
             result = True
         except Exception as e:
@@ -2105,8 +2170,13 @@ def updateConnectionTypeDetail(request):
         
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM connection_type WHERE id = {}".format(id)
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchall()
+                new = get_record_to_json(cursor, query)
+                put_db_log("UPDATE", "Connection Types", old, new)
+
             result = True
         except Exception as e:
             print(e)
@@ -2152,8 +2222,14 @@ def addConnectionType(request):
                 ) 
                 
                 with connection.cursor() as cursor:
+                    old = ""
                     cursor.execute(raw_query)
                     results = cursor.fetchall()
+
+                    query = "SELECT * FROM connection_type WHERE id = {}".format(new_connection_type_id)
+                    new = get_record_to_json(cursor, query)
+                    put_db_log("CREATE", "Connection Types", old, new)
+
                 result = True
         except Exception as e:
             print(e)
@@ -2174,8 +2250,13 @@ def removeConnectionTypeDetail(request):
         raw_query = "SELECT  fn_remove_connection_type({})".format(id)
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM connection_type WHERE id = {}".format(id)
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchall()
+                new = ""
+                put_db_log("DELETE", "Connection Types", old, new)
+                
             result = True
         except Exception as e:
             print(e)

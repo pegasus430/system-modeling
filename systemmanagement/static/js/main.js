@@ -1972,51 +1972,95 @@ $(document).ready(function() {
       var tableData = []
 
       history_logs.forEach(element => {
+         var temp = element.new;
+
+         if(element.action =='DELETE') temp = element.old;
+         temp = JSON.parse(temp)
+
+         var item_name = element.item;
+
+         switch(item_name) {
+          case 'Equipment':
+            item_name = temp['identifier'];
+            break;
+          case 'Equipment Types':
+            item_name = temp['label'];
+            break;
+          case 'Equipment Interfaces':
+            item_name = temp['identifier'];
+            break;
+          case 'Connection Types':
+            item_name = temp['label'];
+            break;
+         }
          tableData.push({
-          'log_time': element.log_time,
-          'item': element.item ,
+          'type': element.item,
+          'item': item_name,
           'action': element.action,
           'before': element.old,
-          'after': element.new
+          'after': element.new,
+          'log_time': element.log_time
          })
       })
 
+      var make_json_view = function(data) {
+        if(data == "") return data;
+
+        var json = JSON.parse(data);
+        var content = "[<br>";
+
+        for (const [key, value] of Object.entries(json)) {
+          content += "&nbsp;&nbsp;"+ key+": "+value+",<br>";
+        }
+        content += "]";
+
+        return content;
+      }
       var history_table = $('#history_table').DataTable({
         data:  tableData ,
         dom: 'Bfrtip',
         destroy: true,
         columns: [
-          { data: 'log_time' },
           { data: 'item' },
           { data: 'action' },
           { data: 'before',
             render: function(data, type, row) {
-              return '<span style="white-space:normal">' + data + "</span>";
+              return '<span style="white-space:normal">' + make_json_view(data) + "</span>";
             }
           },
           { data: 'after',
             render: function(data, type, row) {
-              return '<span style="white-space:normal">' + data + "</span>";
+              return '<span style="white-space:normal">' + make_json_view(data) + "</span>";
             }
-          }
+          },
+          { data: 'log_time' }
         ],
-        "order": [[ 1, "desc" ]]
+        "order": [[ 4, "desc" ]]
       })
     }
     
-    let selected_function = "all";
+    let selected_function = "Equipment";
 
-    $('#all_history_tree').on('click', '.function-item', function(e){
+    function set_logs() {
+      new_tableData = []
+      tableData.forEach(e => {
+        if(e.type == selected_function) new_tableData.push(e)
+      })
+      history_table.clear();
+      history_table.rows.add(new_tableData);
+      history_table.draw();
+      $(".item-log").html(selected_function);
+    }
+    set_logs();
+
+    $('.log-item').click(function(e){
       var item = $(this).text().trim();
+
+      $('.log-item').addClass('collapsed');
+      $(this).removeClass('collapsed');
       if(selected_function != item) {
         selected_function = item;
-        new_tableData = []
-        tableData.forEach(e => {
-          if(e.item == selected_function) new_tableData.push(e)
-        })
-        history_table.clear();
-        history_table.rows.add(new_tableData);
-        history_table.draw();
+        set_logs();
       }
     });
 });

@@ -32,33 +32,68 @@
                   <div class="tab-pane fade show active">
                     <!-- Main Content -->
                     <div class="row">
-                      <!-- Left Object Hierarchy -->
+                      <!-- Left State Menu -->
                       <div class="col-xxl-3 col-lg-3 col-md-4 p-0">
-                        <div class="card info-card left_object_hierarchy border-gray">
-                          <div class="treeview-animated border mx-2 my-2">
-                            <h6 class="pt-3 pl-3">All Items</h6>
-                            <hr>
-                            <ul class="treeview-animated-list mb-3" id="all_history_tree">
-                              
-                            </ul>
-                          </div>
-                        </div>
+                        <div class="card info-card left_state_menu border-gray">
+                          <ul class="sidebar-nav" id="sidebar-nav">
+                            <li class="nav-item">
+                              <a class="nav-link log-item">
+                                <i class="bi bi-wallet"></i>
+                                <span>Equipment</span>
+                              </a>
+                            </li><!-- End Equipment  Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed log-item">
+                                <i class="bi bi-wallet"></i>
+                                <span>Equipment Types</span>
+                              </a>
+                            </li><!-- End Equipment Types Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed log-item">
+                                <i class="bi bi-wallet"></i>
+                                <span>Equipment Resources</span>
+                              </a>
+                            </li><!-- End Equipment Resources Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed log-item">
+                                <i class="bi bi-display"></i>
+                                <span>Equipment Interfaces</span>
+                              </a>
+                            </li><!-- End Equipment Interfaces Nav -->
+                            <li class="nav-item">
+                              <a class="nav-link collapsed log-item">
+                                <i class="bi bi-truck"></i>
+                                <span>Connections</span>
+                              </a>
+                            </li><!-- End Connections Nav -->
+                            
+                            <li class="nav-item">
+                              <a class="nav-link collapsed log-item">
+                                <i class="bi bi-display"></i>
+                                <span>Connection Types</span>
+                              </a>
+                            </li><!-- End Connection Types Nav -->
                           
-                      
-                      </div><!-- End Left Object Hierarchy -->
+                          </ul>
+                        </div>
+                      </div><!-- End Left State Menu -->
                       
                       <!-- Middle Overview -->
                       <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
                         <div class="card card-body right_overview border-gray">
-                            <h5 class="card-title"><b>Database Logs</b></h5>
+                            <h5 class="card-title">
+                              <b>
+                                  <span class="item-log">Equipment</span>&nbsp;Logs
+                              </b>
+                            </h5>
                             <table class="display nowrap custom_datatable1" id="history_table">
-                                <thead>
+                                <thead style="background-color: #000; color: white; border: solid 1px;">
                                     <tr>
-                                        <th>Log time</th>
-                                        <th>Item</th>
+                                        <th>Item Name</th>
                                         <th>Action</th>
-                                        <th>Before</th>
-                                        <th>After</th>
+                                        <th width="30%">Before</th>
+                                        <th width="30%">After</th>
+                                        <th>Log time</th>
                                     </tr>
                                 </thead>
                             <tbody>
@@ -81,56 +116,6 @@
     </div>
   </section>
   <script type="text/javascript">
-    history_functions = [
-        {
-            "title": "Main",
-            "children": [
-                "Equipment",
-                "Connections",
-                "System"
-            ]
-        },
-        {
-            "title": "Definitions",
-            "children": [
-                "System Parameters",
-                "System Users",
-                "Equipment Types",
-                "Equipment Resources",
-                "Equipment Properties",
-                "Equipment Interfaces",
-                "Attribute Classes",
-                "Connection Types",
-                "Target Systems",
-                "Possible Equipment/Connection States"
-            ]
-        }
-    ]
-
-    function createTree(data) {
-        
-      let html = ""
-      data.forEach(element => {
-        children_content = "";
-
-        element.children.forEach(child => {
-            children_content += '<li class="treeview-li function-item"><div class="treeview-animated-element treeview-title"> \
-          '+ child + '</li>'
-        })
-        html += '<li class="treeview-animated-items treeview-li"> \
-                      <a class="closed open"> \
-                        <i class="fas fa-angle-right"></i> \
-                        <span class="ml-1 treeview-title">'+ element.title+'</span> \
-                      </a> \
-                      <ul class="nested">' 
-            + children_content
-            + '</ul></li>'
-      });
-      return html
-    }
-
-    const html = createTree(history_functions)
-    document.getElementById('all_history_tree').innerHTML = html
 
     
   </script>

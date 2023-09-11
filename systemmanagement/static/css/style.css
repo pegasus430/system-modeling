@@ -240,6 +240,12 @@ h6 {
   font-family: "Poppins", sans-serif;
 }
 
+.card-title span.item-log {
+  font-size: 18px;
+  font-weight: 700;
+  color: #012970;
+}
+
 .card-title span {
   color: #899bbd;
   font-size: 14px;
@@ -684,7 +690,7 @@ h6 {
   align-items: center;
   font-size: 15px;
   font-weight: 600;
-  color: #4154f1;
+  color: #4154f1 !important;
   transition: 0.3;
   background: #f6f9ff;
   padding: 10px 15px;
@@ -698,7 +704,7 @@ h6 {
 }
 
 .sidebar-nav .nav-link.collapsed {
-  color: #012970;
+  color: #012970 !important;
   background: #fff;
 }
 
@@ -1367,7 +1373,7 @@ table#equipment_type_interface_table tbody tr:hover{
   margin: 0px !important
 }
 
-table#history_table tr td:nth-child(4), table#history_table tr td:nth-child(5) {
+table#history_table tr td:nth-child(3), table#history_table tr td:nth-child(4) {
   border: 1px solid #dfdbdb;
   padding: 5px;
   background: #e9e5e5;

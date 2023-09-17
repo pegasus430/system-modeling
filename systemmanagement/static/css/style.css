@@ -1379,3 +1379,23 @@ table#history_table tr td:nth-child(3), table#history_table tr td:nth-child(4) {
   background: #e9e5e5;
   color: #3f3c3c !important;
 }
+
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.history-info-title .btn {
+  height: 30px;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 0px !important;
+}
+
+.history-info-title .btn a {
+  color: white !important
+}
+

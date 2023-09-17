@@ -6,6 +6,7 @@ import datetime
 import json
 import pytz
 import logging
+import csv
 # Get the root logger
 logger = logging.getLogger('db')
 
@@ -769,8 +770,13 @@ def update_connection_detail(request):
                 + connection_modified_at + "')" 
             
             with connection.cursor() as cursor:
+                query = "SELECT * FROM connection WHERE id={}".format(connection_id)
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchall()
+                new = get_record_to_json(cursor, query)
+                put_db_log('UPDATE', 'Connections', old, new)
+
             result = True
         except Exception as e:
             print(e)
@@ -839,8 +845,13 @@ def add_connection(request):
                 + str(connection_length) + ", " + connection_is_approved + " , '" + connection_modified_at + "')" 
 
             with connection.cursor() as cursor:
+                old = ""
                 cursor.execute(raw_query)
                 results = cursor.fetchall()
+                query = "SELECT * FROM connection WHERE id={}".format(str(new_connection_id))
+                new = get_record_to_json(cursor, query)
+                put_db_log('CREATE', 'Connections', old, new)
+
             return_result = True
         except Exception as e:
             print(e)
@@ -863,8 +874,13 @@ def remove_connection(request):
 
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM connection WHERE id={}".format(connection_id)
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchall()
+                new = ""
+                put_db_log("DELETE", "Connections", old, new)
+
             result = True
         except Exception as e:
             print(e)
@@ -2675,3 +2691,38 @@ def history(request):
     }
     
     return render(request, 'history.html', context=context)
+
+def downloadHistoryCSV(request, historyType):
+    response = HttpResponse(content_type="text/csv")
+
+    historyType = historyType.replace("_", " ")
+    response[
+        "Content-Disposition"
+    ] = f'attachment; filename="{historyType} History.csv"'
+
+    writer = csv.writer(response)
+    # Write CSV headers
+    writer.writerow(
+        [
+            "Item Name",
+            "Action",
+            "Before",
+            "After",
+            "Log time"
+        ]
+    )
+
+    with open('database_log.log', 'r') as file:
+        for line in file:
+            if '#' + str(historyType) + '#' in line:
+                temp = line.strip().split('#')
+                if len(temp) > 1:
+                    writer.writerow([
+                        temp[2],
+                        temp[1],
+                        temp[3],
+                        temp[4],
+                        temp[0]
+                    ])
+
+    return response

@@ -1992,6 +1992,9 @@ $(document).ready(function() {
           case 'Connection Types':
             item_name = temp['label'];
             break;
+          case 'Connections':
+            item_name = temp['identifier'];
+            break;
          }
          tableData.push({
           'type': element.item,
@@ -2050,6 +2053,12 @@ $(document).ready(function() {
       history_table.rows.add(new_tableData);
       history_table.draw();
       $(".item-log").html(selected_function);
+
+      var temp = selected_function;
+      temp = temp.split(" ");
+      temp = temp.join("_")
+
+      $("#export-history a").attr("href","/history/exportCSV/"+temp+"/");
     }
     set_logs();
 
@@ -2063,6 +2072,10 @@ $(document).ready(function() {
         set_logs();
       }
     });
+
+
+
+
 });
 
 (function() {
@@ -6310,8 +6323,7 @@ $(document).ready(function() {
       showErrorNotification('The label and description should not be empty string.')
     }
   })
-
-  //remove state 
+ //remove state 
   $('#btn_possible_state_delete').on('click', function(){
     let selectedStateId = $('#state_id').val()
     if(selectedStateId){

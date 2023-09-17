@@ -85,4 +85,5 @@ urlpatterns = [
     path(r'definitions/removeStateDetail', views.removeStateDetail, name='removeStateDetail'),
     # 
     path('history/', views.history, name='history'),
+    path('history/exportCSV/<str:historyType>/', views.downloadHistoryCSV, name='downloadHistoryCSV')
 ]

@@ -81,11 +81,16 @@
                       <!-- Middle Overview -->
                       <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
                         <div class="card card-body right_overview border-gray">
-                            <h5 class="card-title">
-                              <b>
-                                  <span class="item-log">Equipment</span>&nbsp;Logs
-                              </b>
-                            </h5>
+                            <div class="flex justify-between history-info-title">
+                              <h5 class="card-title">
+                                <b>
+                                    <span class="item-log">Equipment</span>&nbsp;Logs
+                                </b>
+                              </h5>
+                              <button class="btn btn-primary" style="width: 7rem;" id="export-history">
+                                <a href="">Export</a>
+                              </button>
+                            </div>
                             <table class="display nowrap custom_datatable1" id="history_table">
                                 <thead style="background-color: #000; color: white; border: solid 1px;">
                                     <tr>

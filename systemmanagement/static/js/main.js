@@ -1992,6 +1992,9 @@ $(document).ready(function() {
           case 'Connection Types':
             item_name = temp['label'];
             break;
+          case 'Equipment Properties':
+            item_name = temp['modifier'];
+            break;
           case 'Connections':
             item_name = temp['identifier'];
             break;

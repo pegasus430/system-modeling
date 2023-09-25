@@ -1759,8 +1759,14 @@ def updatePropertyDetail(request):
         )        
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM property WHERE id = {}".format(
+                    propertyId
+                )  
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
+                new = get_record_to_json(cursor, query)
+                put_db_log('UPDATE', 'Equipment Properties', old, new)
             result = True
         except Exception as e:
             print(e)
@@ -1796,8 +1802,18 @@ def addEquipmentProperty(request):
         )        
         try:
             with connection.cursor() as cursor:
+                old = ""
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
+
+                query  = 'SELECT max(id) FROM property'
+                cursor.execute(query)
+                result = cursor.fetchone()
+                maximun_id = result[0]
+                query = "SELECT * FROM property WHERE id={}".format(str(maximun_id))
+
+                new = get_record_to_json(cursor, query)
+                put_db_log('CREATE', 'Equipment Properties', old, new)
             result = True
         except Exception as e:
             print(e)
@@ -1820,8 +1836,14 @@ def removeProperty(request):
         )        
         try:
             with connection.cursor() as cursor:
+                query = "SELECT * FROM property WHERE id = {}".format(
+                    propertyId
+                )        
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
+                new = ""
+                put_db_log("DELETE", "Equipment Properties", old, new)
             result = True
         except Exception as e:
             print(e)
@@ -1858,8 +1880,8 @@ def updateResourcePropertyDetail(request):
         
         try:
             with connection.cursor() as cursor:
-                # query = "SELECT * FROM resource_property WHERE id = {}".format(resourceId)
-                # old = get_record_to_json(cursor, query)
+                query = "SELECT * FROM resource_property WHERE resource_id = {} and property_id = {}".format(resourceId, propertyId)
+                old = get_record_to_json(cursor, query)
                 
                 raw_query = "SELECT fn_update_resource_property({}, {}, '{}', {} , '{}', '{}')".format(
                     resourceId, propertyId, resourcePropertyDefaultValue, resourcePropertyDatatypeId, resourcePropertyComment, modified_at
@@ -1868,8 +1890,8 @@ def updateResourcePropertyDetail(request):
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
 
-                # new = get_record_to_json(cursor, query)
-                # put_db_log("CREATE", "Equipment Resources", old, new)
+                new = get_record_to_json(cursor, query)
+                put_db_log("UPDATE", "Equipment Resources", old, new)
 
             result = True
 
@@ -1906,13 +1928,13 @@ def addResourceProperty(request):
                 )  
         try:
             with connection.cursor() as cursor:
-                # old = ""
+                old = ""
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
                 id = results[0]
-                # query = "SELECT * FROM resource_property WHERE id = {}".format(resourceId)
-                # new = get_record_to_json(cursor, query)
-                # put_db_log("CREATE", "Equipment Resources", old, new)
+                query = "SELECT * FROM resource_property WHERE resource_id = {} and property_id = {}".format(resourceId, propertyId)
+                new = get_record_to_json(cursor, query)
+                put_db_log("CREATE", "Equipment Resources", old, new)
 
             result = True
         except Exception as e:
@@ -1936,10 +1958,12 @@ def removeResourceProperty(request):
         raw_query = "SELECT fn_remove_resource_property({}, {})".format(resourceId, propertyId)  
         try:
             with connection.cursor() as cursor:
-                query = "SELECT * FROM resource_property WHERE id = {}".format(propertyId)
+                query = "SELECT * FROM resource_property WHERE resource_id = {} and property_id = {}".format(resourceId, propertyId)
+                old = get_record_to_json(cursor, query)
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
-              
+                new = ""
+                put_db_log("DELETE", "Equipment Resources", old, new)
             result = True
         except Exception as e:
             print(e)

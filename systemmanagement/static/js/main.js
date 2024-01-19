@@ -2047,23 +2047,7 @@ $(document).ready(function() {
     
     let selected_function = "Equipment";
 
-    function set_logs() {
-      new_tableData = []
-      tableData.forEach(e => {
-        if(e.type == selected_function) new_tableData.push(e)
-      })
-      history_table.clear();
-      history_table.rows.add(new_tableData);
-      history_table.draw();
-      $(".item-log").html(selected_function);
-
-      var temp = selected_function;
-      temp = temp.split(" ");
-      temp = temp.join("_")
-
-      $("#export-history a").attr("href","/history/exportCSV/"+temp+"/");
-    }
-    set_logs();
+   
 
     $('.log-item').click(function(e){
       var item = $(this).text().trim();
@@ -2845,8 +2829,7 @@ $(document).ready(function() {
           $("#adding_parent_path").append(o);
 
           allEquipment.forEach( element => {
-
-            element_equipment_path = element.equipment_path.join('.')
+            var element_equipment_path = element.equipment_path.join('.')
             var selected_element_path = selectedEquipment[0]['equipment_path']
             selected_element_path = selected_element_path.join('.')
 

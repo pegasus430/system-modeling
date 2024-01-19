@@ -1,5 +1,6 @@
 from django.db import models
 from django_ltree_field.fields import LTreeField
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class AllEquipment(models.Model):
@@ -436,3 +437,14 @@ class AttributeClass(models.Model):
     class Meta:
         managed = False
         db_table = 'all_attribute_class'
+
+class CustomUser(AbstractUser):
+    full_name = models.TextField()
+    os_username = models.TextField()
+    os_user_id = models.TextField()
+    comment = models.TextField()
+    modified_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        managed = True
+        db_table = 'user'

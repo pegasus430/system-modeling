@@ -144,7 +144,7 @@ ACCOUNT_EMAIL_VERIFICATION="none"
 # ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_LOGOUT_ON_GET= True
 ACCOUNT_FORMS = {"signup": "systemmanagement.forms.UserRegisterForm"}
-
+AUTH_USER_MODEL = 'systemmanagement.CustomUser'
 
 LOGIN_URL="/accounts/login/"
 LOGIN_REDIRECT_URL = '/'

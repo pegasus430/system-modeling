@@ -2685,57 +2685,64 @@ $(document).ready(function() {
 
   }
   // remove equipment
-  if(select('#btn_equipment_delete')){
-    on('click','#btn_equipment_delete' , function(){
+  if(select('#equipmentRemoveModal .btn-primary')){
+    on('click','#equipmentRemoveModal .btn-primary' , function(){
       var selectedEquipmentId = $('#equipment_id').val()
+      var remove_option = $('#remove_equipment_option').val()
       if(selectedEquipmentId){
+        var reason = $('#remove_equipment_reason').val()
+        var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)  
         
-        if(confirm('Are you sure to remove the equipment?')){
-          $.ajax({
-            type: "GET",
-            url: 'removeEquipment',
-            data: {
-              equipment_id: selectedEquipmentId    
-            },
-            success: function (data){
-              data = JSON.parse(data)
-              var result = data['result']
-              var equipment_list = data['equipment_list']
-              if(result){
+        $.ajax({
+          type: "GET",
+          url: 'removeEquipment',
+          data: {
+            modified_by: currentUserName,
+            remove_reason: reason,
+            equipment_id: selectedEquipmentId ,
+            remove_option: remove_option
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            var equipment_list = data['equipment_list']
+            if(result){
 
-                showSuccessNotification('The equipment has been  removed successfully!')
-                  
-                $("#location_path").find('option').remove()
-                $("#parent_path").find('option').remove()
-                $('#all_equipment_types_select').find('option').remove()
-  
-                $('#equipment_id').val('')
-                $('#equipment_full_identifier').val('')
-                $('#equipment_local_identifier').val('')
+              showSuccessNotification('The equipment has been  removed successfully!')
                 
-                $('#equipment_use_parent_identifier').prop('checked' , false)
-                
-                $('#equipment_description').val('')
-                $('#equipment_comment').val('')
-                $('#basic-full-identifier').val('')
-                
-                $('#equipment_is_approved').prop('checked' , false)
+              $("#location_path").find('option').remove()
+              $("#parent_path").find('option').remove()
+              $('#all_equipment_types_select').find('option').remove()
 
-                if(equipment_list){
-                  const html = createEquipmentTree(equipment_list)
-                  document.getElementById('all_equipment_tree').innerHTML = html
-                  $('.treeview-animated').mdbTreeview();
-                }
-  
+              $('#equipment_id').val('')
+              $('#equipment_full_identifier').val('')
+              $('#equipment_local_identifier').val('')
+              
+              $('#equipment_use_parent_identifier').prop('checked' , false)
+              
+              $('#equipment_description').val('')
+              $('#equipment_comment').val('')
+              $('#basic-full-identifier').val('')
+              
+              $('#equipment_is_approved').prop('checked' , false)
+              $('#remove_equipment_reason').val('')
+              $("#equipmentRemoveModal").modal('hide');
+              if(equipment_list){
+                const html = createEquipmentTree(equipment_list)
+                document.getElementById('all_equipment_tree').innerHTML = html
+                $('.treeview-animated').mdbTreeview();
               }
-              else{
-                showErrorNotification('The error happend while removing the equipment!')
-              }
+
             }
-           })
-        }
+            else{
+              showErrorNotification(data['message'])
+            }
+          }
+          })
+        
+        
       }else{
-        showErrorNotification('You need to select the equipment!')
+        showErrorNotification('You need to select the equipment to be removed!')
       }
       
     })
@@ -2863,14 +2870,17 @@ $(document).ready(function() {
   if(select('#equipmentModal .btn-primary'))
   {
     on('click', '#equipmentModal .btn-primary', function(){
+      var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
       var addingEquipmentIdentifier = $('#adding_equipment_identifier').val()
+      var addingEquipmentReason = $('#adding_equipment_reason').val()
+      var addingEquipmentLocationPath = $('#adding_location_path').val()
       // console.log(addingEquipmentIdentifier)
-      if(addingEquipmentIdentifier){
+      if(addingEquipmentIdentifier && addingEquipmentReason && addingEquipmentLocationPath){
         if(confirm('Are you sure to add this equpment?')){
             var addingEquipmentDescription = $('#adding_equipment_description').val()
             var addingEquipmentParentPath = $('#adding_parent_path').val()
             addingEquipmentParentPath =  addingEquipmentParentPath.replaceAll(',', '.')
-            var addingEquipmentLocationPath = $('#adding_location_path').val()
+            
             addingEquipmentLocationPath = addingEquipmentLocationPath.replaceAll(',', '.')
             var addingEquipmentIncludeParentFlag = $('#adding_equipment_use_parent_identifier').prop('checked')
             var addingEquipmentTypeId = $('#adding_equipment_type').val()
@@ -2887,7 +2897,9 @@ $(document).ready(function() {
                 equipment_location_path: addingEquipmentLocationPath,
                 equipment_type_id: addingEquipmentTypeId,
                 equipment_comment: addingEquipmentComment,
-                equipment_is_approved: addingEquipmentApproved          
+                equipment_is_approved: addingEquipmentApproved,
+                equipment_reason: addingEquipmentReason,
+                equipment_added_by: currentUserName,
               },
               success: function (data){
                 data = JSON.parse(data)
@@ -2912,14 +2924,13 @@ $(document).ready(function() {
     
                 }
                 else{
-                  showErrorNotification('The error has happend while adding the equipment')
+                  showErrorNotification(data['message'])
                 }
               }
             })
         }
-        
       }else{
-        showErrorNotification('You have to put the new equipment identifier.')        
+        showErrorNotification('The equipment identifier, location_path and the reason should be not empty.')        
       }
       
     })
@@ -2931,7 +2942,9 @@ $(document).ready(function() {
     on('click', '.equipment_page #commit', function(){
       var equipment_id = $('#equipment_id').val()
       if(equipment_id){
-        if(confirm('Are you sure to update this equipment?')){
+        let reason = prompt('Please write the reason why you update this equipment.', '')
+        if(reason != null ){
+          var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
           var equipment_local_identifier = $('#equipment_local_identifier').val()         
           var equipment_parent_path = $('#parent_path').val()
           var equipment_description = $('#equipment_description').val()
@@ -2940,7 +2953,7 @@ $(document).ready(function() {
           var equipment_comment = $('#equipment_comment').val()
           var equipment_is_approved = $('#equipment_is_approved').prop('checked')
           var equipment_use_parent_identifier = $('#equipment_use_parent_identifier').prop('checked')
-      
+          
           $.ajax({
            type: "GET",
            url: 'updateEquipmentDetail',
@@ -2953,7 +2966,9 @@ $(document).ready(function() {
              equipment_location_path: equipment_location_path,
              equipment_type_id: equipment_type_id,
              equipment_comment: equipment_comment,
-             equipment_is_approved: equipment_is_approved          
+             equipment_is_approved: equipment_is_approved,
+             equipment_reason: reason,
+             equipment_added_by: currentUserName,
            },
            success: function (data){
              data = JSON.parse(data)
@@ -2979,7 +2994,7 @@ $(document).ready(function() {
                $('#equipment_is_approved').prop('checked' , false)
              }
              else{
-              showErrorNotification('The error has happend while updating the equipment information')
+              showErrorNotification(data['message'])
              }
            }
           })

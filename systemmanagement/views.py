@@ -502,6 +502,7 @@ def getEquipmentTypesInterface(request):
         return HttpResponse(data)
 
 def update_equipment_detail(request):
+    message = ''
     if request.method == 'GET':
         equipment_id = request.GET['equipment_id']
         equipment_local_identifier = request.GET['equipment_local_identifier']
@@ -515,43 +516,47 @@ def update_equipment_detail(request):
         equipment_description =  request.GET['equipment_description']
         equipment_location_path =  request.GET['equipment_location_path']
         equipment_location_path = equipment_location_path.replace(',', '.')
-        
         equipment_type_id =  request.GET['equipment_type_id']
         equipment_comment =  request.GET['equipment_comment']
         equipment_is_approved = request.GET['equipment_is_approved'] 
-
-        current_time = datetime.datetime.now(pytz.utc)
-        
-        # Convert the current time to a timestamp with time zone
-        equipment_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        
-        
-        raw_query = "SELECT  fn_update_equipment(" + equipment_id + " , '" + equipment_local_identifier + "' , '" +  \
-            equipment_path + "', "+ equipment_use_parent_identifier +" , '"+ equipment_location_path + "', " + equipment_type_id + ", '" \
-            + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
-            + equipment_modified_at + "')" 
-        
+        equipment_reason = request.GET['equipment_reason']
+        equipment_added_by = request.GET['equipment_added_by']
        
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-            result = True
+                with connection.cursor() as cursor:
+                    cursor.execute("CALL proc_modify_equipment('{}','{}','{}',{},'{}','{}',{},'{}','{}','{}','{}')".format(
+                        equipment_added_by,
+                        equipment_reason,
+                        equipment_local_identifier, 
+                        equipment_id,
+                        equipment_path,
+                        equipment_location_path,
+                        equipment_type_id,
+                        equipment_description,
+                        equipment_comment,
+                        equipment_use_parent_identifier,
+                        equipment_is_approved
+                    ))
+                return_result = True
         except Exception as e:
-            result = False
-            print(result)
-        
+            print(e)
+            message = str(e)
+            return_result = False
         all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
         
         data = json.dumps(
             {
-                'result': result,
+                'result': return_result,
                 'equipment_list': all_equipment,
+                'message': message,
             }, 
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
        
 def add_equipment_detail(request):
+    message = ''
     if request.method == 'GET':
         equipment_local_identifier = request.GET['equipment_local_identifier']
         equipment_parent_path =  request.GET['equipment_parent_path']
@@ -561,12 +566,9 @@ def add_equipment_detail(request):
         equipment_type_id =  request.GET['equipment_type_id']
         equipment_comment =  request.GET['equipment_comment']
         equipment_is_approved = request.GET['equipment_is_approved'] 
-
-        current_time = datetime.datetime.now(pytz.utc)
+        equipment_reason = request.GET['equipment_reason']
+        equipment_added_by = request.GET['equipment_added_by']
         
-        # Convert the current time to a timestamp with time zone
-        equipment_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
         try:
             query  = 'SELECT max(equipment_id) FROM all_equipment'
             with connection.cursor() as cursor:
@@ -575,29 +577,32 @@ def add_equipment_detail(request):
                 
             maximun_id = result[0]
             new_equipment_id = maximun_id + 1
+
             if equipment_parent_path:
                 equipment_path = equipment_parent_path + '.' + str(new_equipment_id)
             else:
                 equipment_path = str(new_equipment_id)
-            
-            
-            raw_query = "SELECT  fn_add_equipment(" + str(new_equipment_id) + " , '" + equipment_path + "' , " +  \
-                equipment_use_parent_identifier +" , '"+ equipment_location_path + "', " + equipment_type_id + ", '" \
-                + equipment_local_identifier + "', '" + equipment_description + "', " + equipment_is_approved + " , '" + equipment_comment + "','"  \
-                + equipment_modified_at + "')" 
-
-
+        
             try:
-                
                 with connection.cursor() as cursor:
-                    cursor.execute(raw_query)
-                    results = cursor.fetchall()
+                    cursor.execute("CALL proc_modify_equipment('{}','{}','{}',null,'{}','{}',{},'{}','{}','{}','{}')".format(
+                        equipment_added_by,
+                        equipment_reason,
+                        equipment_local_identifier, 
+                        equipment_path,
+                        equipment_location_path,
+                        equipment_type_id,
+                        equipment_description,
+                        equipment_comment,
+                        equipment_use_parent_identifier,
+                        equipment_is_approved
+                    ))
                 return_result = True
-            except Exception as e:
-                print(e)
+            except Exception as e:                
+                message =str(e)
                 return_result = False
         except Exception as e:
-            print(e)
+            message = str(e)
             return_result = False
         all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
         
@@ -605,6 +610,7 @@ def add_equipment_detail(request):
             {
                 'result': return_result,
                 'equipment_list': all_equipment,
+                'message': message
             }, 
             cls=DateTimeEncoder
         )
@@ -665,19 +671,26 @@ def update_equipment_property_value(request):
         return HttpResponse(data)
 
 def remove_equipment(request):
+    message = ''
     if request.method == 'GET':
         equipment_id = request.GET['equipment_id']
-        
-        raw_query = "SELECt fn_remove_equipment("+ str(equipment_id) +")" 
+        modified_by = request.GET['modified_by']
+        remove_reason = request.GET['remove_reason']
+        remove_option = request.GET['remove_option']
 
         try:
             result = True
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
+                 cursor.execute("CALL proc_remove_equipment('{}','{}',{},'{}')".format(
+                        modified_by,
+                        remove_reason,
+                        equipment_id, 
+                        remove_option
+                    ))
                 
         except Exception as e:
             print(e)
+            message = str(e)
             result = False
         
         all_equipment = list(AllEquipment.objects.order_by('equipment_sort_identifier').values())
@@ -686,6 +699,7 @@ def remove_equipment(request):
             {
                 'result': result,
                 'equipment_list': all_equipment,
+                'message': message
             }, 
             cls=DateTimeEncoder
         )

@@ -2713,17 +2713,13 @@ $(document).ready(function() {
               $("#location_path").find('option').remove()
               $("#parent_path").find('option').remove()
               $('#all_equipment_types_select').find('option').remove()
-
               $('#equipment_id').val('')
               $('#equipment_full_identifier').val('')
               $('#equipment_local_identifier').val('')
-              
               $('#equipment_use_parent_identifier').prop('checked' , false)
-              
               $('#equipment_description').val('')
               $('#equipment_comment').val('')
               $('#basic-full-identifier').val('')
-              
               $('#equipment_is_approved').prop('checked' , false)
               $('#remove_equipment_reason').val('')
               $("#equipmentRemoveModal").modal('hide');
@@ -2915,6 +2911,7 @@ $(document).ready(function() {
                   $('#adding_equipment_type').find('option').remove()
                   $('#adding_equipment_comment').val('')
                   $('#adding_equipment_approved').prop('checked', false)
+                  $('#adding_equipment_reason').val('')
                   $("#equipmentModal").modal('hide');
                   if(equipment_list){
                     const html = createEquipmentTree(equipment_list)
@@ -3044,8 +3041,9 @@ $(document).ready(function() {
      on('click', '#btn_connection_commit', function(){
       var connection_id = $('#connection_id').val()  
        if(connection_id){
-        if(confirm('Are you sure to update this connection?')){
-          
+        let reason = prompt('Please write the reason why you update this connection.', '')
+        if(reason != null){
+          var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
           var connection_identifier = $('#connection_identifier').val()
           var connection_use_parent_identifier = $('#connection_use_parent_identifier').prop('checked')
           var connection_parent_path = $('#connection_parent_path').val()
@@ -3076,6 +3074,8 @@ $(document).ready(function() {
              connection_type_id: connection_type_id,
              connection_comment: connection_comment,
              connection_is_approved: connection_is_approved,          
+             connection_reason: reason,
+             connection_added_by: currentUserName,
            },
            success: function (data)
            {
@@ -3107,7 +3107,7 @@ $(document).ready(function() {
                
              }
              else{
-              showErrorNotification('The error happend while updating the connection!')
+              showErrorNotification(data['message'])
             }
            }
           })
@@ -3328,8 +3328,9 @@ $(document).ready(function() {
   {
     on('click', '#connectionModal .btn-primary', function(){
       var addingConnectionIdentifier = $('#adding_connection_identifier').val()
-      
-      if(addingConnectionIdentifier){
+      var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+      var addingConnectionReason = $('#adding_connection_reason').val()
+      if(addingConnectionIdentifier && addingConnectionReason){
         if(confirm('Are you sure to add this connection?')){
             var addingConnectionDescription = $('#adding_connection_description').val()
             var addingConnectionParentPath = $('#adding_connection_parent_path').val()
@@ -3343,8 +3344,7 @@ $(document).ready(function() {
             var addingConnectionEndEquipment = $('#adding_connection_end_equipment').val()
             var addingConnectionStartInterface = $('#adding_connection_start_interface').val()
             var addingConnectionEndInterface = $('#adding_connection_end_interface').val()
-            var addingConnectionApproved = $('#adding_connection_approved').prop('checked')
-            // console.log(addingEquipmentDescription, addingEquipmentParentPath , addingEquipmentLocationPath, addingEquipmentIncludeParentFlag, addingEquipmentTypeId, addingEquipmentComment,  addingEquipmentApproved)
+            var addingConnectionApproved = $('#adding_connection_approved').prop('checked')            
 
             $.ajax({
               type: "GET",
@@ -3361,7 +3361,9 @@ $(document).ready(function() {
                 connection_type_id: addingConnectionTypeId,
                 connection_length: addingConnectionLength,
                 connection_comment: addingConnectionComment,
-                connection_is_approved: addingConnectionApproved          
+                connection_is_approved: addingConnectionApproved,
+                connection_reason: addingConnectionReason,
+                connection_added_by: currentUserName,          
               },
               success: function (data){
                 data = JSON.parse(data)
@@ -3382,7 +3384,7 @@ $(document).ready(function() {
                   $('#adding_connection_type').find('option').remove()
                   $('#adding_connection_comment').val('')
                   $('#adding_connection_approved').prop('checked', false)
-
+                  $('#adding_connection_reason').val('')
                   $("#connectionModal").modal('hide');
 
                   if(connection_list){
@@ -3393,31 +3395,36 @@ $(document).ready(function() {
     
                 }
                 else{
-                  showErrorNotification('The error happend while adding the connection!')
+                  showErrorNotification(data['message'])
                 }
               }
             })
         }
         
       }else{
-        showErrorNotification('You have to put the new connection identifier.')
+        showErrorNotification('The connection identifier and Reason should not be empty.')
       }
       
     })
   }
 
   //remove connection
-  if(select('#btn_connection_delete')){
-    on('click','#btn_connection_delete' , function(){
+  if(select('#connectionRemoveModal .btn-primary')){
+    on('click','#connectionRemoveModal .btn-primary' , function(){
       var selectedConnectionId = $('#connection_id').val()
+      var remove_option = $('#remove_connection_option').val()
       if(selectedConnectionId){
-        
+        var reason = $('#remove_connection_reason').val()
+        var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)  
         if(confirm('Are you sure to remove this connection?')){
           $.ajax({
             type: "GET",
             url: 'removeConnection',
             data: {
-              connection_id: selectedConnectionId    
+              connection_id: selectedConnectionId,
+              modified_by: currentUserName,
+              remove_reason: reason,
+              remove_option: remove_option
             },
             success: function (data){
               data = JSON.parse(data)
@@ -3442,7 +3449,8 @@ $(document).ready(function() {
                 $('#connection_comment').val('')
                 $('#basic-full-identifier').val('')
                 $('#connection_is_approved').prop('checked' , false)
-
+                $('#remove_connection_reason').val('')
+                $("#connectionRemoveModal").modal('hide');
                 if(connection_list){
                   const html = createConnectionTree(connection_list)
                   document.getElementById('all_connection_tree').innerHTML = html
@@ -3451,7 +3459,7 @@ $(document).ready(function() {
   
               }
               else{
-                showErrorNotification('The error happend while removing the connection!')
+                showErrorNotification(data['message'])
               }
             }
            })

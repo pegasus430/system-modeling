@@ -689,7 +689,6 @@ def remove_equipment(request):
                     ))
                 
         except Exception as e:
-            print(e)
             message = str(e)
             result = False
         
@@ -706,6 +705,7 @@ def remove_equipment(request):
         return HttpResponse(data)
 
 def update_connection_detail(request):
+    message = ''
     if request.method == 'GET':
         connection_id = request.GET['connection_id']
         connection_identifier = request.GET['connection_identifier']
@@ -734,27 +734,35 @@ def update_connection_detail(request):
         connection_end_interface_id = request.GET['connection_end_interface_id']
         if connection_end_interface_id == '':
             connection_end_interface_id = 0
-
-        current_time = datetime.datetime.now(pytz.utc)
         
-        # Convert the current time to a timestamp with time zone
-        connection_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        connection_reason = request.GET['connection_reason']
+        connection_added_by = request.GET['connection_added_by']
 
         try:
-        
-            raw_query = "SELECT  fn_update_connection(" + connection_id + " , '" + connection_path + "' , " +  \
-                connection_use_parent_identifier + ", " + str(connection_type_id) + ","+ str(connection_start_equipment_id) \
-                + ","+ str(connection_end_equipment_id)+ ","+ str(connection_start_interface_id)+ ","+ str(connection_end_interface_id) +",'"+ connection_identifier + "', '" \
-                + connection_description + "', '" + connection_comment + "'," + str(connection_length) +" , " + connection_is_approved +" ,'"  \
-                + connection_modified_at + "')" 
-            
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
+                cursor.execute("CALL proc_modify_connection('{}','{}','{}',{},'{}',{},{},{},{},{}, '{}', {}, '{}', {}, {})".format(
+                        connection_added_by,
+                        connection_reason,
+                        connection_identifier, 
+                        connection_id,
+                        connection_path,
+                        connection_type_id,
+                        connection_start_equipment_id,
+                        connection_start_interface_id,
+                        connection_end_equipment_id,
+                        connection_end_interface_id,
+                        connection_description,
+                        connection_length,
+                        connection_comment,
+                        connection_use_parent_identifier,
+                        connection_is_approved
+                    ))
+
+            return_result = True
 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
@@ -763,13 +771,15 @@ def update_connection_detail(request):
             {
                 'result': result,
                 'connection_list': all_connection,
+                'message': message,
             }, 
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
 def add_connection(request):
-      if request.method == 'GET':
+    message = ''
+    if request.method == 'GET':
         connection_local_identifier = request.GET['connection_local_identifier']
         connection_parent_path =  request.GET['connection_parent_path']
         connection_use_parent_identifier = request.GET['connection_use_parent_identifier']        
@@ -794,11 +804,10 @@ def add_connection(request):
         connection_length = request.GET['connection_length'] 
         if connection_length == '':
             connection_length = 0
-        current_time = datetime.datetime.now(pytz.utc)
         
-        # Convert the current time to a timestamp with time zone
-        connection_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        
+        connection_reason = request.GET['connection_reason']
+        connection_added_by = request.GET['connection_added_by']
+
         try:
             query  = 'SELECT max(connection_id) FROM all_connection'
             with connection.cursor() as cursor:
@@ -812,20 +821,27 @@ def add_connection(request):
             else:
                 connection_path = str(new_connection_id)
             
-            
-            raw_query = "SELECT  fn_add_connection(" + str(new_connection_id) + " , '" + connection_path + "' , " +  \
-                connection_use_parent_identifier +" , " + str(connection_type_id) + ", " + str(connection_start_equipment_id) + "," \
-                + str(connection_end_equipment_id) + ", " + str(connection_start_interface_id) + ", " + str(connection_end_interface_id) + ", '" \
-                + connection_local_identifier + "', '" + connection_description + "', '" + connection_comment + "',"  \
-                + str(connection_length) + ", " + connection_is_approved + " , '" + connection_modified_at + "')" 
-
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
+                cursor.execute("CALL proc_modify_connection('{}','{}','{}',null,'{}',{},{},{},{},{}, '{}', {}, '{}', {}, {})".format(
+                        connection_added_by,
+                        connection_reason,
+                        connection_local_identifier, 
+                        connection_path,
+                        connection_type_id,
+                        connection_start_equipment_id,
+                        connection_start_interface_id,
+                        connection_end_equipment_id,
+                        connection_end_interface_id,
+                        connection_description,
+                        connection_length,
+                        connection_comment,
+                        connection_use_parent_identifier,
+                        connection_is_approved
+                    ))
 
             return_result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             return_result = False
         all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
         
@@ -833,31 +849,40 @@ def add_connection(request):
             {
                 'result': return_result,
                 'connection_list': all_connection,
+                'message': message
             }, 
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
 def remove_connection(request):
+    message = ''
     if request.method == 'GET':
         connection_id = request.GET['connection_id']
-        raw_query = "SELECt fn_remove_connection("+ str(connection_id) +")" 
+        modified_by = request.GET['modified_by']
+        remove_reason = request.GET['remove_reason']
+        remove_option = request.GET['remove_option']
 
         try:
-            with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
-
             result = True
+            with connection.cursor() as cursor:
+                 cursor.execute("CALL proc_remove_connection('{}','{}',{},'{}')".format(
+                        modified_by,
+                        remove_reason,
+                        connection_id, 
+                        remove_option
+                    ))
+                
         except Exception as e:
-            print(e)
-            result = False
+            message = str(e)
+            result = False        
         all_connection = list(AllConnection.objects.order_by('connection_identifier').values())
         
         data = json.dumps(
             {
                 'result': result,
                 'connection_list': all_connection,
+                'message': message
             }, 
             cls=DateTimeEncoder
         )

@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource, ResourceGroup, ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority, AttributeClass
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource, ResourceGroup, ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority, AttributeClass, CustomUser
 from django.db import connection
 import datetime
 import json
@@ -82,6 +82,17 @@ def system_state(request):
     }
     
     return render(request, 'system_state.html', context=context)
+
+def system_users(request):
+    page = 'system'
+    users = list(CustomUser.objects.values('username', 'first_name', 'last_name', 'email', 'date_joined'))
+    # users = list(CustomUser.objects.values())
+    context = {
+        'title': 'System Users',
+        'page': page,
+        'system_users': users
+    }
+    return render(request, 'system_users.html', context=context)
 
 def equipment(request):
     page = 'equipment'

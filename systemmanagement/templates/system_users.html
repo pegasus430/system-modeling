@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{{system_users | json_script:'system_users'}}
+
+<section class="section equipment">
+    <div class="row">
+
+      <!-- Left side columns -->
+      <div class="col-lg-12">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="row">
+                        <div class="input-group mb-2 mt-3 p-0">
+                            <span class="input-group-text">
+                            <i class="bi bi-arrow-left-circle mr-3"></i>
+                            <i class="bi bi-arrow-right-circle mr-3"></i>
+                            <i class="bi bi-arrow-up-circle mr-3"></i>
+                            <i class="bi bi-arrow-down-circle"></i>
+                            </span>
+                            <input type="text" class="form-control" id="basic_delievery_full_identifer" aria-describedby="basic-addon3" placeholder="Full identifier (description)">
+                        </div>
+                        </div>
+
+                        <!-- Start System Tab Content -->
+                        <div class="tab-pane fade show active">
+                        <!-- Main Content -->
+                        <div class="row ">
+                            <!-- Left State Menu -->
+                            <div class="col-xxl-2 col-lg-2 col-md-3 p-0">
+                            <div class="card info-card left_state_menu border-gray">
+                                <ul class="sidebar-nav" id="sidebar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="{% url 'system' %}">
+                                    <i class="bi bi-wallet"></i>
+                                    <span>System</span>
+                                    </a>
+                                </li><!-- End System Nav -->
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="{% url 'system_purchasing_overview' %}">
+                                    <i class="bi bi-wallet"></i>
+                                    <span>Purchasing Overview</span>
+                                    </a>
+                                </li><!-- End Purchasing Overview Nav -->
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="{% url 'system_purchasing_detail' %}">
+                                    <i class="bi bi-wallet"></i>
+                                    <span>Purchasing Detail</span>
+                                    </a>
+                                </li><!-- End Purchasing Detail Nav -->
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="{% url 'system_delivery' %}">
+                                    <i class="bi bi-truck"></i>
+                                    <span>Delivery</span>
+                                    </a>
+                                </li><!-- End Delivery Nav -->
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="{% url 'system_state' %}">
+                                    <i class="bi bi-display"></i>
+                                    <span>Current Equipment State</span>
+                                    </a>
+                                </li><!-- End State Nav -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'system_users' %}">
+                                        <i class="bi bi-display"></i>
+                                        <span>Users</span>
+                                    </a>
+                                    </li><!-- End usrs Nav -->
+                                </ul>
+                            </div>
+                            </div><!-- End Left State Menu -->
+                            <div class="col-xxl-10 col-lg-10 col-md-9 p-0 pl-1">
+                                
+                                <div class="row ml-2 pr-2">
+                                    
+                                    <div class="card card-body right_overview border-gray" style="overflow-x: auto;">
+                                        <!-- Equipment Type purchasing table -->
+                                        <h5 class="card-title">System Users</h5>
+                                        <table class="display nowrap custom_datatable" id='system_users_table'>
+                                            <thead >
+                                                <tr>
+                                                    <th>Username</th>
+                                                    <th>Email</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Joined</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody >
+                                                
+                                            </tbody>
+                                        </table> 
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div><!-- End Main Content -->
+                        </div>
+                        <!-- // End System Tab Content -->
+                    </div><!-- End Bordered Tabs -->
+                </div>
+            </div>
+          
+        </div>
+      </div><!-- End Left side columns -->
+    </div>
+    
+  </section>
+  <script type="text/javascript">
+    
+
+  </script>
+{% endblock %}

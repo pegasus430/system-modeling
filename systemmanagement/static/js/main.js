@@ -1964,6 +1964,40 @@ $(document).ready(function() {
       }
     }
 
+    // system users tab in system page
+    if(document.getElementById('system_users')){
+      let system_users = JSON.parse(document.getElementById('system_users').textContent)
+      var tableData = []
+      if(system_users.length){
+        system_users.forEach(element => {
+             tableData.push({
+              'username': element.username ,
+              'firstName': element.first_name,              
+              'lastName': element.last_name,
+              'email': element.email,
+              'joined': element.date_joined,
+             })
+          })
+
+          $('#system_users_table').DataTable({
+            data:  tableData ,
+            destroy: true,
+            columns: [
+              { data: 'username' },
+              { data: 'email'},
+              { data: 'firstName' },
+              { data: 'lastName' },
+              { data: 'joined'},
+            ],
+          }
+          )
+
+      }else{
+        html = 'No data'
+        $('#system_users_table tbody').html(html)
+      }
+    }
+
     // History
     if(document.getElementById('history_logs')){
   

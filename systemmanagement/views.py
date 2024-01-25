@@ -303,17 +303,6 @@ def definitions(request):
     
     return render(request, 'definitions_system_parameters.html', context=context)
 
-def definitions_system_users(request):
-    page = 'definitions'
-    sidebar_title = 'system_users'
-    context = {
-        'title': 'Definitions',
-        'page': page,
-        'sidebar_title': sidebar_title,
-    }
-    
-    return render(request, 'definitions_system_users.html', context=context)
-
 def definitions_equipment_types(request):
     page = 'definitions'
     sidebar_title = 'equipment_types'

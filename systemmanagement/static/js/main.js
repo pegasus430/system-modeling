@@ -1191,7 +1191,7 @@ $(document).ready(function() {
     if(document.getElementById('system_parameters')){
   
       var system_parameters = JSON.parse(document.getElementById('system_parameters').textContent)
-      
+      var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)  
       var tableData = []
       if(system_parameters.length){
           system_parameters.forEach(element => {
@@ -1270,70 +1270,77 @@ $(document).ready(function() {
             }
             p_comment = cell.comment
           
-            $.ajax({
-              type: "GET",
-              url: 'updateSystemParameters',
-              data: {
-                p_id: p_id,
-                p_label: p_label,
-                p_value: p_value,
-                p_comment: p_comment,
-              },
-              success: function (data){
-                data = JSON.parse(data)
-                var result = data['result']
-                
-                if(result){
-                  showSuccessNotification('The system parameter has been  updated successfully!')
-                  var system_parameters = data['system_parameters']
-                  var tableData = []
-                  if(system_parameters.length){
-                      system_parameters.forEach(element => {
-                        tableData.push({
-                          'id': element.id,
-                          'label': element.label ,
-                          'value': element.value,
-                          'comment': element.comment,
-                          'last_modified': element.modified_at,
-                          'action': '<div class="inner-flex">\
-                            <span class="bi bi-trash p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
-                            </div>'
+            let reason = prompt('Please write the reason why you update this parameter.', '')
+            if (reason != null){
+
+            
+              $.ajax({
+                type: "GET",
+                url: 'updateSystemParameters',
+                data: {
+                  p_id: p_id,
+                  p_label: p_label,
+                  p_value: p_value,
+                  p_comment: p_comment,
+                  p_reason: reason,
+                  p_user: currentUserName,
+                },
+                success: function (data){
+                  data = JSON.parse(data)
+                  var result = data['result']
+                  
+                  if(result){
+                    showSuccessNotification('The system parameter has been updated successfully!')
+                    var system_parameters = data['system_parameters']
+                    var tableData = []
+                    if(system_parameters.length){
+                        system_parameters.forEach(element => {
+                          tableData.push({
+                            'id': element.id,
+                            'label': element.label ,
+                            'value': element.value,
+                            'comment': element.comment,
+                            'last_modified': element.modified_at,
+                            'action': '<div class="inner-flex">\
+                              <span class="bi bi-trash p-1" data-id="'+ element.id +'" style="cursor:pointer"></span> \
+                              </div>'
+                          })
+
                         })
+                        
+                        $('#system_paramter_table').DataTable({
+                          data:  tableData ,
+                          dom: 'Bfrtip',
+                          destroy: true,
+                          columns: [
+                            { data: 'id' },
+                            { data: 'label' },
+                            { data: 'value' },
+                            { data: 'comment' },
+                            { data: 'last_modified' },
+                            { data: 'action'}
+                          ],
+                          columnDefs:[
+                            {
+                              targets: [0], 
+                              visible: false 
+                            },
+                            
+                          ],
+                          "order": [[ 1, "asc" ]]
+                        })
+                      }
 
-                      })
-                      
-                      $('#system_paramter_table').DataTable({
-                        data:  tableData ,
-                        dom: 'Bfrtip',
-                        destroy: true,
-                        columns: [
-                          { data: 'id' },
-                          { data: 'label' },
-                          { data: 'value' },
-                          { data: 'comment' },
-                          { data: 'last_modified' },
-                          { data: 'action'}
-                        ],
-                        columnDefs:[
-                          {
-                            targets: [0], 
-                            visible: false 
-                          },
-                          
-                        ],
-                        "order": [[ 1, "asc" ]]
-                      })
-                    }
-
+                  }
+                  else{
+                    showErrorNotification(data['message'])
+                  }
+                },
+                error: function(e){
+                  showErrorNotification('The error happend while requesting the server')
                 }
-                else{
-                  showErrorNotification('The error happend while updating the system parameters!')
-                }
-              },
-              error: function(e){
-                showErrorNotification('The error happend while requesting the server')
-              }
-            })
+              })
+            }
           });
 
       }
@@ -1343,23 +1350,30 @@ $(document).ready(function() {
     $('#systemParamerterModal .btn-primary').on('click', function(){
        var label = $('#adding_systemParamerter_label').val()
        if(label == ""){
-        showErrorNotification("The label can't be empty string")
+        showErrorNotification("The label should not be empty string.")
         return
        }
 
        var value = $('#adding_systemParamerter_value').val()
        if(value == ""){
-        showErrorNotification("The value can't be empty string")
+        showErrorNotification("The value should not be empty string.")
+        return
+       }
+
+       var reason = $('#adding_systemParamerter_reason').val()
+       if(reason == ""){
+        showErrorNotification("The reason should not be empty string.")
         return
        }
 
        var comment =  $('#adding_systemParamerter_comment').val()
-
+       var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)  
        $.ajax({
         type: "GET",
         url: 'addSystemParameters',
         data: {
-          
+          p_user: currentUserName,
+          p_reason: reason,
           p_label: label,
           p_value: value,
           p_comment: comment,
@@ -1409,12 +1423,15 @@ $(document).ready(function() {
                   "order": [[ 1, "asc" ]]
                 })
               }
-
+            $('#adding_systemParamerter_label').val('')
+            $('#adding_systemParamerter_value').val('')
+            $('#adding_systemParamerter_comment').val('')
+            $('#adding_systemParamerter_reason').val('')
             $('#systemParamerterModal').modal('hide')
 
           }
           else{
-            showErrorNotification('The error happend while adding the system parameters!')
+            showErrorNotification(data['message'])
           }
         },
         error: function(e){
@@ -1425,21 +1442,25 @@ $(document).ready(function() {
 
     // remove system paramter from the table
     $('#system_paramter_table').on('click', '.bi-trash', function(){
+      var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)  
 
-      if(confirm('Are you sure to remove this system parameter?')){
+      let reason = prompt('Please write the reason why you remove this parameter.', '')
+      if (reason != null){
         selectedPId = this.getAttribute('data-id')
         $.ajax({
           type: "GET",
           url: 'removeSystemParameters',
           data: {
             selectedPId: selectedPId,
+            p_reason: reason,
+            p_user: currentUserName,
           },
           success: function (data){
             data = JSON.parse(data)
             var result = data['result']
             
             if(result){
-              showSuccessNotification('The system parameter has been  removed successfully!')
+              showSuccessNotification('The system parameter has been removed successfully.')
               
               var system_parameters = data['system_parameters']
               
@@ -1486,7 +1507,7 @@ $(document).ready(function() {
 
             }
             else{
-              showErrorNotification('The error happend while removing the system parameters!')
+              showErrorNotification(data['message'])
             }
           },
           error: function(e){

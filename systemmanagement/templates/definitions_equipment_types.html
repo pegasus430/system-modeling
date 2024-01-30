@@ -5,6 +5,7 @@
 {{all_equipment_types | json_script:'all_equipment_types'}}
 {{all_resources | json_script:'all_resources'}}
 {{all_interfaces | json_script:'all_interfaces'}}
+{{user.username | json_script:'currentUserName'}}
 
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
@@ -33,7 +34,7 @@
                         <div class="row mt-1">
                             <label class="col-md-3 col-form-label text-secondary">Label:</label>
                             <div class="col-md-8">
-                            <input type="text" class="form-control" placeholder="Label" value="" id="equipment_type_label" readonly>
+                            <input type="text" class="form-control" placeholder="Label" value="" id="equipment_type_label">
                             </div>
                         </div>
                         <div class="row mt-1">
@@ -102,7 +103,7 @@
                             </button>
                             </div>
                             <div class="col-md-4">
-                            <button type="button" id="btn_equipment_type_delete" class="btn btn-danger">
+                            <button type="button" id="btn_equipment_type_delete" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#equipmentTypeRemoveModal">
                                 Delete
                             </button>
                             </div>
@@ -252,6 +253,12 @@
                     <input class="form-check-input form-control" type="checkbox" id="adding_equipment_type_approved">
                   </div>
               </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="comment" style="height: 60px;" id="adding_equipment_type_reason"></textarea>
+                </div>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -351,7 +358,42 @@
           </div>
         </div>
       </div>
-  </div>
+    </div>
+
+    <div class="modal fade" id="equipmentTypeRemoveModal" tabindex="-1" aria-labelledby="equipmentTypeRemoveModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="equipmentTypeRemoveModalLabel">Remove Equipment Type</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Remove Reason" value="" id="remove_equipment_type_reason" name="remove_equipment_type_reason" required ></textarea>
+                </div>
+              </div>
+             
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Option:</label>
+                <div class="col-md-7">
+                  <select class="form-select" id="remove_equipment_type_option">
+                    <option value="orphan">Orphan</option>
+                    <option value="delete">Delete</option>
+                  </select>
+                </div>
+              </div>
+             
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button  class="btn btn-primary" type="button" >remove</button>
+          </div>
+        
+        </div>
+      </div>
+    </div>
 
     <script type="text/javascript">
         

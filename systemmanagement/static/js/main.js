@@ -3530,8 +3530,11 @@ $(document).ready(function() {
    {
      on('click', '#equipmentTypeUpdateCommitBtn', function(){
       var equipment_type_id = $('#equipment_type_id').val()  
-       if(equipment_type_id){
-        if(confirm('Are you sure to update this equipment type?')){
+      var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent) 
+
+      if(equipment_type_id){
+        let equipment_type_reason = prompt('Please write the reason why you update this equipment type.', '')
+        if(equipment_type_reason != null){
           var equipment_type_label = $('#equipment_type_label').val()
           var equipment_type_parent_path = $('#equipment_type_parent_path').val()
           var equipment_type_description = $('#equipment_type_description').val()
@@ -3540,6 +3543,7 @@ $(document).ready(function() {
           var equipment_type_model = $('#equipment_type_model').val()
           var equipment_type_comment = $('#equipment_type_comment').val()                
           var equipment_type_is_approved = $('#equipment_type_is_approved').prop('checked')
+          
           
           $.ajax({
            type: "GET",
@@ -3554,6 +3558,8 @@ $(document).ready(function() {
               equipment_type_model: equipment_type_model,
               equipment_type_comment: equipment_type_comment,
               equipment_type_is_approved: equipment_type_is_approved,       
+              equipment_type_reason: equipment_type_reason ,    
+              equipment_type_modified_by: currentUserName , 
            },
            success: function (data)
            {
@@ -3579,7 +3585,7 @@ $(document).ready(function() {
                $('#equipment_type_is_approved').prop('checked' , false)
              }
              else{
-              showErrorNotification('The error happend while updating the equipment type!')
+              showErrorNotification(data['message'])
             }
            },
            error:function(e){
@@ -3681,8 +3687,10 @@ $(document).ready(function() {
      on('click', '#equipmentTypeModal .btn-primary', function(){
        var addingEquipmentTypeLabel = $('#adding_equipment_type_label').val()
        var addingEquipmentTypeDescription = $('#adding_equipment_type_description').val()
-    
-       if(addingEquipmentTypeLabel != "" && addingEquipmentTypeDescription != ""){
+       var addingEquipmentTypeReason = $('#adding_equipment_type_reason').val()
+       var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)  
+
+       if(addingEquipmentTypeLabel != "" && addingEquipmentTypeDescription != "" && addingEquipmentTypeReason != ''){
          if(confirm('Are you sure to add this equpment type?')){
              var addingEquipmentTypeModifier = $('#adding_equipment_type_modifier').val()
              var addingEquipmentTypeManufacturer = $('#adding_equipment_type_manufacturer').val()
@@ -3691,7 +3699,6 @@ $(document).ready(function() {
              var addingEquipmentTypeParentPath = $('#adding_equipment_type_parent_path').val()
              addingEquipmentTypeParentPath =  addingEquipmentTypeParentPath.replaceAll(',', '.')
              var addingEquipmentTypeApproved = $('#adding_equipment_type_approved').prop('checked')
-             
  
              $.ajax({
                type: "GET",
@@ -3704,7 +3711,9 @@ $(document).ready(function() {
                 addingEquipmentTypeModel: addingEquipmentTypeModel,
                 addingEquipmentTypeComment: addingEquipmentTypeComment,
                 addingEquipmentTypeParentPath: addingEquipmentTypeParentPath,
-                addingEquipmentTypeApproved: addingEquipmentTypeApproved          
+                addingEquipmentTypeApproved: addingEquipmentTypeApproved,     
+                addingEquipmentTypeReason: addingEquipmentTypeReason ,    
+                addingEquipmentTypeModifiedBy: currentUserName ,        
                },
                success: function (data){
                  data = JSON.parse(data)
@@ -3720,6 +3729,7 @@ $(document).ready(function() {
                    $('#adding_equipment_type_manufacturer').val('')
                    $('#adding_equipment_type_model').val('')
                    $('#adding_equipment_type_comment').val('')
+                   $('#adding_equipment_type_reason').val('')
                    $('#adding_equipment_type_approved').prop('checked', false)
                    $("#equipmentTypeModal").modal('hide');
  
@@ -3731,33 +3741,37 @@ $(document).ready(function() {
 
                  }
                  else{
-                   showErrorNotification('The error has happend while adding the equipment type')
+                   showErrorNotification(data['message'])
                  }
                },
                error: function(e){
-                  showErrorNotification('The error has happend while requesting the server')
+                  showErrorNotification('The error has happend while requesting the server.')
                }
              })
          }
          
        }else{
-         showErrorNotification('Label and description can not be empty string')
+         showErrorNotification('The label, description and Reason should not be empty.')
        }
      })
    }
 
    //remove equipment type
-  if(select('#btn_equipment_type_delete')){
-    on('click','#btn_equipment_type_delete' , function(){
+  if(select('#equipmentTypeRemoveModal .btn-primary')){
+    on('click','#equipmentTypeRemoveModal .btn-primary' , function(){
       var selectedEquipmentTypeId = $('#equipment_type_id').val()
+      var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
       if(selectedEquipmentTypeId){
-        
-        if(confirm('Are you sure to remove this equipment type?')){
+          let equipmentTypeRemoveReason = $('#remove_equipment_type_reason').val()
+          let equipmentTypeRemoveOption = $('#remove_equipment_type_option').val()
           $.ajax({
             type: "GET",
             url: 'removeEquipmentType',
             data: {
-              selectedEquipmentTypeId: selectedEquipmentTypeId    
+              selectedEquipmentTypeId: selectedEquipmentTypeId,
+              equipmentTypeRemoveReason: equipmentTypeRemoveReason,
+              equipmentTypeRemoveOption: equipmentTypeRemoveOption,
+              equipmentTypeRemovedBy: currentUserName
             },
             success: function (data){
               data = JSON.parse(data)
@@ -3778,14 +3792,14 @@ $(document).ready(function() {
                $('#equipment_type_manufacturer').val('')
                $('#equipment_type_model').val('')
                $('#equipment_type_comment').val('')
-               $('#equipment_type_last_modified').val('')               
+               $('#equipment_type_last_modified').val('')     
+               $('#remove_equipment_type_reason').val('')          
                $('#equipment_type_is_approved').prop('checked' , false)
-
+               $("#equipmentTypeRemoveModal").modal('hide');
   
               }
               else{
-                 showErrorNotification('The error happend while removing the euqipment type!')
-                  
+                 showErrorNotification(data['message'])
               }
             },
             error: function(e){
@@ -3793,7 +3807,7 @@ $(document).ready(function() {
               
             }
            })
-        }
+        
       }else{
         showErrorNotification('You need to select the equipment type to be removed!')
       }

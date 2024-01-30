@@ -1242,6 +1242,7 @@ def removeSystemParameters(request):
         return HttpResponse(data) 
 
 def updateEquipmentTypeDetail(request):
+    message = ''
     if request.method == 'GET':
         p_equipment_type_id = request.GET['equipment_type_id']
         p_equipment_type_label = request.GET['equipment_type_label']
@@ -1254,30 +1255,32 @@ def updateEquipmentTypeDetail(request):
         
         p_equipment_type_description =  request.GET['equipment_type_description']
         p_equipment_type_modifier =  request.GET['equipment_type_modifier']
-        equipment_type_manufacturer =  request.GET['equipment_type_manufacturer']
-        equipment_type_model =  request.GET['equipment_type_model']
-        equipment_type_comment = request.GET['equipment_type_comment'] 
-        equipment_type_is_approved = request.GET['equipment_type_is_approved'] 
-
-        current_time = datetime.datetime.now(pytz.utc)
-        
-        # Convert the current time to a timestamp with time zone
-        equipment_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        
-        
-        raw_query = "SELECT  fn_update_equipment_type({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', {} , '{}')".format(
-            p_equipment_type_id, p_equipment_type_label, p_equipment_type_parent_path, p_equipment_type_description, p_equipment_type_modifier,
-             equipment_type_manufacturer , equipment_type_model , equipment_type_comment, equipment_type_is_approved, equipment_modified_at
-        ) 
+        p_equipment_type_manufacturer =  request.GET['equipment_type_manufacturer']
+        p_equipment_type_model =  request.GET['equipment_type_model']
+        p_equipment_type_comment = request.GET['equipment_type_comment'] 
+        p_equipment_type_is_approved = request.GET['equipment_type_is_approved'] 
+        p_equipment_type_reason = request.GET['equipment_type_reason'] 
+        p_equipment_type_modified_by = request.GET['equipment_type_modified_by'] 
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
+                 cursor.execute("CALL proc_modify_equipment_type('{}','{}','{}','{}',{},'{}','{}','{}','{}','{}',{})".format(
+                        p_equipment_type_modified_by,
+                        p_equipment_type_reason,
+                        p_equipment_type_label, 
+                        p_equipment_type_description,
+                        p_equipment_type_id,
+                        p_equipment_type_parent_path,
+                        p_equipment_type_modifier,
+                        p_equipment_type_model,
+                        p_equipment_type_manufacturer,
+                        p_equipment_type_comment,
+                        p_equipment_type_is_approved,
+                    ))
 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_equipment_types = list(EquipmentType.objects.order_by('path').values())
         
@@ -1285,13 +1288,15 @@ def updateEquipmentTypeDetail(request):
             {
                 'result': result,
                 'all_equipment_types': all_equipment_types,
+                'message': message
             }, 
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
 def addEquipmentType(request):
-     if request.method == 'GET':
+    message = ''
+    if request.method == 'GET':
         addingEquipmentTypeLabel = request.GET['addingEquipmentTypeLabel']
         addingEquipmentTypeDescription =  request.GET['addingEquipmentTypeDescription']
         addingEquipmentTypeModifier = request.GET['addingEquipmentTypeModifier']        
@@ -1300,11 +1305,8 @@ def addEquipmentType(request):
         addingEquipmentTypeComment =  request.GET['addingEquipmentTypeComment']
         addingEquipmentTypeParentPath =  request.GET['addingEquipmentTypeParentPath']
         addingEquipmentTypeApproved = request.GET['addingEquipmentTypeApproved'] 
-
-        current_time = datetime.datetime.now(pytz.utc)
-        
-        # Convert the current time to a timestamp with time zone
-        equipment_type_modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        addingEquipmentTypeReason =  request.GET['addingEquipmentTypeReason']
+        addingEquipmentTypeModifiedBy =  request.GET['addingEquipmentTypeModifiedBy']
 
         try:
             query  = 'SELECT max(id) FROM all_equipment_type'
@@ -1319,19 +1321,23 @@ def addEquipmentType(request):
             else:
                 equipment_type_path = str(new_equipment_type_id)
             
-            
-            raw_query = "SELECT  fn_add_equipment_type({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, '{}')".format(
-                new_equipment_type_id, equipment_type_path, addingEquipmentTypeLabel,addingEquipmentTypeModel, addingEquipmentTypeModifier,
-                addingEquipmentTypeManufacturer,addingEquipmentTypeDescription , addingEquipmentTypeComment,addingEquipmentTypeApproved,  equipment_type_modified_at
-            ) 
-           
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
-
+                cursor.execute("CALL proc_modify_equipment_type('{}','{}','{}','{}',null,'{}','{}','{}','{}','{}',{})".format(
+                        addingEquipmentTypeModifiedBy,
+                        addingEquipmentTypeReason,
+                        addingEquipmentTypeLabel, 
+                        addingEquipmentTypeDescription,
+                        equipment_type_path,
+                        addingEquipmentTypeModifier,
+                        addingEquipmentTypeModel,
+                        addingEquipmentTypeManufacturer,
+                        addingEquipmentTypeComment,
+                        addingEquipmentTypeApproved,
+                    ))
+                
             return_result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             return_result = False
         all_equipment_types = list(EquipmentType.objects.order_by('path').values())
         
@@ -1339,27 +1345,33 @@ def addEquipmentType(request):
             {
                 'result': return_result,
                 'all_equipment_types': all_equipment_types,
+                'message': message
             }, 
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
 def removeEquipmentType(request):
+    message = ''
     if request.method == 'GET':
         selectedEquipmentTypeId = request.GET['selectedEquipmentTypeId']
-        
-        raw_query = "SELECT fn_remove_equipment_type({})".format(
-            selectedEquipmentTypeId
-        )
+        equipmentTypeRemoveReason = request.GET['equipmentTypeRemoveReason']
+        equipmentTypeRemoveOption = request.GET['equipmentTypeRemoveOption']
+        equipmentTypeRemovedBy = request.GET['equipmentTypeRemovedBy']
+
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
-              
+                cursor.execute("CALL proc_remove_equipment_type('{}','{}',{},'{}')".format(
+                       equipmentTypeRemovedBy,
+                       equipmentTypeRemoveReason,
+                       selectedEquipmentTypeId,
+                       equipmentTypeRemoveOption
+                ))
+
             result = True
                            
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
     
         all_equipment_types = list(EquipmentType.objects.order_by('path').values())
@@ -1368,6 +1380,7 @@ def removeEquipmentType(request):
             {
                 'result': result,  
                 'all_equipment_types' : all_equipment_types,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )

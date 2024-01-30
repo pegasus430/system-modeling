@@ -1296,6 +1296,7 @@ $(document).ready(function() {
           
           associatedResource.forEach(resource => {
             tableData.push({
+              'type_resource_id': resource.id,
               'type_id': resource.type_id,
               'resource_id': resource.resource_id,              
               'modifier': resource.modifier,
@@ -1309,6 +1310,7 @@ $(document).ready(function() {
             data:  tableData ,
             destroy: true,
             columns: [
+              { data: 'type_resource_id'},
               { data: 'type_id'},
               { data: 'resource_id' },
               { data: 'modifier' },
@@ -1317,7 +1319,7 @@ $(document).ready(function() {
               
             ],
             columnDefs:[
-              { "visible": false, "targets": [0, 1] },
+              { "visible": false, "targets": [0, 1, 2] },
             ]})
           
           tableData = []
@@ -1344,13 +1346,17 @@ $(document).ready(function() {
     
   }); 
 
+  // When clicking the cell in associated reource table on definitions/equpment_type page
   $('#equipment_type_resource_table').on('click', 'tbody tr', function(e){
     sTable = $('#equipment_type_resource_table').DataTable()
     var row = sTable.row(this).data()
+    var selectedTypeResourceId = row.type_resource_id    
     var selectedTypeId = row.type_id
     var selectedResourceId = row.resource_id
     $('#selectedResourceId').val(selectedResourceId)
+    $('#selectedTypeResourceId').val(selectedTypeResourceId)
     $('#selectedInterfaceId').val('')
+
     $.ajax({
       type: "GET",
       url: 'getEquipmentTypesInterface',

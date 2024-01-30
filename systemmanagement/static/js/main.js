@@ -3832,7 +3832,7 @@ $(document).ready(function() {
         })
 
       }else{
-         showErrorNotification('You have to select the equipment type')
+         showErrorNotification('You have to select the equipment type.')
        }
      
     })
@@ -3844,10 +3844,12 @@ $(document).ready(function() {
     on('click', '#equipmentTypeResourceModal .btn-primary', function(){
       var addingEquipmentTypeId = $('#equipment_type_id').val()
       var addingResourceId = $('#addingEquipmentTypeResource').val()
-   
-      if(addingEquipmentTypeId && addingResourceId){
+      let addingEquipmentTypeReourceReason = $('#addingEquipmentTypeResourceReason').val()
+      if(addingEquipmentTypeId && addingResourceId && addingEquipmentTypeReourceReason){
         if(confirm('Are you sure to add this resource to the equpment type?')){
             var addingEquipmentTypeReourceComment = $('#addingEquipmentTypeResourceComment').val()
+            
+            let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
             $.ajax({
               type: "GET",
               url: 'addEquipmentTypeResource',
@@ -3855,6 +3857,8 @@ $(document).ready(function() {
                 addingEquipmentTypeId: addingEquipmentTypeId,  
                 addingResourceId: addingResourceId,
                 addingEquipmentTypeReourceComment: addingEquipmentTypeReourceComment,
+                addingEquipmentTypeReourceReason: addingEquipmentTypeReourceReason,
+                addingEquipmentTypeReourceBy: currentUserName
               },
               success: function (data){
                 data = JSON.parse(data)
@@ -3864,6 +3868,7 @@ $(document).ready(function() {
                 if(result){
                   showSuccessNotification('The Resource has been inserted successfully!')                  
                   $('#addingEquipmentTypeResourceComment').val('')
+                  $('#addingEquipmentTypeResourceReason').val('')
                   $('#addingEquipmentTypeResource').find('option').remove()
                   $("#equipmentTypeResourceModal").modal('hide');
 
@@ -3872,6 +3877,7 @@ $(document).ready(function() {
                     
                     associatedResource.forEach(resource => {
                       tableData.push({
+                        'type_resource_id': resource.id,
                         'type_id': resource.type_id,
                         'resource_id': resource.resource_id,              
                         'modifier': resource.modifier,
@@ -3885,6 +3891,7 @@ $(document).ready(function() {
                       data:  tableData ,
                       destroy: true,
                       columns: [
+                        { data: 'type_resource_id'},
                         { data: 'type_id'},
                         { data: 'resource_id' },
                         { data: 'modifier' },
@@ -3893,13 +3900,13 @@ $(document).ready(function() {
                         
                       ],
                       columnDefs:[
-                        { "visible": false, "targets": [0, 1] },
+                        { "visible": false, "targets": [0, 1 , 2] },
                         
                       ]
                     })
                 }
                 else{
-                  showErrorNotification('The error has happend while adding the type resource')
+                  showErrorNotification(data['message'])
                 }
               },
               error: function(e){
@@ -3909,81 +3916,100 @@ $(document).ready(function() {
         }
         
       }else{
-        showErrorNotification('you should select the Equipment type and the resource')
+        showErrorNotification('you should select the Equipment type, resource and reason.')
       }
       
     })
   }
 
-  // remove type resource from the asociated Resource
+  // when clicking the delete resource btn from associated resource
   if(select('#btn_delete_equipment_type_resource')){
     on('click', '#btn_delete_equipment_type_resource', function(){
       var typeId = $('#equipment_type_id').val()
       var selectedResourceId = $('#selectedResourceId').val()
-      
       if(typeId && selectedResourceId){
-        if(confirm('Are you sure to remove the resource from the type resource?')){
-          $.ajax({
-            type: "GET",
-            url: 'removeEquipmentTypeResource',
-            data: {
-              typeId: typeId,  
-              selectedResourceId: selectedResourceId,            
-            },
-            success: function (data){
-              $('#selectedResourceId').val('')
-              data = JSON.parse(data)
-              var result = data['result']
-              var associatedResource = data['associatedResource']
-              
-              if(result){
-                showSuccessNotification('The Resource has been removed successfully!')                  
-                tableData = []
-                if(associatedResource.length){
-                  
-                  associatedResource.forEach(resource => {
-                    tableData.push({
-                      'type_id': resource.type_id,
-                      'resource_id': resource.resource_id,              
-                      'modifier': resource.modifier,
-                      'description': resource.description,
-                      'comment': resource.comment,
-                    })
-                  })
-                }
-                $('#equipment_type_resource_table').DataTable({
-                  data:  tableData ,
-                  destroy: true,
-                  columns: [
-                    { data: 'type_id'},
-                    { data: 'resource_id' },
-                    { data: 'modifier' },
-                    { data: 'description' },
-                    { data: 'comment' },
-                    
-                  ],
-                  columnDefs:[
-                    { "visible": false, "targets": [0, 1] },
-                  ]
-                })
-              }
-              else{
-                var message = data['message']
-                if(message){
-                  showErrorNotification(message)
-                }else{
-                  showErrorNotification('The error has happend while removing the type resource')
-                }
-              }
-            },
-            error: function(e){
-               showErrorNotification('The error has happend while requesting the server')
-            }
-           })
-        }
-      }else{
+          return
+      }
+      else{
         showErrorNotification('You should select the Resource to be removed!')
       }
+
+    })
+  }
+  
+
+  // remove type resource from the asociated Resource
+  if(select('#equipmentTypeResourceRemoveModal .btn-primary')){
+    on('click', '#equipmentTypeResourceRemoveModal .btn-primary', function(){
+      var typeResourceId = $('#selectedTypeResourceId').val()
+      var typeId = $('#equipment_type_id').val()
+      let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+      let reason = $('#remove_equipment_type_resource_reason').val()
+      let option = $('#remove_equipment_type_resource_option').val()
+      $.ajax({
+        type: "GET",
+        url: 'removeEquipmentTypeResource',
+        data: {
+          typeId: typeId,
+          typeResourceId: typeResourceId,
+          typeResourceReason: reason,
+          typeResource_modified_by: currentUserName,    
+          typeResourceOption: option,       
+        },
+        success: function (data){
+          $('#selectedResourceId').val('')
+          $('#selectedTypeResourceId').val('')
+          $('#remove_equipment_type_resource_reason').val('')
+          $("#equipmentTypeResourceRemoveModal").modal('hide');   
+
+          data = JSON.parse(data)
+          var result = data['result']
+          var associatedResource = data['associatedResource']
+
+          if(result){
+            showSuccessNotification('The Resource has been removed successfully!')  
+                         
+            tableData = []
+            if(associatedResource.length){
+              
+              associatedResource.forEach(resource => {
+                tableData.push({
+                  'type_resource_id': resource.id,
+                  'type_id': resource.type_id,
+                  'resource_id': resource.resource_id,              
+                  'modifier': resource.modifier,
+                  'description': resource.description,
+                  'comment': resource.comment,
+                })
+              })
+            }
+            $('#equipment_type_resource_table').DataTable({
+              data:  tableData ,
+              destroy: true,
+              columns: [
+                { data: 'type_resource_id'},
+                { data: 'type_id'},
+                { data: 'resource_id' },
+                { data: 'modifier' },
+                { data: 'description' },
+                { data: 'comment' },
+                
+              ],
+              columnDefs:[
+                { "visible": false, "targets": [0, 1, 2] },
+              ]
+            })
+          }
+          else{
+            showErrorNotification(data['message'])
+          }
+        },
+        error: function(e){
+            showErrorNotification('The error has happend while requesting the server')
+        }
+        })
+        
+     
     })
   }
 

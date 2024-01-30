@@ -114,17 +114,19 @@
                         <hr/>
         
                         <div class="row">
-                            <!-- Equipment Details table -->
+                            <!-- Associated Reousrces Details table -->
                             <h5 class="card-title">Associated Resources</h5>
                             <input type="text" style="display: none;" id="selectedResourceId">
+                            <input type="text" style="display: none;" id="selectedTypeResourceId">
                             <table class="display nowrap custom_datatable1" id="equipment_type_resource_table">
                                 <thead style="background-color: #000; color: white; border: solid 1px;">
                                     <tr>
+                                        <th style="display: none;">type_resoure_id</th>  
                                         <th style="display: none;">type_id</th>
                                         <th style="display: none;">resouce_id</th>
-                                        <th scope="col" >Modifer</th>
+                                        <th scope="col">Modifer</th>
                                         <th scope="col">Description</th>
-                                        <th scope="col" >comment</th>
+                                        <th scope="col">comment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -139,7 +141,7 @@
                                 </button>
                               </div>
                               <div class="col-md-4">
-                              <button type="button" id="btn_delete_equipment_type_resource" class="btn btn-danger">
+                              <button type="button"  class="btn btn-danger" id="btn_delete_equipment_type_resource" data-bs-toggle="modal" data-bs-target="#equipmentTypeResourceRemoveModal">
                                   Delete Resource
                               </button>
                               </div>
@@ -290,7 +292,12 @@
                   </select>
                 </div>
               </div>
-              
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="reason" style="height: 60px;" id="addingEquipmentTypeResourceReason"></textarea>
+                </div>
+              </div>
               
               <div class="row mt-1">
                 <label class="col-md-4 col-form-label text-secondary">Comment:</label>
@@ -379,6 +386,41 @@
                 <label class="col-md-4 col-form-label text-secondary">Option:</label>
                 <div class="col-md-7">
                   <select class="form-select" id="remove_equipment_type_option">
+                    <option value="orphan">Orphan</option>
+                    <option value="delete">Delete</option>
+                  </select>
+                </div>
+              </div>
+             
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button  class="btn btn-primary" type="button" >remove</button>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="equipmentTypeResourceRemoveModal" tabindex="-1" aria-labelledby="equipmentTypeResourceRemoveModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="equipmentTypeResourceRemoveModalLabel">Remove Associated Resource</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Remove Reason" value="" id="remove_equipment_type_resource_reason" name="remove_equipment_type_resource_reason" required ></textarea>
+                </div>
+              </div>
+             
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Option:</label>
+                <div class="col-md-7">
+                  <select class="form-select" id="remove_equipment_type_resource_option">
                     <option value="orphan">Orphan</option>
                     <option value="delete">Delete</option>
                   </select>

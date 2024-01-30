@@ -466,7 +466,7 @@ def get_connection_state_detail(request):
 def getEquipmentTypesAttributes(request):
     if request.method == 'GET':
         selectedtypeId = request.GET['selectedtypeId']
-        raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
+        raw_query = "SELECT A.id, A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
             left join all_resource B on A.resource_id = B.id \
             where type_id = " + selectedtypeId + " order by B.modifier"
         
@@ -1387,27 +1387,30 @@ def removeEquipmentType(request):
         return HttpResponse(data) 
 
 def addEquipmentTypeResource(request):
+    message = ''
     if request.method == 'GET':
         addingEquipmentTypeId = request.GET['addingEquipmentTypeId']
         addingResourceId = request.GET['addingResourceId']
         addingEquipmentTypeReourceComment = request.GET['addingEquipmentTypeReourceComment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_add_type_resource({}, {}, '{}', '{}')".format(
-            addingEquipmentTypeId,addingResourceId , addingEquipmentTypeReourceComment, modified_at
-        )
-        
+        addingEquipmentTypeReourceReason = request.GET['addingEquipmentTypeReourceReason']
+        addingEquipmentTypeReourceBy = request.GET['addingEquipmentTypeReourceBy']
+
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_type_resource('{}','{}',null,{},{},'{}')".format(
+                        addingEquipmentTypeReourceBy,
+                        addingEquipmentTypeReourceReason,
+                        addingEquipmentTypeId, 
+                        addingResourceId,
+                        addingEquipmentTypeReourceComment,
+                    ))            
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
     
         
-        raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
+        raw_query = "SELECT A.id, A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
             left join all_resource B on A.resource_id = B.id \
             where type_id = " + addingEquipmentTypeId + " order by B.modifier"
         
@@ -1419,6 +1422,7 @@ def addEquipmentTypeResource(request):
         data = json.dumps(
             {
                 'result': result,  
+                'message': message,
                 'associatedResource': associatedResource,
             } ,
             cls=DateTimeEncoder
@@ -1427,32 +1431,26 @@ def addEquipmentTypeResource(request):
 
 def removeEquipmentTypeResource(request):
     if request.method == 'GET':
+        typeResourceId = request.GET['typeResourceId']
         typeId = request.GET['typeId']
-        selectedResourceId = request.GET['selectedResourceId']
+        typeResourceReason = request.GET['typeResourceReason']
+        typeResource_modified_by = request.GET['typeResource_modified_by']
+        typeResourceOption = request.GET['typeResourceOption']
         message = ''
-        raw_query = "SELECT count(*) FROM type_resource WHERE type_id = {} and resource_id = {}".format(
-            typeId, selectedResourceId
-        )
-        
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
-                counter = results[0]
-                if counter > 0:
-                    raw_query = 'SELECT fn_remove_type_resource({}, {})'.format(typeId, selectedResourceId)
-                    
-                    cursor.execute(raw_query)
-                    results = cursor.fetchone()
-                    result = True        
-                else:
-                    result = False
-                    message = 'This resource is from the Ancestor type. You can not remove this resource.'
+                cursor.execute("CALL proc_remove_type_resource('{}','{}',{},'{}')".format(
+                        typeResource_modified_by,
+                        typeResourceReason,
+                        typeResourceId,
+                        typeResourceOption
+                    )) 
+                result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         
-        raw_query = "SELECT  A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
+        raw_query = "SELECT  A.id, A.type_id, A.resource_id, A.comment, B.modifier , B.description FROM public.all_type_resource as A  \
             left join all_resource B on A.resource_id = B.id \
             where type_id = " + typeId + " order by B.modifier"
         

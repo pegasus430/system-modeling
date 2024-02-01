@@ -322,7 +322,9 @@ class TypeResource(models.Model):
         db_table = 'all_type_resource'
 
 class TypeInterface(models.Model):
-    type_id = models.BigIntegerField(primary_key=True)
+    type_interface_id = models.BigIntegerField(primary_key=True)
+    type_resource_id = models.BigIntegerField()
+    type_id = models.BigIntegerField()
     resource_id = models.BigIntegerField()
     interface_id = models.BigIntegerField()
     type_interface_comment = models.TextField()

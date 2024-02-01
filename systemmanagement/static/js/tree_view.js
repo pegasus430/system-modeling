@@ -1372,7 +1372,7 @@ $(document).ready(function() {
         if(typeInterfaceList.length){
           typeInterfaceList.forEach(interface => {
             tableData.push({
-              'interface_id': interface.interface_id,
+              'type_interface_id': interface.type_interface_id,
               'identifier': interface.interface_identifier,
               'description': interface.interface_description,              
               'class_label': interface.interface_class_label,
@@ -1386,7 +1386,7 @@ $(document).ready(function() {
           data:  tableData ,
           destroy: true,
           columns: [
-            { data: 'interface_id'},
+            { data: 'type_interface_id'},
             { data: 'identifier'},
             { data: 'description' },
             { data: 'class_label' },
@@ -1407,7 +1407,7 @@ $(document).ready(function() {
   $('#equipment_type_interface_table').on('click', 'tbody tr', function(e){
     sTable = $('#equipment_type_interface_table').DataTable()
     var row = sTable.row(this).data()    
-    $('#selectedInterfaceId').val(row.interface_id)
+    $('#selectedTypeInterfaceId').val(row.type_interface_id)
   })
 
   $('.equipment_resource_page').on('click', '.treeview-li .treeview-title',function(){

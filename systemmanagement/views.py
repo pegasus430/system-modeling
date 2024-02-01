@@ -1470,46 +1470,33 @@ def removeEquipmentTypeResource(request):
         return HttpResponse(data) 
     
 def addEquipmentTypeInterface(request):
+    message = ''
     if request.method == 'GET':
-        addingTypeId = request.GET['addingTypeId']
-        addingResourceId = request.GET['addingResourceId']
+        addingTypeResourceId = request.GET['addingTypeResourceId']      
         addingInterfaceId = request.GET['addingInterfaceId']
         is_active = request.GET['is_active']
         addingComment = request.GET['addingComment']
-
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = 'SELECT id FROM type_resource WHERE type_id = {} and resource_id = {}'.format(
-            addingTypeId, addingResourceId
-        )
+        addingReason = request.GET['addingReason']
+        addingBy = request.GET['addingBy']
 
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
-            type_resource_id = results[0]
-        except Exception as e:
-            print(e)
-            result = False
-
-        raw_query = "SELECT fn_add_type_interface({}, {}, '{}', {}, '{}')".format(
-            type_resource_id, addingInterfaceId, addingComment, is_active, modified_at
-        )
-        print(raw_query)
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_type_interface('{}','{}',null,{}, {}, '{}', {})".format(
+                        addingBy,
+                        addingReason,
+                        addingTypeResourceId,
+                        addingInterfaceId,
+                        addingComment, 
+                        is_active
+                    ))                
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
-
 
         typeInterfacedb = TypeInterface.objects.extra(
             where=[
-                "type_id = " + addingTypeId + " and resource_id = " + addingResourceId
+                "type_resource_id = " + addingTypeResourceId 
             ]
         ).order_by('interface_identifier')
 
@@ -1519,6 +1506,7 @@ def addEquipmentTypeInterface(request):
             {
                 'result': result,  
                 'associatedInterface': typeInterfaceList,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
@@ -1526,43 +1514,27 @@ def addEquipmentTypeInterface(request):
 
 def removeEquipmentTypeInterface(request):
     if request.method == 'GET':
-        typeId = request.GET['typeId']
-        selectedResourceId = request.GET['selectedResourceId']
-        selectedInterfaceId = request.GET['selectedInterfaceId']
-
+        selectedTypeInterfaceId = request.GET['selectedTypeInterfaceId']
+        reason = request.GET['reason']
+        removed_by = request.GET['removed_by']
+        typeResourceId = request.GET['typeResourceId']
         message = ''
-        raw_query = "SELECT id FROM type_resource WHERE type_id = {} and resource_id = {}".format(
-            typeId, selectedResourceId
-        )
-        
+       
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
-                type_resource_id = results[0]
-                if type_resource_id:
-                    raw_query = 'SELECT count(*) FROM type_interface WHERE type_resource_id = {} and interface_id = {}'.format(type_resource_id, selectedInterfaceId)
-                    cursor.execute(raw_query)
-                    results = cursor.fetchone()
-                    counter = results[0]
-                    if counter:
-                        raw_query = "SELECT fn_remove_type_interface({}, {})".format(type_resource_id, selectedInterfaceId)
-                        cursor.execute(raw_query)
-                        results = cursor.fetchone()
-                        result = True
-                    else:
-                        result = False
-                        message = 'This resource is from the Ancestor type. You can not remove this resource.'
-                else:
-                    result = False
-                    message = 'This resource is from the Ancestor type. You can not remove this resource.'
+                cursor.execute("CALL proc_remove_type_interface('{}','{}', {})".format(
+                        removed_by,
+                        reason,
+                        selectedTypeInterfaceId,
+                    ))    
+                result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         
         typeInterfacedb = TypeInterface.objects.extra(
             where=[
-                "type_id = " + typeId + " and resource_id = " + selectedResourceId
+                "type_resource_id = " + typeResourceId
             ]
         ).order_by('interface_identifier')
         typeInterfaceList = list(typeInterfacedb.values())

@@ -3958,7 +3958,7 @@ $(document).ready(function() {
         },
         success: function (data){
           $('#selectedResourceId').val('')
-          $('#selectedTypeResourceId').val('')
+          // $('#selectedTypeResourceId').val('')
           $('#remove_equipment_type_resource_reason').val('')
           $("#equipmentTypeResourceRemoveModal").modal('hide');   
 
@@ -4050,21 +4050,25 @@ $(document).ready(function() {
     on('click', '#equipmentTypeInterfaceModal .btn-primary', function(){
       var addingTypeId = $('#equipment_type_id').val()
       var addingResourceId = $('#selectedResourceId').val()
-   
+      var addingTypeResourceId = $('#selectedTypeResourceId').val()
+      var currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
       if(addingTypeId && addingResourceId){
         if(confirm('Are you sure to add this interface to the equipment type?')){
             var addingInterfaceId = $('#addingEquipmentTypeInterface').val()
             var is_active =  $('#addingEquipmentTypeInterfaceActive').prop('checked')
             var addingComment = $('#addingEquipmentTypeInterfaceComment').val()
+            var addingReason = $('#addingEquipmentTypeInterfaceReason').val()
+            
             $.ajax({
               type: "GET",
               url: 'addEquipmentTypeInterface',
               data: {
-                addingTypeId: addingTypeId,  
-                addingResourceId: addingResourceId,
+                addingTypeResourceId: addingTypeResourceId,
                 addingInterfaceId: addingInterfaceId,
-                is_active:is_active,
+                is_active:  is_active,
                 addingComment: addingComment,
+                addingReason: addingReason,
+                addingBy: currentUserName,
               },
               success: function (data){
                 data = JSON.parse(data)
@@ -4074,6 +4078,7 @@ $(document).ready(function() {
                 if(result){
                   showSuccessNotification('The Resource has been inserted successfully!')                  
                   $('#addingEquipmentTypeInterfaceComment').val('')
+                  $('#addingEquipmentTypeInterfaceReason').val('')
                   $('#addingInterfaceId').find('option').remove()
                   $('#addingEquipmentTypeInterfaceActive').prop('checked', false)
                   $("#equipmentTypeInterfaceModal").modal('hide');
@@ -4082,7 +4087,7 @@ $(document).ready(function() {
                   if(associatedInterface.length){
                     associatedInterface.forEach(element => {
                       tableData.push({
-                        'interface_id': element.interface_id,
+                        'type_interface_id': element.type_interface_id,
                         'identifier': element.interface_identifier,
                         'description': element.interface_description,              
                         'class_label': element.interface_class_label,
@@ -4096,7 +4101,7 @@ $(document).ready(function() {
                       data:  tableData ,
                       destroy: true,
                       columns: [
-                        { data: 'interface_id'},
+                        { data: 'type_interface_id'},
                         { data: 'identifier'},
                         { data: 'description' },
                         { data: 'class_label' },
@@ -4110,7 +4115,7 @@ $(document).ready(function() {
                     })
                 }
                 else{
-                  showErrorNotification('The error has happend while adding the interface')
+                  showErrorNotification(data['message'])
                 }
               },
               error: function(e){
@@ -4126,81 +4131,91 @@ $(document).ready(function() {
     })
   }
 
-  // remove type interface from the asociated interface
+  // click remove type interface brb 
   if(select('#btn_delete_equipment_type_interface')){
     on('click', '#btn_delete_equipment_type_interface', function(){
-      var typeId = $('#equipment_type_id').val()
-      var selectedResourceId = $('#selectedResourceId').val()
-      var selectedInterfaceId = $('#selectedInterfaceId').val()
-      if(typeId && selectedResourceId && selectedInterfaceId){
-        if(confirm('Are you sure to remove the interface from the type interface?')){
-          $.ajax({
-            type: "GET",
-            url: 'removeEquipmentTypeInterface',
-            data: {
-              typeId: typeId,  
-              selectedResourceId: selectedResourceId,    
-              selectedInterfaceId:selectedInterfaceId,        
-            },
-            success: function (data){
-              
-              $('#selectedInterfaceId').val('')
-              data = JSON.parse(data)
-              var result = data['result']
-              var associatedInterface = data['associatedInterface']
-              
-              if(result){
-                showSuccessNotification('The Interface has been removed successfully!')                  
-                tableData = []
-                if(associatedInterface.length){
-                  associatedInterface.forEach(element => {
-                    tableData.push({
-                      'interface_id': element.interface_id,
-                      'identifier': element.interface_identifier,
-                      'description': element.interface_description,              
-                      'class_label': element.interface_class_label,
-                      'comment': element.type_interface_comment,
-                      'active': element.type_interface_is_active,
-                     })
-                  })
-                }
-                $('#equipment_type_interface_table').DataTable({
-                  data:  tableData ,
-                  destroy: true,
-                  columns: [
-                    { data: 'interface_id'},
-                    { data: 'identifier'},
-                    { data: 'description' },
-                    { data: 'class_label' },
-                    { data: 'comment' },
-                    { data: 'active' },
-                    
-                  ],
-                  columnDefs:[
-                    { "visible": false, "targets": [0] },
-                  ]
-                })
-               
-              }
-              else{
-                var message = data['message']
-                if(message){
-                  showErrorNotification(message)
-                }else{
-                  showErrorNotification('The error has happend while removing the type interface')
-                }
-              }
-            },
-            error: function(e){
-               showErrorNotification('The error has happend while requesting the server')
-            }
-           })
-        }
+      
+      var selectedTypeInterfaceId = $('#selectedTypeInterfaceId').val()
+      if(selectedTypeInterfaceId){
+        return
       }else{
         showErrorNotification('You should select the interface to be removed!')
       }
     })
   }
+
+  // remove associated type interface on the modal
+  if(select('#equipmentTypeInterfaceRemoveModal .btn-primary')){
+    on('click', '#equipmentTypeInterfaceRemoveModal .btn-primary', function(){
+      let reason = $('#remove_equipment_type_interface_reason').val()
+      let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+      var typeResourceId = $('#selectedTypeResourceId').val()
+      var selectedTypeInterfaceId = $('#selectedTypeInterfaceId').val()
+      $.ajax({
+        type: "GET",
+        url: 'removeEquipmentTypeInterface',
+        data: {
+          selectedTypeInterfaceId: selectedTypeInterfaceId,
+          reason: reason,
+          removed_by: currentUserName,
+          typeResourceId: typeResourceId
+        },
+        success: function (data){
+          
+          $('#remove_equipment_type_interface_reason').val('')
+          $('#selectedTypeInterfaceId').val('')
+          data = JSON.parse(data)
+          var result = data['result']
+          var associatedInterface = data['associatedInterface']
+          
+          if(result){
+            $('#equipmentTypeInterfaceRemoveModal').modal('hide')
+            showSuccessNotification('The Interface has been removed successfully!')                  
+            tableData = []
+            if(associatedInterface.length){
+              associatedInterface.forEach(element => {
+                tableData.push({
+                  'type_interface_id': element.type_interface_id,
+                  'identifier': element.interface_identifier,
+                  'description': element.interface_description,              
+                  'class_label': element.interface_class_label,
+                  'comment': element.type_interface_comment,
+                  'active': element.type_interface_is_active,
+                 })
+              })
+            }
+            $('#equipment_type_interface_table').DataTable({
+              data:  tableData ,
+              destroy: true,
+              columns: [
+                { data: 'type_interface_id'},
+                { data: 'identifier'},
+                { data: 'description' },
+                { data: 'class_label' },
+                { data: 'comment' },
+                { data: 'active' },
+                
+              ],
+              columnDefs:[
+                { "visible": false, "targets": [0] },
+              ]
+            })
+           
+          }
+          else{
+            var message = data['message']
+        
+            showErrorNotification(message)
+
+          }
+        },
+        error: function(e){
+           showErrorNotification('The error has happend while requesting the server')
+        }
+       })
+    })
+  }
+
   
   //add resource group in the modal
   if(select('#resourceGroupModal .btn-primary')){

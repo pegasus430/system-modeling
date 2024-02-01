@@ -151,11 +151,11 @@
                         <div class="row">
                             <!-- Equipment Details table -->
                             <h5 class="card-title">Associated Interfaces</h5>
-                            <input type="text" style="display: none;" id="selectedInterfaceId">
+                            <input type="text" style="display: none;" id="selectedTypeInterfaceId">                            
                             <table class="display nowrap custom_datatable1" id="equipment_type_interface_table">
                                 <thead style="background-color: #000; color: white; border: solid 1px;">
                                     <tr>
-                                      <th style="display: none;">interface_id</th>
+                                      <th style="display: none;">type_interface_id</th>
                                       <th scope="col" width="30%">Identifer</th>
                                       <th scope="col" width="15%">Description</th>
                                       <th scope="col" >Interface Class label</th>
@@ -174,7 +174,7 @@
                                 </button>
                               </div>
                               <div class="col-md-4">
-                              <button type="button" id="btn_delete_equipment_type_interface" class="btn btn-danger">
+                              <button type="button" id="btn_delete_equipment_type_interface" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#equipmentTypeInterfaceRemoveModal">
                                   Delete Interface
                               </button>
                               </div>
@@ -357,6 +357,12 @@
                 <textarea class="form-control" placeholder="comment" style="height: 60px;" id="addingEquipmentTypeInterfaceComment"></textarea>
               </div>
             </div>
+            <div class="row mt-1">
+              <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+              <div class="col-md-7">
+                <textarea class="form-control" placeholder="reason" style="height: 60px;" id="addingEquipmentTypeInterfaceReason"></textarea>
+              </div>
+            </div>
             
           </div>
           <div class="modal-footer">
@@ -424,6 +430,31 @@
                     <option value="orphan">Orphan</option>
                     <option value="delete">Delete</option>
                   </select>
+                </div>
+              </div>
+             
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button  class="btn btn-primary" type="button" >remove</button>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="equipmentTypeInterfaceRemoveModal" tabindex="-1" aria-labelledby="equipmentTypeInterfaceRemoveModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="equipmentTypeInterfaceRemoveModalLabel">Remove Associated Interface</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Remove Reason" value="" id="remove_equipment_type_interface_reason" name="remove_equipment_type_interface_reason" required ></textarea>
                 </div>
               </div>
              

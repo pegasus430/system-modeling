@@ -4224,6 +4224,9 @@ $(document).ready(function() {
       let description = $('#adding_resource_group_description').val()
       let is_report = $('#adding_resource_group_is_reportable').prop('checked')
       let comment = $('#adding_resource_group_comment').val()
+      let reason = $('#adding_resource_group_reason').val()
+      let addedBy = JSON.parse(document.getElementById('currentUserName').textContent)
+
       if(label && description){
         $.ajax({
           type: 'GET',
@@ -4232,13 +4235,15 @@ $(document).ready(function() {
             label:label,
             description: description,
             is_report: is_report,
-            comment: comment
+            comment: comment,
+            reason: reason,
+            addedBy: addedBy,
           },
           success: function(data){
             data = JSON.parse(data)
             let result = data['result']
             if(result){
-              showSuccessNotification('The resource group has been added successfully')
+              showSuccessNotification('The new resource group has been added successfully.')
               let all_resource_group = data['all_resource_group']
               document.getElementById('all_resource_group').textContent = JSON.stringify(all_resource_group)
               var html = ''
@@ -4249,9 +4254,15 @@ $(document).ready(function() {
               });
               document.getElementById('all_equipment_resources_tree').innerHTML = html
               $('.treeview-animated').mdbTreeview();
+
+              $('#adding_resource_group_label').val('')
+              $('#adding_resource_group_description').val('')              
+              $('#adding_resource_group_comment').val('')
+              $('#adding_resource_group_reason').val('')
+
               $('#resourceGroupModal').modal('hide')
             }else{
-              showErrorNotification('The error happend while adding the resource group')
+              showErrorNotification(data['message'])
             }
           },
           error: function(e){
@@ -4273,8 +4284,11 @@ $(document).ready(function() {
         let description  = $('#resource_group_description').val()
         let is_report  = $('#resource_group_is_reportable').prop('checked')
         let comment  = $('#resource_group_comment').val()
+        let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
+
         if(label && description){
-          if(confirm('Are you sure to update this resource group ?')){
+          let reason = prompt('Please write the reason why you update this resource group.','')
+          if(reason != ''){
             $.ajax({
               type: 'GET',
               url: 'updateResourceGroup',
@@ -4283,13 +4297,15 @@ $(document).ready(function() {
                 label:label,
                 description: description,
                 is_report: is_report,
-                comment: comment
+                comment: comment,
+                modifiedBy: modifiedBy,
+                reason: reason,
               },
               success: function(data){
                 data = JSON.parse(data)
                 let result = data['result']
                 if(result){
-                  showSuccessNotification('The resource group has been updated successfully')
+                  showSuccessNotification('The resource group has been updated successfully.')
                   let all_resource_group = data['all_resource_group']
                   document.getElementById('all_resource_group').textContent = JSON.stringify(all_resource_group)
                   var html = ''
@@ -4300,9 +4316,9 @@ $(document).ready(function() {
                   });
                   document.getElementById('all_equipment_resources_tree').innerHTML = html
                   $('.treeview-animated').mdbTreeview();
-                  $('#resourceGroupModal').modal('hide')
+                  
                 }else{
-                  showErrorNotification('The error happend while updating the resource group')
+                  showErrorNotification(data['message'])
                 }
               },
               error: function(e){
@@ -4323,19 +4339,23 @@ $(document).ready(function() {
   if(select('#btn_remove_resource_group')){
     on('click', '#btn_remove_resource_group', function(){
       var selectedGroupId = $('#resource_group_id').val()
+      let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
       if(selectedGroupId){
-          if(confirm('Are you sure to remove this resource group?')){
+        let reason = prompt('Please write the reason why you remove this resource group.','')
+          if(reason != ''){
             $.ajax({
               type: 'GET',
               url: 'removeResourceGroup',
               data:{
                 groupId: selectedGroupId,
+                modifiedBy: modifiedBy,
+                reason: reason,
               },
               success: function(data){
                 data = JSON.parse(data)
                 let result = data['result']
                 if(result){
-                  showSuccessNotification('The resource group has been removed successfully')
+                  showSuccessNotification('The resource group has been removed successfully.')
                   let all_resource_group = data['all_resource_group']
                   document.getElementById('all_resource_group').textContent = JSON.stringify(all_resource_group)
                   var html = ''
@@ -4346,9 +4366,13 @@ $(document).ready(function() {
                   });
                   document.getElementById('all_equipment_resources_tree').innerHTML = html
                   $('.treeview-animated').mdbTreeview();
-                  $('#resourceGroupModal').modal('hide')
+                  $('#resource_group_label').val('')
+                  $('#resource_group_description').val('')
+                  $('#resource_group_is_reportable').prop('checked', false)
+                  $('#resource_group_comment').val('')
+                 
                 }else{
-                  showErrorNotification('The error happend while removing the resource group')
+                  showErrorNotification(data['message'])
                 }
               },
               error: function(e){

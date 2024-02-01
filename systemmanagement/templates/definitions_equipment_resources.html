@@ -4,6 +4,8 @@
 {% block maincontent %}
 {{all_resources | json_script:'all_resources'}}
 {{all_resource_group | json_script:'all_resource_group'}}
+{{user.username | json_script:'currentUserName'}}
+
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_resource_page card card-body system_overview border-gray">
@@ -145,6 +147,13 @@
                 <label class="col-md-4 col-form-label text-secondary">Comment:</label>
                 <div class="col-md-7">
                   <textarea class="form-control" placeholder="comment" style="height: 60px;" id="adding_resource_group_comment"></textarea>
+                </div>
+              </div>
+
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="reason" style="height: 60px;" id="adding_resource_group_reason"></textarea>
                 </div>
               </div>
               

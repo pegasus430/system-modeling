@@ -1550,100 +1550,103 @@ def removeEquipmentTypeInterface(request):
         return HttpResponse(data) 
 
 def addResourceGroup(request):
+    message = ''
     if request.method == 'GET':
         label = request.GET['label']
         description = request.GET['description']
         reportable = request.GET['is_report']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        reason = request.GET['reason']
+        addedBy = request.GET['addedBy']
 
-        raw_query = "SELECT fn_add_resource_group('{}', '{}', {}, '{}', '{}')".format(
-            label, description, reportable, comment, modified_at
-        )
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_resource_group('{}','{}','{}', '{}', null, '{}', {})".format(
+                        addedBy,
+                        reason,
+                        label,
+                        description,
+                        comment, 
+                        reportable
+                    ))
+                
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_resource_group = list(ResourceGroup.objects.order_by('label').values())
         data = json.dumps(
             {
                 'result': result,  
                 'all_resource_group': all_resource_group,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def updateResourceGroup(request):
+     message = ''
      if request.method == 'GET':
         id = request.GET['groupId']
         label = request.GET['label']
         description = request.GET['description']
         reportable = request.GET['is_report']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = "SELECT fn_update_resource_group({}, '{}', '{}', {}, '{}', '{}')".format(
-            id, label, description, reportable, comment, modified_at
-        )
+        modifiedBy = request.GET['modifiedBy']
+        reason = request.GET['reason']
+       
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                 cursor.execute("CALL proc_modify_resource_group('{}','{}','{}', '{}', {}, '{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        label,
+                        description,
+                        id,
+                        comment, 
+                        reportable
+                    ))
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_resource_group = list(ResourceGroup.objects.order_by('label').values())
         data = json.dumps(
             {
                 'result': result,  
                 'all_resource_group': all_resource_group,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
      
 def removeResourceGroup(request):
+     message = ''
      if request.method == 'GET':
         group_id = request.GET['groupId']
-
-        raw_query = "SELECT id FROM resource_group WHERE label='Unassigned'"
-        with connection.cursor() as cursor:
-            cursor.execute(raw_query)
-            results = cursor.fetchone()
-        unAssigneId = results[0]
-    
-        raw_query = "SELECT fn_update_resource_with_new_group({}, {})".format(group_id, unAssigneId)
+        modifiedBy = request.GET['modifiedBy']
+        reason = request.GET['reason']
+      
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_remove_resource_group('{}','{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        group_id,
+                    )) 
+              
             result = True
         except Exception as e:
-            print(e)
-            result = False
-        
-        raw_query = "SELECT fn_remove_resource_group({})".format(group_id)
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
-            result = True
-        except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_resource_group = list(ResourceGroup.objects.order_by('label').values())
         data = json.dumps(
             {
                 'result': result,  
                 'all_resource_group': all_resource_group,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )

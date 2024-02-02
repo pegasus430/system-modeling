@@ -1508,17 +1508,20 @@ $(document).ready(function() {
       let description = cell.description
       let comment = cell.comment
       let resourceGroupId = selectedResourceGroupId
-
-      if(description){
+      let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
+      let reason = prompt('Please write the reason why you update this resource.', '')
+      if(description && reason){
         $.ajax({
           type: 'GET',
-          url: 'updateReourceDetail',
+          url: 'updateResourceDetail',
           data: {
             resourceId: resourceId,
             modifier: modifier,
             description: description,
             comment: comment,
-            resourceGroupId: resourceGroupId
+            resourceGroupId: resourceGroupId,
+            reason: reason,
+            modifiedBy: modifiedBy,
           },
           success: function (data){
             data = JSON.parse(data)
@@ -1530,7 +1533,7 @@ $(document).ready(function() {
               document.getElementById('all_resources').textContent = JSON.stringify(all_resources)
             }
             else{
-              showErrorNotification('The error happend while updating the resource!')
+              showErrorNotification(data['message'])
             }
           },
           error: function(e){
@@ -1538,7 +1541,7 @@ $(document).ready(function() {
           }
         })
       }else{
-        showErrorNotification('Description should not be empty string.')
+        showErrorNotification('The reason and description should not be empty string.')
       }
 
     })

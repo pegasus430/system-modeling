@@ -1652,44 +1652,50 @@ def removeResourceGroup(request):
         )
         return HttpResponse(data) 
      
-def updateReourceDetail(request):
+def updateResourceDetail(request):
+     message = ''
      if request.method == 'GET':
         resourceId = request.GET['resourceId']
         modifier = request.GET['modifier']
         description = request.GET['description']
         resourceGroupId = request.GET['resourceGroupId']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = "SELECT fn_update_resource({}, {}, '{}', '{}', '{}', '{}')".format(
-            resourceId, resourceGroupId, modifier, description, comment, modified_at
-        )
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+               cursor.execute("CALL proc_modify_resource('{}','{}', '{}', {}, {}, '{}', '{}')".format(
+                        modifiedBy,
+                        reason,
+                        description,
+                        resourceId,
+                        resourceGroupId,
+                        modifier,
+                        comment
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_resources = list(Resource.objects.order_by('modifier').values())
         data = json.dumps(
             {
                 'result': result,  
                 'all_resources': all_resources,
+                'message': message
             } 
         )
         return HttpResponse(data)
 
 def removeResourceFromGroup(request):
+    message = ''
     if request.method == 'GET':
         resourceId = request.GET['resourceId']
         modifier = request.GET['modifier']
         description = request.GET['description']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
 
         raw_query = "SELECT id FROM resource_group WHERE label='Unassigned'"
         with connection.cursor() as cursor:
@@ -1697,22 +1703,27 @@ def removeResourceFromGroup(request):
             results = cursor.fetchone()
         unAssigneId = results[0]
 
-        raw_query = "SELECT fn_update_resource({}, {}, '{}', '{}', '{}', '{}')".format(
-            resourceId, unAssigneId, modifier, description, comment, modified_at
-        )
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                 cursor.execute("CALL proc_modify_resource('{}','{}', '{}', {}, {}, '{}', '{}')".format(
+                        modifiedBy,
+                        reason,
+                        description,
+                        resourceId,
+                        unAssigneId,
+                        modifier,
+                        comment
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_resources = list(Resource.objects.order_by('modifier').values())
         data = json.dumps(
             {
                 'result': result,  
                 'all_resources': all_resources,
+                'message': message,
             } 
         )
         return HttpResponse(data)

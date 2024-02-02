@@ -4412,20 +4412,24 @@ $(document).ready(function() {
       let selectedResourceGroupId = $('#resource_group_id').val()
       let resourceGroupLabel = $('#resource_group_label').val()
       let resourceId = $("#all_resources_to_group").val()
-      
+      let reason = $('#adding_resource_to_group_reason').val()
+      let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
+
       if(selectedResourceGroupId && resourceId){
         if(confirm('Are you sure to add this resource to the resource group:' + resourceGroupLabel+ '?')){
             let all_reesources = JSON.parse(document.getElementById('all_resources').textContent)
             let selectedResource = all_reesources.find(element => element.id ==  resourceId)
             $.ajax({
               type: "GET",
-              url: 'updateReourceDetail',
+              url: 'updateResourceDetail',
               data: {
                 resourceId: resourceId,
                 modifier: selectedResource.modifier,
-                description:selectedResource.description,
+                description:  selectedResource.description,
                 comment: selectedResource.comment,
-                resourceGroupId: selectedResourceGroupId
+                resourceGroupId: selectedResourceGroupId,
+                reason: reason,
+                modifiedBy: modifiedBy,
               },
               success: function (data){
                 data = JSON.parse(data)
@@ -4433,6 +4437,7 @@ $(document).ready(function() {
 
                 if(result){
                   showSuccessNotification('The Resource has been added to the group successfully!') 
+                  $('#adding_resource_to_group_reason').val('')
                   $('#resourceToGroupModal').modal('hide')
                   var all_resources = data['all_resources']
                   document.getElementById('all_resources').textContent = JSON.stringify(all_resources)                 
@@ -4497,17 +4502,17 @@ $(document).ready(function() {
 
                 }
                 else{
-                  showErrorNotification('The error has happend while adding the resource')
+                  showErrorNotification(data['message'])
                 }
               },
               error: function(e){
-                 showErrorNotification('The error has happend while requesting the server')
+                 showErrorNotification('The error has happend while requesting the server.')
               }
             })
         }
         
       }else{
-        showErrorNotification('you should select the resource group for adding the resource')
+        showErrorNotification('you should select the resource group for adding the resource.')
       }
     })
   }
@@ -4515,11 +4520,13 @@ $(document).ready(function() {
   // remove resource from the resouce group
   if(select('#btn_remove_resource_fromgroup')){
     on('click', '#btn_remove_resource_fromgroup', function(){
+      let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
       let resourceGroupLabel = $('#resource_group_label').val()
       let resourceId = $("#resource_id").val()
       let selectedResourceGroupId = $('#resource_group_id').val()
       if(resourceId){
-        if(confirm('Are you sure to remove the resource from the group: ' + resourceGroupLabel + ' ?')){
+        let reason = prompt('Please write the reason why you remove the resouce from the group.','')
+        if(reason != ''){
           let all_reesources = JSON.parse(document.getElementById('all_resources').textContent)
           let selectedResource = all_reesources.find(element => element.id ==  resourceId)
           $.ajax({
@@ -4529,7 +4536,9 @@ $(document).ready(function() {
               resourceId: resourceId,
               modifier: selectedResource.modifier,
               description:selectedResource.description,
-              comment: selectedResource.comment              
+              comment: selectedResource.comment  , 
+              reason: reason,
+              modifiedBy: modifiedBy,            
             },
             success: function (data){
               data = JSON.parse(data)
@@ -4601,7 +4610,7 @@ $(document).ready(function() {
 
               }
               else{
-                showErrorNotification('The error has happend while adding the resource')
+                showErrorNotification(data['message'])
               }
             },
             error: function(e){

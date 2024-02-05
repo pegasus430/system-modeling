@@ -1549,26 +1549,32 @@ $(document).ready(function() {
   })
 
   $('.equipment_property_page').on('click','.treeview-li .treeview-title', function(){
-    selectedPropertyId = $(this).attr("data-propertyId")
+    selectedPropertyId = $(this).attr("data-property-id")
     if(selectedPropertyId){
       resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
+      all_property = JSON.parse(document.getElementById('all_property').textContent)
       all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
       all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
+
       // display resource property detail
-      selectedProperty= resourceProperty.find(element => element.id == selectedPropertyId)
+      selectedProperty= all_property.find(element => element.id == selectedPropertyId)
+      console.log(selectedProperty)
+      selectedPropertyFromResourceProperty = resourceProperty.find(element => element.id == selectedPropertyId)
       $("#resource_property_default_datatype").find('option').remove()
       $('#resource_property_attribute_class').find('option').remove()
       
-      $('#resource_property_id').val(selectedPropertyId)
+      $('#resource_property_id').val(selectedPropertyId)  
       $('#resource_property_modifier').val(selectedProperty.modifier)
       $('#resource_property_description').val(selectedProperty.description)
+
       if(selectedProperty['is_reportable']){
         $('#resource_property_is_reportable').prop('checked' , true)
       }else{
         $('#resource_property_is_reportable').prop('checked' , false)
       }
+
       $('#resource_property_comment').val(selectedProperty.comment)
-      if(selectedProperty['property_is_used']){
+      if(selectedPropertyFromResourceProperty['property_is_used']){
         $('#resource_property_used').prop('checked' , true)
       }else{
         $('#resource_property_used').prop('checked' , false)

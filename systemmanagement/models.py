@@ -363,6 +363,20 @@ class ResouceProperty(models.Model):
         managed = False
         db_table = 'all_resource_property'
 
+class Property(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    modifier = models.TextField()
+    description = models.TextField()
+    default_value = models.TextField()
+    default_datatype_id = models.BigIntegerField()
+    is_reportable = models.BooleanField()
+    comment = models.TextField()
+    attribute_class_id = models.BigIntegerField()
+    modified_at = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'property'
+
 class DataType(models.Model):
     id = models.BigIntegerField(primary_key=True)
     label = models.TextField()

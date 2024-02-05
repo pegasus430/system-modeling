@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource, ResourceGroup, ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority, AttributeClass, CustomUser
+from .models import AllEquipment , EquipmentType, PurchasingConnectionType, PurchasingEquipmentType , AllConnection, ConnectionType, PurchasingEquipmentTypeDetail, PurchasingConnectionTypeDetail , ConnectionState, EquipmentState, Interface , SystemSetting , TypeInterface , Resource, ResourceGroup, ResouceProperty, DataType, InterfaceClass, TargetSystem, PossibleState, Authority, AttributeClass, CustomUser, Property
 from django.db import connection
 import datetime
 import json
@@ -324,6 +324,7 @@ def definitions_equipment_properties(request):
     page = 'definitions'
     sidebar_title = 'equipment_properties'
     resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+    all_property = list(Property.objects.order_by('modifier').values())
     all_datatype = list(DataType.objects.values())
     all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
     all_resources = list(Resource.objects.order_by('modifier').values())
@@ -335,6 +336,7 @@ def definitions_equipment_properties(request):
         'all_datatype': all_datatype,
         'all_attributeClass': all_attributeClass,
         'all_resources': all_resources,
+        'all_property':all_property,
     }
     
     return render(request, 'definitions_equipment_properties.html', context=context)
@@ -1729,44 +1731,52 @@ def removeResourceFromGroup(request):
         return HttpResponse(data)
 
 def updatePropertyDetail(request):
+    message = ''
     if request.method == 'GET':
         propertyId = request.GET['propertyId']
         propertyModifier = request.GET['propertyModifier']
         propertyDescription = request.GET['propertyDescription']
-        propertyDeValue = request.GET['propertyDeValue']
-        propertyDeDataLabelId = request.GET['propertyDeDataLabelId']
-        if propertyDeDataLabelId == 'none':
-            propertyDeDataLabelId = 'Null'
-        propertyDeComment = request.GET['propertyDeComment']
-        attributeClassId = request.GET['attributeClassId']
+        propertyValue = request.GET['propertyValue']
+        propertyDataLabelId = request.GET['propertyDataLabelId']
+        if propertyDataLabelId == 'none':
+            propertyDataLabelId = 'Null'
+        propertyComment = request.GET['propertyComment']
         propertyReportable = request.GET['propertyReportable']
+        modifiedBy = request.GET['modifiedBy']
+        reason = request.GET['reason']
         
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
 
-        raw_query = "SELECT fn_update_property({}, '{}', '{}', '{}', {}, '{}', {}, '{}', {})".format(
-            propertyId, propertyModifier, propertyDescription, propertyDeValue, propertyDeDataLabelId, 
-            propertyDeComment, propertyReportable, modified_at, attributeClassId
-        )        
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_property('{}','{}', '{}', {} , '{}', '{}', {}, '{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        propertyDescription,
+                        propertyId,
+                        propertyModifier,
+                        propertyValue,
+                        propertyDataLabelId,
+                        propertyComment,
+                        propertyReportable
+                    ))   
+                
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
-        resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+        all_property = list(Property.objects.order_by('modifier').values())
         data = json.dumps(
             {
                 'result': result,  
-                'resourceProperty': resourceProperty,
+                'all_property': all_property,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
      
 def addEquipmentProperty(request):
+    message = ''
     if request.method == 'GET':
         modifier = request.GET['modifier']
         description = request.GET['description']
@@ -1776,53 +1786,65 @@ def addEquipmentProperty(request):
             defaultDataTypeId = 'Null'
         reportable = request.GET['reportable']
         comment = request.GET['comment']
-        attributeClassId = request.GET['attributeClassId']
-        if attributeClassId == 'none':
-            attributeClassId = 'Null'
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = "SELECT fn_add_property('{}', '{}', '{}', {}, '{}', {}, '{}', {})".format(
-            modifier, description, defaultValue, defaultDataTypeId, comment, reportable, modified_at, attributeClassId
-        )        
+        adding_property_reason = request.GET['adding_property_reason']
+        addedBy = request.GET['addedBy']
+      
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_property('{}','{}', '{}', null , '{}', '{}', {}, '{}', {})".format(
+                        addedBy,
+                        adding_property_reason,
+                        description,
+                        modifier,
+                        defaultValue,
+                        defaultDataTypeId,
+                        comment,
+                        reportable
+                    ))    
 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
-        resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+        all_property = list(Property.objects.order_by('modifier').values())
         data = json.dumps(
             {
                 'result': result,  
-                'resourceProperty': resourceProperty,
+                'all_property': all_property,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
     
 def removeProperty(request):
+    message = ''
     if request.method == 'GET':
         propertyId = request.GET['propertyId']
-        raw_query = "SELECT fn_remove_property({})".format(
-            propertyId
-        )        
+        reason = request.GET['reason']
+        option = request.GET['option']
+        user = request.GET['user']
+              
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                 cursor.execute("CALL proc_remove_property('{}','{}',  {} , '{}')".format(
+                        user,
+                        reason,
+                        propertyId,
+                        option
+                    )) 
+                
             result = True
         except Exception as e:
-            print(e)
+            message =  str(e)
             result = False
-        resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
+        
+        all_property = list(Property.objects.order_by('modifier').values())
         data = json.dumps(
             {
                 'result': result,  
-                'resourceProperty': resourceProperty,
+                'all_property': all_property,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )

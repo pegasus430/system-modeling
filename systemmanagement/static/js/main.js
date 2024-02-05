@@ -4624,20 +4624,21 @@ $(document).ready(function() {
     })
   }
 
-  //update the property
+  // update the property
   if(select('#btnEquipmentPropertyUpdate')){
     on('click', '#btnEquipmentPropertyUpdate', function(){
       let propertyId = $('#resource_property_id').val()
-      if(propertyId){
+      let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
+      let reason = prompt('Please write the reason why you update this property.', '')
+      if(reason != ''){
          let propertyModifier = $('#resource_property_modifier').val()
          let propertyDescription = $('#resource_property_description').val()
-         let propertyDeValue =  $('#resource_property_default_value').val()
-         let propertyDeDataLabelId = $('#resource_property_default_datatype').val()
-         let propertyDeComment =  $('#resource_property_comment').val()
+         let propertyValue =  $('#resource_property_default_value').val()
+         let propertyDataLabelId = $('#resource_property_default_datatype').val()
+         let propertyComment =  $('#resource_property_comment').val()
          let attributeClassId =  $('#resource_property_attribute_class').val()
          let propertyReportable =  $('#resource_property_is_reportable').prop('checked')
-         if(propertyDescription && attributeClassId){
-          if(confirm('Are you sure to update this property?')){
+         if(propertyDescription){
             $.ajax({
               type: "GET",
               url: 'updatePropertyDetail',
@@ -4645,11 +4646,13 @@ $(document).ready(function() {
                 propertyId: propertyId,
                 propertyModifier: propertyModifier,
                 propertyDescription: propertyDescription,
-                propertyDeValue: propertyDeValue,
-                propertyDeDataLabelId: propertyDeDataLabelId,
-                propertyDeComment: propertyDeComment,
-                attributeClassId:attributeClassId,
+                propertyValue: propertyValue,
+                propertyDataLabelId: propertyDataLabelId,
+                propertyComment: propertyComment,
+                attributeClassId: attributeClassId,
                 propertyReportable: propertyReportable,
+                modifiedBy: modifiedBy,
+                reason: reason,
               },
               success: function (data){
                 data = JSON.parse(data)
@@ -4657,24 +4660,21 @@ $(document).ready(function() {
   
                 if(result){
                   showSuccessNotification('The property has been updated successfully!')
-                  var resourceProperty = data['resourceProperty']
-                  document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+                  var all_property = data['all_property']
+                  document.getElementById('all_property').textContent = JSON.stringify(all_property)
                   var html = ''
-                  all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
-                  let attributeClassesHavingProperty = all_attributeClass.filter(element =>{
-                      atcId = element.attribute_class_id
-                      if(resourceProperty.find(element => element.attribute_class_id == atcId))
-                          return true
-                      else
-                          return false
-                  })                
-                  html = createPropertyTree(resourceProperty, attributeClassesHavingProperty)
+
+                  all_property.forEach(property => {
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-property-id="'+ property.id + '"> \
+                          '+property.modifier + '  (' + property.description +')</li>'
+                      
+                  });
                   document.getElementById('all_resource_property_tree').innerHTML = html
                   $('.treeview-animated').mdbTreeview();
   
                 }
                 else{
-                  showErrorNotification('The error happend while updating the property!')
+                  showErrorNotification(data['message'])
                 }
               },
               error:function(){
@@ -4682,9 +4682,9 @@ $(document).ready(function() {
               }
     
             })
-          }
+          
          }else{
-           showErrorNotification('The description and attribute class should not be empty string.')
+           showErrorNotification('The description should not be empty string.')
          }
       }else{
         showErrorNotification('You should select the property to be updated.')
@@ -4721,7 +4721,7 @@ $(document).ready(function() {
     })
   }
 
-  // add the resource to group in the modal
+  // add the property on the modal
   if(select('#equipmentPropertyModal .btn-primary'))
   {
     on('click', '#equipmentPropertyModal .btn-primary', function(){
@@ -4732,8 +4732,9 @@ $(document).ready(function() {
       let comment = $('#adding_property_comment').val()
       let reportable = $('#adding_property_is_reportable').prop('checked')
       let attributeClassId = $('#adding_property_attribute_class').val()
-
-      if(description && attributeClassId){
+      let adding_property_reason = $('#adding_property_reason').val()
+      let addedBy = JSON.parse(document.getElementById('currentUserName').textContent)
+      if(description){
         if(confirm('Are you sure to add this property?')){
             
             $.ajax({
@@ -4746,7 +4747,9 @@ $(document).ready(function() {
                 defaultDataTypeId: defaultDataTypeId,
                 comment: comment,
                 reportable: reportable,
-                attributeClassId: attributeClassId
+                attributeClassId: attributeClassId,
+                adding_property_reason: adding_property_reason,
+                addedBy: addedBy,
               },
               success: function (data){
                 data = JSON.parse(data)
@@ -4754,29 +4757,35 @@ $(document).ready(function() {
 
                 if(result){
                   showSuccessNotification('The Property has been added successfully!') 
+                  $('#adding_property_modifier').val('')
+                  $('#adding_property_description').val('')
+                  $('#adding_property_default_value').val('')
+                  $('#adding_property_default_datatype_label').val('')
+                  $('#adding_property_comment').val('')
+                  $('#adding_property_is_reportable').prop('checked', false)
+                  $('#adding_property_attribute_class').val('')
+                  $('#adding_property_reason').val('')
+
                   $('#equipmentPropertyModal').modal('hide')
-                  var resourceProperty = data['resourceProperty']
-                  document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
+                  var all_property = data['all_property']
+                  document.getElementById('all_property').textContent = JSON.stringify(all_property)
                   var html = ''
-                  all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
-                  let attributeClassesHavingProperty = all_attributeClass.filter(element =>{
-                      atcId = element.attribute_class_id
-                      if(resourceProperty.find(element => element.attribute_class_id == atcId))
-                          return true
-                      else
-                          return false
-                  })                
-                  html = createPropertyTree(resourceProperty, attributeClassesHavingProperty)
+
+                  all_property.forEach(property => {
+                      html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-property-id="'+ property.id + '"> \
+                          '+property.modifier + '  (' + property.description +')</li>'
+                      
+                  })
                   document.getElementById('all_resource_property_tree').innerHTML = html
                   $('.treeview-animated').mdbTreeview();
                 
                 }
                 else{
-                  showErrorNotification('The error has happend while adding the property')
+                  showErrorNotification(data['message'])
                 }
               },
               error: function(e){
-                 showErrorNotification('The error has happend while requesting the server')
+                 showErrorNotification('The error has happend while requesting the server.')
               }
             })
         }
@@ -4787,64 +4796,78 @@ $(document).ready(function() {
     })
   }
 
-  // delete the property 
+  // click the delete property btn 
   if(select('#btn_equipment_property_delete')){
     on('click', '#btn_equipment_property_delete', function(){
       let propertyId = $('#resource_property_id').val()
       if(propertyId){
-        if(confirm('Are you sure to remove this property?')){
-          $.ajax({
-            type: "GET",
-            url: 'removeProperty',
-            data: {
-              propertyId: propertyId,
-            },
-            success: function (data){
-              data = JSON.parse(data)
-              var result = data['result']            
-
-              if(result){
-
-                showSuccessNotification('The property has been removed successfully!')
-                $("#resource_property_default_datatype").find('option').remove()
-    
-                $('#resource_property_id').val('')
-                $('#resource_property_modifier').val('')
-                $('#resource_property_description').val('')
-                $('#resource_property_is_reportable').prop('checked' , false)
-                $('#resource_property_comment').val('')
-                $('#resource_property_used').prop('checked' , false)
-                $('#resource_property_default_value').val('')
-
-                var resourceProperty = data['resourceProperty']
-                document.getElementById('resourceProperty').textContent = JSON.stringify(resourceProperty)
-                var html = ''
-                all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
-                let attributeClassesHavingProperty = all_attributeClass.filter(element =>{
-                    atcId = element.attribute_class_id
-                    if(resourceProperty.find(element => element.attribute_class_id == atcId))
-                        return true
-                    else
-                        return false
-                })                
-                html = createPropertyTree(resourceProperty, attributeClassesHavingProperty)
-                document.getElementById('all_resource_property_tree').innerHTML = html
-                $('.treeview-animated').mdbTreeview();
-
-              }
-              else{
-                showErrorNotification('The error happend while removing the property!')
-              }
-            },
-            error:function(){
-              showErrorNotification('The error happend while requesting the server')
-            }
-  
-          })
-        }
+        return
       }else{
         showErrorNotification('You should select the property to be removed.')
       }
+    })
+  }
+
+  // delete the property from the modal
+  if(select('#equipmentPropertyRemoveModal .btn-primary'))
+  {
+    on('click', '#equipmentPropertyRemoveModal .btn-primary', function(){
+      let propertyId = $('#resource_property_id').val()
+      let reason = $('#remove_property_reason').val()
+      let option = $('#remove_property_option').val()
+      let user = JSON.parse(document.getElementById("currentUserName").textContent)
+      
+        $.ajax({
+          type: "GET",
+          url: 'removeProperty',
+          data: {
+              propertyId: propertyId,
+              reason: reason,
+              option: option,
+              user: user,
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']            
+
+            if(result){
+
+              showSuccessNotification('The property has been removed successfully!')
+              $("#resource_property_default_datatype").find('option').remove()
+  
+              $('#resource_property_id').val('')
+              $('#resource_property_modifier').val('')
+              $('#resource_property_description').val('')
+              $('#resource_property_is_reportable').prop('checked' , false)
+              $('#resource_property_comment').val('')
+              $('#resource_property_used').prop('checked' , false)
+              $('#resource_property_default_value').val('')
+              $('#equipmentPropertyRemoveModal').modal('hide')
+             
+              var all_property = data['all_property']
+              document.getElementById('all_property').textContent = JSON.stringify(all_property)
+              var html = ''
+
+              all_property.forEach(property => {
+                  html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-property-id="'+ property.id + '"> \
+                      '+property.modifier + '  (' + property.description +')</li>'
+                  
+              })
+              
+              document.getElementById('all_resource_property_tree').innerHTML = html
+              $('.treeview-animated').mdbTreeview();
+
+            }
+            else{
+              showErrorNotification(data['message'])
+            }
+          },
+          error:function(){
+            showErrorNotification('The error happend while requesting the server')
+          }
+
+        })
+      
     })
   }
 

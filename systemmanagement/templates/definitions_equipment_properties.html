@@ -6,6 +6,8 @@
 {{all_datatype | json_script:'all_datatype'}}
 {{all_attributeClass | json_script:'all_attributeClass'}}
 {{all_resources | json_script:'all_resources'}}
+{{all_property | json_script:'all_property'}}
+{{user.username | json_script:'currentUserName'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_property_page card card-body system_overview border-gray">
@@ -101,7 +103,7 @@
                         </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" id="btn_equipment_property_delete" class="btn btn-danger">
+                        <button type="button" id="btn_equipment_property_delete" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#equipmentPropertyRemoveModal">
                             Delete
                         </button>
                         </div>
@@ -206,6 +208,12 @@
                         </select>
                     </div>
                 </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                    <div class="col-md-7">
+                      <textarea class="form-control" placeholder="reason"  id="adding_property_reason"></textarea>
+                    </div>
+                  </div>
               
             </div>
             <div class="modal-footer">
@@ -274,47 +282,53 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="equipmentPropertyRemoveModal" tabindex="-1" aria-labelledby="equipmentPropertyRemoveModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="equipmentPropertyRemoveModalLabel">Remove property</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mt-1">
+                  <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                  <div class="col-md-7">
+                    <textarea class="form-control" placeholder="Remove Reason" value="" id="remove_property_reason" name="remove_property_reason" required ></textarea>
+                  </div>
+                </div>
+               
+                <div class="row mt-1">
+                  <label class="col-md-4 col-form-label text-secondary">Option:</label>
+                  <div class="col-md-7">
+                    <select class="form-select" id="remove_property_option">
+                      <option value="orphan">Orphan</option>
+                      <option value="delete">Delete</option>
+                    </select>
+                  </div>
+                </div>
+               
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button  class="btn btn-primary" type="button" >remove</button>
+            </div>
+          
+          </div>
+        </div>
+      </div>
     <script>
         resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
         all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)
-        
-        let attributeClassesHavingProperty = all_attributeClass.filter(element =>{
-            atcId = element.attribute_class_id
-            if(resourceProperty.find(element => element.attribute_class_id == atcId))
-                return true
-            else
-                return false
-        })
-        resource_id_list = []
-        var html = ''   
+        all_property = JSON.parse(document.getElementById('all_property').textContent)
 
-        function createPropertyTree(resourceProperty, attributeClassesHavingProperty) {
-            let html = ''
-            attributeClassesHavingProperty.forEach(element => {
-                html += '<li class="treeview-animated-items treeview-li"> \
-                          <a class="closed"> \
-                            <i class="fas fa-angle-right"></i> \
-                            <span class="ml-1 treeview-title" data-typeid="" data-typepath="">'+ element.attribute_class_label + '  (' + element.attribute_class_description + ')</span> \
-                          </a> \
-                          <ul class="nested">' 
-                atcId = element.attribute_class_id
-                propertiesByAttribute = resourceProperty.filter(property => property.attribute_class_id == atcId)
-                propertiesByAttribute.forEach(n => {
-                    if(!resource_id_list.includes(n.id)){
-                        resource_id_list.push(n.id)
-                        html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-propertyId="'+ n.id + '"> \
-                        ' + n.modifier + '  (' + n.description +')</li>'
-                    }
-                })
-                
-                html += '</ul></li>'
-            })
-              
-            return html
-        }
-
-        html = createPropertyTree(resourceProperty, attributeClassesHavingProperty)
-    
+        var html = ''
+        all_property.forEach(property => {
+            html += '<li class="treeview-li"><div class="treeview-animated-element treeview-title" data-property-id="'+ property.id + '"> \
+                '+property.modifier + '  (' + property.description +')</li>'
+            
+        });
+                  
         document.getElementById('all_resource_property_tree').innerHTML = html
     </script>
     

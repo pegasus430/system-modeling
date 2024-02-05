@@ -1851,38 +1851,38 @@ def removeProperty(request):
         return HttpResponse(data) 
     
 def updateResourcePropertyDetail(request):
+    message = ''
     if request.method == 'GET':
         propertyId = request.GET['propertyId']
         resourceId = request.GET['resourceId']
-        resourceModifier = request.GET['resourceModifier']
-        resourceDescription = request.GET['resourceDescription']
-        resourceGroupId = request.GET['resourceGroupId']
-        resourceComment = request.GET['resourceComment']
         resourcePropertyDefaultValue = request.GET['resourcePropertyDefaultValue']
         resourcePropertyComment = request.GET['resourcePropertyComment']
         resourcePropertyDatatypeId = request.GET['resourcePropertyDatatypeId']
         if resourcePropertyDatatypeId == 'none':
             resourcePropertyDatatypeId = 'Null'
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = "SELECT fn_update_resource({}, {}, '{}', '{}', '{}', '{}')".format(
-            resourceId, resourceGroupId, resourceModifier, resourceDescription, resourceComment, modified_at
-        )   
-        
+        modifiedBy = request.GET['modifiedBy']
+        reason = request.GET['reason']
+        raw_query = "SELECT id FROM resource_property where resource_id = {} and property_id = {}".format(resourceId, propertyId)  
         try:
             with connection.cursor() as cursor:
-                raw_query = "SELECT fn_update_resource_property({}, {}, '{}', {} , '{}', '{}')".format(
-                    resourceId, propertyId, resourcePropertyDefaultValue, resourcePropertyDatatypeId, resourcePropertyComment, modified_at
-                )
-                
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
+                resorcuePropertyId = results[0]
+                cursor.execute("CALL proc_modify_resource_property('{}','{}', {} , {} , {}, '{}', {}, '{}')".format(
+                        modifiedBy,
+                        reason,
+                        resorcuePropertyId,
+                        resourceId,
+                        propertyId,
+                        resourcePropertyDefaultValue,
+                        resourcePropertyDatatypeId,
+                        resourcePropertyComment
+                    )) 
 
             result = True
 
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
@@ -1892,33 +1892,40 @@ def updateResourcePropertyDetail(request):
                 'result': result,  
                 'resourceProperty': resourceProperty,
                 'all_resources': all_resources,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
     
 def addResourceProperty(request):
+    message = ''
     if request.method == 'GET':
         propertyId = request.GET['propertyId']
         resourceId = request.GET['resourceId']
         resourcePropertyDefaultValue = request.GET['resourcePropertyDefaultValue']
         resourcePropertyComment = request.GET['resourcePropertyComment']
         resourcePropertyDatatypeId = request.GET['resourcePropertyDatatypeId']
+        addedBy = request.GET['addedBy']
+        reason = request.GET['reason']
         if resourcePropertyDatatypeId == 'none':
             resourcePropertyDatatypeId = 'Null'
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = "SELECT fn_add_resource_property({}, {}, '{}', {} , '{}', '{}')".format(
-                    resourceId, propertyId, resourcePropertyDefaultValue, resourcePropertyDatatypeId, resourcePropertyComment, modified_at
-                )  
+       
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+              
+                cursor.execute("CALL proc_modify_resource_property('{}','{}', null, {} , {}, '{}', {}, '{}')".format(
+                        addedBy,
+                        reason,
+                        resourceId,
+                        propertyId,
+                        resourcePropertyDefaultValue,
+                        resourcePropertyDatatypeId,
+                        resourcePropertyComment
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
@@ -1926,24 +1933,35 @@ def addResourceProperty(request):
             {
                 'result': result,  
                 'resourceProperty': resourceProperty,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def removeResourceProperty(request):
+    message = ''
     if request.method == 'GET':
         propertyId = request.GET['propertyId']
         resourceId = request.GET['resourceId']
-        raw_query = "SELECT fn_remove_resource_property({}, {})".format(resourceId, propertyId)  
+        reason = request.GET['reason']
+        option = request.GET['option']
+        modifiedBy = request.GET['modifiedBy']
+        raw_query = "SELECT id FROM resource_property where resource_id = {} and property_id = {}".format(resourceId, propertyId)  
         try:
             with connection.cursor() as cursor:
                 cursor.execute(raw_query)
                 results = cursor.fetchone()
-
+                resorcuePropertyId = results[0]
+                cursor.execute("CALL proc_remove_resource_property('{}','{}', {} ,'{}')".format(
+                        modifiedBy,
+                        reason,
+                        resorcuePropertyId,
+                        option
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         resourceProperty = list(ResouceProperty.objects.order_by('modifier').values())
@@ -1951,6 +1969,7 @@ def removeResourceProperty(request):
             {
                 'result': result,  
                 'resourceProperty': resourceProperty,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )

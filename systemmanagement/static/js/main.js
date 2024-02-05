@@ -4923,7 +4923,9 @@ $(document).ready(function() {
 
     $('#modal_resource_select_div').css('display', 'none')
     $('#modal_resource_modifier_div').css('display', 'flex')
+    $('#modal_resource_modifier').prop('disabled', true)
     $('#modal_resource_description_div').css('display', 'flex')
+    $('#modal_resource_description').prop('disabled', true)
     $('#update_resource_property_btn').css('display', 'flex')
     $('#add_resource_property_btn').css('display', 'none')
 
@@ -4959,13 +4961,11 @@ $(document).ready(function() {
   $('#update_resource_property_btn').on('click', function(){
     let resourceId = $('#selectedResourceId').val()
     let propertyId = $('#resource_property_id').val()
-    let resourceModifier = $('#modal_resource_modifier').val()
-    let resourceDescription = $('#modal_resource_description').val()
     let resourcePropertyDefaultValue = $('#modal_resource_value').val()
     let resourcePropertyComment = $('#modal_resource_comment').val()
     let resourcePropertyDatatypeId =  $('#modal_resesource_default_datatype').val()
-    let all_resources = JSON.parse(document.getElementById('all_resources').textContent)
-    let selectedResource = all_resources.find(element => element.id == resourceId)
+    let reason = $('#modal_resource_reason').val()
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
     if(confirm('Are you sure to update this resource property?')){
       $.ajax({
         type: "GET",
@@ -4973,13 +4973,11 @@ $(document).ready(function() {
         data: {
           propertyId: propertyId,
           resourceId: resourceId,
-          resourceModifier: resourceModifier,
-          resourceDescription: resourceDescription,
-          resourceGroupId: selectedResource.group_id,
-          resourceComment: selectedResource.comment,
           resourcePropertyDefaultValue: resourcePropertyDefaultValue,
           resourcePropertyComment: resourcePropertyComment,
           resourcePropertyDatatypeId: resourcePropertyDatatypeId,
+          reason: reason,
+          modifiedBy: currentUserName,
         },
         success: function (data){
           data = JSON.parse(data)
@@ -5003,6 +5001,9 @@ $(document).ready(function() {
             });
             document.getElementById('all_resource_property_tree').innerHTML = html
             $('.treeview-animated').mdbTreeview();
+            $('#modal_resource_value').val('')
+            $('#modal_resource_comment').val('')
+            $('#modal_resource_reason').val('')
             $('#resourcePropertyModal').modal('hide')
   
             // display resources using this property
@@ -5043,7 +5044,7 @@ $(document).ready(function() {
             })
           }
           else{
-            showErrorNotification('The error happend while updating the resource property!')
+            showErrorNotification(data['message'])
           }
         },
         error:function(){
@@ -5062,11 +5063,13 @@ $(document).ready(function() {
     let resourcePropertyComment = $('#modal_resource_comment').val()
     let resourcePropertyDatatypeId =  $('#modal_resesource_default_datatype').val()
     let resourceId = $('#modal_resesource_select').val()
+    let reason = $('#modal_resource_reason').val()
     let resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
     let resource = resourceProperty.find(element => (element.id == propertyId && element.resource_id == resourceId))
     if(resource){
-      showErrorNotification('This resource already is in reaource property table')
+      showErrorNotification('This resource is already in reaource property table.')
     }else{
+      let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
       $.ajax({
         type: "GET",
         url: 'addResourceProperty',
@@ -5076,6 +5079,8 @@ $(document).ready(function() {
           resourcePropertyDefaultValue: resourcePropertyDefaultValue,
           resourcePropertyComment: resourcePropertyComment,
           resourcePropertyDatatypeId: resourcePropertyDatatypeId,
+          addedBy: currentUserName,
+          reason: reason,
         },
         success: function (data){
           data = JSON.parse(data)
@@ -5100,6 +5105,9 @@ $(document).ready(function() {
             });
             document.getElementById('all_resource_property_tree').innerHTML = html
             $('.treeview-animated').mdbTreeview();
+            $('#modal_resource_value').val('')
+            $('#modal_resource_comment').val('')
+            $('#modal_resource_reason').val('')
             $('#resourcePropertyModal').modal('hide')
 
             // display resources using this property
@@ -5142,21 +5150,34 @@ $(document).ready(function() {
 
           }
           else{
-            showErrorNotification('The error happend while updating the resource property!')
+            showErrorNotification(data['message'])
           }
         },
         error:function(){
-          showErrorNotification('The error happend while requesting the server')
+          showErrorNotification('The error happend while requesting the server.')
         }
       })
     }
   })
 
-  // remove the resource from the resource property
+  // click delete btn to remove resource from the resource property
   $('#btnResourcePropertyRemove').on('click', function(){
     let propertyId = $('#resource_property_id').val()
     let resourceId = $('#selectedResourceId').val()
     if(resourceId && propertyId){
+      return
+    }else{
+      showErrorNotification('You should select the resource fromt the table')
+    }
+  })
+
+  // remove the resource from the resource property
+  $('#resourcePropertyRemoveModal .btn-primary').on('click', function(){
+    let propertyId = $('#resource_property_id').val()
+    let resourceId = $('#selectedResourceId').val()
+    let reason = $('#remove_resource_property_reason').val()
+    let option = $('#remove_resource_property_option').val()
+    let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
       if(confirm('Are you sure to remove this resource from the resource property?')){
         $.ajax({
           type: "GET",
@@ -5164,6 +5185,9 @@ $(document).ready(function() {
           data: {
             propertyId: propertyId,
             resourceId: resourceId,
+            reason: reason,
+            option: option,
+            modifiedBy: modifiedBy,
           },
           success: function (data){
             data = JSON.parse(data)
@@ -5188,7 +5212,9 @@ $(document).ready(function() {
               });
               document.getElementById('all_resource_property_tree').innerHTML = html
               $('.treeview-animated').mdbTreeview();
-              $('#resourcePropertyModal').modal('hide')
+              $('#remove_resource_property_reason').val('')
+              $('#remove_resource_property_option').val('')
+              $('#resourcePropertyRemoveModal').modal('hide')
   
               // display resources using this property
               resources = resourceProperty.filter(element => element.id == propertyId)
@@ -5228,7 +5254,7 @@ $(document).ready(function() {
   
             }
             else{
-              showErrorNotification('The error happend while removing  the resource property!')
+              showErrorNotification(data['message'])
             }
           },
           error:function(){
@@ -5236,9 +5262,7 @@ $(document).ready(function() {
           }
         })
       }
-    }else{
-      showErrorNotification('You should select the resource fromt the table')
-    }
+    
   })
 
   // update equipment interface

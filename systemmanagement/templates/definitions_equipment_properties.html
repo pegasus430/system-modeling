@@ -140,7 +140,7 @@
                         </div>
                         
                         <div class="col-md-2">
-                            <button type="button" id="btnResourcePropertyRemove" class="btn btn-danger">
+                            <button type="button" id="btnResourcePropertyRemove" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#resourcePropertyRemoveModal" >
                                 Delete
                             </button>
                         </div>
@@ -273,6 +273,12 @@
                         <textarea class="form-control" placeholder="comment"  id="modal_resource_comment"></textarea>
                     </div>
                 </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                    <div class="col-md-7">
+                        <textarea class="form-control" placeholder="reason"  id="modal_resource_reason"></textarea>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -316,7 +322,43 @@
           
           </div>
         </div>
-      </div>
+    </div>
+
+    <div class="modal fade" id="resourcePropertyRemoveModal" tabindex="-1" aria-labelledby="resourcePropertyRemoveModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="resourcePropertyRemoveModalLabel">Remove resource</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mt-1">
+                  <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                  <div class="col-md-7">
+                    <textarea class="form-control" placeholder="Remove Reason" value="" id="remove_resource_property_reason" name="remove_resource_property_reason" required ></textarea>
+                  </div>
+                </div>
+               
+                <div class="row mt-1">
+                  <label class="col-md-4 col-form-label text-secondary">Option:</label>
+                  <div class="col-md-7">
+                    <select class="form-select" id="remove_resource_property_option">
+                      <option value="orphan">Orphan</option>
+                      <option value="delete">Delete</option>
+                    </select>
+                  </div>
+                </div>
+               
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button  class="btn btn-primary" type="button" >remove</button>
+            </div>
+          
+          </div>
+        </div>
+    </div>
+
     <script>
         resourceProperty = JSON.parse(document.getElementById('resourceProperty').textContent)
         all_attributeClass = JSON.parse(document.getElementById('all_attributeClass').textContent)

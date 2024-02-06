@@ -5268,6 +5268,7 @@ $(document).ready(function() {
   // update equipment interface
   $('#btnUpdateEquipmentInterface').on('click', function(){
     let selectedInterfaceId = $('#equipment_interface_id').val()
+    
     if(selectedInterfaceId){
       let identifier = $('#equipment_interface_identifier').val()      
       let description = $('#equipment_interface_description').val()
@@ -5275,8 +5276,11 @@ $(document).ready(function() {
       let interfaceClassId =  $('#equipment_interface_interface_class_label').val()
       let interfaceConnectingClassId =  $('#equipment_interface_connecting_class_label').val()
       let isIntermediate =  $('#equipment_interface_is_intermediate').prop('checked')
+      let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+      
       if(identifier && interfaceClassId){
-        if(confirm('Are you sure to update this interface?')){
+        let reason = prompt('Please write the reason why you update the equipment interface.', '')
+        if(reason != ""){
           $.ajax({
             type: "GET",
             url: 'updateEquipmentInterfaceDetail',
@@ -5288,6 +5292,8 @@ $(document).ready(function() {
               interfaceClassId: interfaceClassId,
               interfaceConnectingClassId: interfaceConnectingClassId,
               isIntermediate: isIntermediate,
+              reason: reason,
+              modifiedBy: currentUserName,
             },
             success: function (data){
               data = JSON.parse(data)
@@ -5313,7 +5319,7 @@ $(document).ready(function() {
                 $('.treeview-animated').mdbTreeview();
               }
               else{
-                showErrorNotification('The error happend while updating the interface!')
+                showErrorNotification(data['message'])
               }
             },
             error:function(){
@@ -5362,6 +5368,8 @@ $(document).ready(function() {
     let connectingClassId = $('#adding_interface_connecting_class_label').val()
     let comment = $('#adding_interface_comment').val()
     let isIntermediate= $('#adding_interface_is_intermediate').prop('checked')
+    let reason = $('#adding_interface_reason').val()
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
     if(identifier && classId){
       $.ajax({
         type: "GET",
@@ -5373,33 +5381,41 @@ $(document).ready(function() {
           classId: classId,
           connectingClassId: connectingClassId,
           isIntermediate: isIntermediate,
+          modifiedBy: currentUserName,
+          reason: reason,
         },
         success: function (data){
           data = JSON.parse(data)
           var result = data['result']
           if(result){
-            showSuccessNotification('The interface has been added successfully!')
-            $('#equipmentInterfaceModal').modal('hide')
-            var  all_interfaces = data['all_interfaces']
-            // update the resoruce proeprty and resouces with added ones
-            document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
-           
-            // update the tree view
-            all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
-                let interfaceClasesHavingInterface = all_interface_classes.filter( element => {
-                    itcId = element.id
-                    if(all_interfaces.find(element => element.interface_class_id == itcId))
-                        return true
-                    else
-                        return false
-                })
-                let html = createInterfaceTree(all_interfaces, interfaceClasesHavingInterface)
-           
-            document.getElementById('equipment_interface_tree').innerHTML = html
-            $('.treeview-animated').mdbTreeview();
+              showSuccessNotification('The interface has been added successfully!')
+              $('#equipmentInterfaceModal').modal('hide')
+              var  all_interfaces = data['all_interfaces']
+              // update the resoruce proeprty and resouces with added ones
+              document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
+            
+              // update the tree view
+              all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+              let interfaceClasesHavingInterface = all_interface_classes.filter( element => {
+                  itcId = element.id
+                  if(all_interfaces.find(element => element.interface_class_id == itcId))
+                      return true
+                  else
+                      return false
+              })
+              let html = createInterfaceTree(all_interfaces, interfaceClasesHavingInterface)
+            
+              document.getElementById('equipment_interface_tree').innerHTML = html
+              $('.treeview-animated').mdbTreeview();
+              $('#adding_interface_identifier').val()
+              $('#adding_interface_description').val()
+              $('#adding_interface_comment').val()
+              $('#adding_interface_is_intermediate').prop('checked', false)
+              $('#adding_interface_reason').val('')
+              $('#equipmentInterfaceModal').modal('hide')
           }
           else{
-            showErrorNotification('The error happend while adding the interface!')
+            showErrorNotification(data['message'])
           }
         },
         error:function(){
@@ -5411,51 +5427,65 @@ $(document).ready(function() {
     }
   })
 
-  //remove the inerface
+  //click remove btn for remove the inerface
   $('#btnRemoveEquipmentInterface').on('click', function(){
     let selectedInterfaceId = $('#equipment_interface_id').val()
     if(selectedInterfaceId){
-      if(confirm('Are you sure to remove this interface?')){
-        $.ajax({
-          type: "GET",
-          url: 'removeEquipmentInterface',
-          data: {
-            selectedInterfaceId: selectedInterfaceId,
-          },
-          success: function (data){
-            data = JSON.parse(data)
-            var result = data['result']
-            if(result){
-              showSuccessNotification('The interface has been removed successfully!')
-             
-              var  all_interfaces = data['all_interfaces']
-              // update the resoruce proeprty and resouces with removed one
-              document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
-             
-              // update the tree view
-              all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
-                let interfaceClasesHavingInterface = all_interface_classes.filter( element => {
-                    itcId = element.id
-                    if(all_interfaces.find(element => element.interface_class_id == itcId))
-                        return true
-                    else
-                        return false
-                })
-                let html = createInterfaceTree(all_interfaces, interfaceClasesHavingInterface)
-              document.getElementById('equipment_interface_tree').innerHTML = html
-              $('.treeview-animated').mdbTreeview();
-            }
-            else{
-              showErrorNotification('The error happend while removing the interface!')
-            }
-          },
-          error:function(){
-            showErrorNotification('The error happend while requesting the server')
-          }
-        })
-      }
+      return
     }else{
       showErrorNotification("You should select the interface to be removed.")
+    }
+  })
+
+  $('#interfaceRemoveModal .btn-primary').on('click', function(){
+    if(confirm('Are you sure to remove this interface?')){
+      let selectedInterfaceId = $('#equipment_interface_id').val()
+      let option = $('#remove_interface_option').val()
+      let reason = $('#remove_interface_reason').val()
+      let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+      $.ajax({
+        type: "GET",
+        url: 'removeEquipmentInterface',
+        data: {
+          selectedInterfaceId: selectedInterfaceId,
+          modifiedBy: currentUserName,
+          reason: reason,
+          option: option,
+        },
+        success: function (data){
+          data = JSON.parse(data)
+          var result = data['result']
+          if(result){
+            showSuccessNotification('The interface has been removed successfully!')
+           
+            var  all_interfaces = data['all_interfaces']
+            // update the resoruce proeprty and resouces with removed one
+            document.getElementById('all_interfaces').textContent = JSON.stringify(all_interfaces)
+           
+            // update the tree view
+            all_interface_classes = JSON.parse(document.getElementById('all_interface_classes').textContent)
+              let interfaceClasesHavingInterface = all_interface_classes.filter( element => {
+                  itcId = element.id
+                  if(all_interfaces.find(element => element.interface_class_id == itcId))
+                      return true
+                  else
+                      return false
+              })
+              let html = createInterfaceTree(all_interfaces, interfaceClasesHavingInterface)
+            document.getElementById('equipment_interface_tree').innerHTML = html
+            $('#remove_interface_option').val('')
+            $('#remove_interface_reason').val('')
+            $('#interfaceRemoveModal').modal('hide')
+            $('.treeview-animated').mdbTreeview();
+          }
+          else{
+            showErrorNotification(data['message'])
+          }
+        },
+        error:function(){
+          showErrorNotification('The error happend while requesting the server.')
+        }
+      })
     }
   })
 

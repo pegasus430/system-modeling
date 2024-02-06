@@ -4,6 +4,8 @@
 {% block maincontent %}
 {{all_interfaces | json_script:'all_interfaces'}}
 {{all_interface_classes | json_script:'all_interface_classes'}}
+{{user.username | json_script:'currentUserName'}}
+
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="equipment_interface_page card card-body system_overview border-gray">
@@ -92,7 +94,7 @@
                         </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" id="btnRemoveEquipmentInterface" class="btn btn-danger">
+                        <button type="button" id="btnRemoveEquipmentInterface" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#interfaceRemoveModal" >
                             Delete
                         </button>
                         </div>
@@ -156,11 +158,51 @@
                         <input class="form-check-input form-control" type="checkbox" id="adding_interface_is_intermediate">
                     </div>
                 </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                    <div class="col-md-7">
+                    <textarea class="form-control" placeholder="reason"  id="adding_interface_reason"></textarea>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary"  >Save</button>
             </div>
+          </div>
+        </div>
+    </div>
+    <div class="modal fade" id="interfaceRemoveModal" tabindex="-1" aria-labelledby="interfaceRemoveModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="interfaceRemoveModalLabel">Remove interface</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mt-1">
+                  <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                  <div class="col-md-7">
+                    <textarea class="form-control" placeholder="Remove Reason" value="" id="remove_interface_reason" name="remove_interface_reason" required ></textarea>
+                  </div>
+                </div>
+               
+                <div class="row mt-1">
+                  <label class="col-md-4 col-form-label text-secondary">Option:</label>
+                  <div class="col-md-7">
+                    <select class="form-select" id="remove_interface_option">
+                      <option value="orphan">Orphan</option>
+                      <option value="delete">Delete</option>
+                    </select>
+                  </div>
+                </div>
+               
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button  class="btn btn-primary" type="button" >remove</button>
+            </div>
+          
           </div>
         </div>
     </div>

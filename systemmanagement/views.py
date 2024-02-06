@@ -1976,6 +1976,7 @@ def removeResourceProperty(request):
         return HttpResponse(data) 
 
 def updateEquipmentInterfaceDetail(request):
+    message = ''
     if request.method == 'GET':
         selectedInterfaceId = request.GET['selectedInterfaceId']
         identifier = request.GET['identifier']
@@ -1988,19 +1989,24 @@ def updateEquipmentInterfaceDetail(request):
         if interfaceConnectingClassId == 'none':
             interfaceConnectingClassId = 'Null'
         isIntermediate = request.GET['isIntermediate']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = "SELECT fn_update_interface({}, {}, '{}', '{}' , '{}', '{}', {}, {})".format(
-            interfaceClassId, interfaceConnectingClassId, identifier, description, comment, modified_at, isIntermediate, selectedInterfaceId
-        )  
+        modifiedBy = request.GET['modifiedBy']
+        reason = request.GET['reason']
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+               cursor.execute("CALL proc_modify_interface('{}','{}', '{}' ,{} , {}, {}, '{}', '{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        identifier,
+                        selectedInterfaceId,
+                        interfaceClassId,
+                        interfaceConnectingClassId,
+                        description,
+                        comment,
+                        isIntermediate
+                    ))
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_interfaces = list(Interface.objects.order_by('identifier').values())
@@ -2008,13 +2014,15 @@ def updateEquipmentInterfaceDetail(request):
             {
                 'result': result,  
                 'all_interfaces': all_interfaces,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
     
 def addInterfaceDetail(request):
-      if request.method == 'GET':
+    message = ''
+    if request.method == 'GET':
         identifier = request.GET['identifier']
         description = request.GET['description']
         comment = request.GET['comment']
@@ -2025,20 +2033,25 @@ def addInterfaceDetail(request):
         if connectingClassId == 'none':
             connectingClassId = 'Null'
         isIntermediate = request.GET['isIntermediate']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = "SELECT fn_add_interface({}, {}, '{}', '{}' , '{}', '{}', {})".format(
-            classId, connectingClassId, identifier, description, comment, modified_at, isIntermediate
-        )  
+        modifiedBy = request.GET['modifiedBy']
+        reason = request.GET['reason']
+       
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
-            
+                cursor.execute("CALL proc_modify_interface('{}','{}', '{}' , null , {}, {}, '{}', '{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        identifier,
+                        classId,
+                        connectingClassId,
+                        description,
+                        comment,
+                        isIntermediate
+                    ))
+
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_interfaces = list(Interface.objects.order_by('identifier').values())
@@ -2046,23 +2059,31 @@ def addInterfaceDetail(request):
             {
                 'result': result,  
                 'all_interfaces': all_interfaces,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
 def removeEquipmentInterface(request):
+    message = ''
     if request.method == 'GET':
         selectedInterfaceId = request.GET['selectedInterfaceId']
-
-        raw_query = "SELECT fn_remove_interface({})".format(selectedInterfaceId)  
+        modifiedBy = request.GET['modifiedBy']
+        reason = request.GET['reason']
+        option = request.GET['option']
+        
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_remove_interface('{}','{}', {} ,'{}')".format(
+                        modifiedBy,
+                        reason,
+                        selectedInterfaceId,
+                        option
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_interfaces = list(Interface.objects.order_by('identifier').values())
@@ -2070,6 +2091,7 @@ def removeEquipmentInterface(request):
             {
                 'result': result,  
                 'all_interfaces': all_interfaces,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )

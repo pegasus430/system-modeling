@@ -2050,7 +2050,7 @@ def addInterfaceDetail(request):
                     ))
 
             result = True
-        except Exception as e:
+        except Exception as e:            
             message = str(e)
             result = False
 
@@ -2098,24 +2098,28 @@ def removeEquipmentInterface(request):
         return HttpResponse(data) 
     
 def updateAttributeClassDetail(request):
+    message = ''
     if request.method == 'GET':
         id = request.GET['id']
         label = request.GET['label']
         description = request.GET['description']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_update_attribute_class({},  '{}', '{}' , '{}', '{}')".format(
-           id, label, description, comment, modified_at
-        )  
-        
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+       
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
-            result = True
+                cursor.execute("CALL proc_modify_attribute_class('{}','{}', '{}' , '{}', {},  '{}')".format(
+                        modifiedBy,
+                        reason,
+                        label,
+                        description,
+                        id,
+                        comment,
+                    ))
+                result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
@@ -2123,28 +2127,33 @@ def updateAttributeClassDetail(request):
             {
                 'result': result,  
                 'all_attributeClass': all_attributeClass,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
     
 def addAttributeClass(request):
+    message = ''
     if request.method == 'GET':
         label = request.GET['label']
         description = request.GET['description']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_add_attribute_class('{}', '{}' , '{}', '{}')".format(
-            label, description, comment, modified_at
-        ) 
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+       
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
-            result = True
+                cursor.execute("CALL proc_modify_attribute_class('{}','{}', '{}' , '{}', null,  '{}')".format(
+                        modifiedBy,
+                        reason,
+                        label,
+                        description,
+                        comment,
+                    ))
+                result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
@@ -2152,28 +2161,36 @@ def addAttributeClass(request):
             {
                 'result': result,  
                 'all_attributeClass': all_attributeClass,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
 def removeAttributeClassDetail(request):
+     message = ''
      if request.method == 'GET':
-        id = request.GET['id']       
-        raw_query = "SELECT fn_remove_attribute_class({})".format(id)
+        id = request.GET['id']      
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy'] 
+       
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
-            result = True
+                cursor.execute("CALL proc_remove_attribute_class('{}','{}', {} )".format(
+                        modifiedBy,
+                        reason,
+                        id
+                    )) 
+                result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_attributeClass = list(AttributeClass.objects.order_by('attribute_class_label').values())
         data = json.dumps(
             {
                 'result': result,  
                 'all_attributeClass': all_attributeClass,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )

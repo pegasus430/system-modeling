@@ -5496,8 +5496,10 @@ $(document).ready(function() {
         let label = $('#attribute_class_label').val()
         let description = $('#attribute_class_description').val()
         let comment = $('#attribute_class_comment').val()
+        let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
         if(label && description){
-          if(confirm('Are you sure to update this attribute class?')){
+          let reason = prompt('Please write the reason why you update the attribute class.', '')
+          if(reason != ""){
             $.ajax({
               type: "GET",
               url: 'updateAttributeClassDetail',
@@ -5506,6 +5508,8 @@ $(document).ready(function() {
                 label: label,
                 description: description,
                 comment: comment,
+                reason: reason,
+                modifiedBy: currentUserName,
               },
               success: function (data){
                 data = JSON.parse(data)
@@ -5520,21 +5524,22 @@ $(document).ready(function() {
                           ' + n.attribute_class_label + '  (' + n.attribute_class_description +')</li>'
                   });
                   document.getElementById('attribute_class_tree').innerHTML = html
+
                 }
                 else{
-                  showErrorNotification('The error happend while updating the attribute class!')
+                  showErrorNotification(data['message'])
                 }
               },
               error:function(){
-                showErrorNotification('The error happend while requesting the server')
+                showErrorNotification('The error happend while requesting the server.')
               }
             })
           }
         }else{
-          showErrorNotification('Label and description should not be emptry string')
+          showErrorNotification('Label and description should not be emptry string.')
         }
       }else{  
-        showErrorNotification('You should select the attribute class to be updated')
+        showErrorNotification('You should select the attribute class to be updated.')
       }
   })
 
@@ -5543,6 +5548,8 @@ $(document).ready(function() {
      let label = $('#adding_attribute_class_label').val()
      let description= $('#adding_attribute_class_description').val()
      let comment = $('#adding_attribute_class_comment').val()
+     let reason = $('#adding_attribute_class_reason').val()
+     let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
      if(label && description){
       $.ajax({
         type: "GET",
@@ -5551,6 +5558,8 @@ $(document).ready(function() {
           label: label,
           description: description,
           comment: comment,
+          reason: reason,
+          modifiedBy: currentUserName,
         },
         success: function (data){
           data = JSON.parse(data)
@@ -5566,9 +5575,16 @@ $(document).ready(function() {
                     ' + n.attribute_class_label + '  (' + n.attribute_class_description +')</li>'
             });
             document.getElementById('attribute_class_tree').innerHTML = html
+
+            $('#adding_attribute_class_label').val('')
+            $('#adding_attribute_class_description').val('')
+            $('#adding_attribute_class_comment').val('')
+            $('#adding_attribute_class_reason').val('')
+            $('#AttributeClassModal').modal('hide')
+
           }
           else{
-            showErrorNotification('The error happend while adding the attribute class!')
+            showErrorNotification(data['message'])
           }
         },
         error:function(){
@@ -5583,13 +5599,18 @@ $(document).ready(function() {
   //remove attribute class
   $('#btnRemoveAttributeClass').on('click', function(){
     let selectedClassId = $('#attribute_class_id').val()
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
     if(selectedClassId){
-      if(confirm('Are you sure to remove this attribute class?')){
+      let reason = prompt('Please write the reason why you remove this attribute class.', '')
+
+      if(reason != ""){
         $.ajax({
           type: "GET",
           url: 'removeAttributeClassDetail',
           data: {
-            id: selectedClassId          
+            id: selectedClassId ,
+            reason: reason,
+            modifiedBy: currentUserName,  
           },
           success: function (data){
             data = JSON.parse(data)
@@ -5610,16 +5631,16 @@ $(document).ready(function() {
               document.getElementById('attribute_class_tree').innerHTML = html
             }
             else{
-              showErrorNotification('The error happend while removing the attribute class!')
+              showErrorNotification(data['message'])
             }
           },
           error:function(){
-            showErrorNotification('The error happend while requesting the server')
+            showErrorNotification('The error happend while requesting the server.')
           }
         })
       }
     }else{  
-      showErrorNotification('You should select the attribute class to be removed')
+      showErrorNotification('You should select the attribute class to be removed.')
     }
   })
 

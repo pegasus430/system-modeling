@@ -3,6 +3,7 @@
 
 {% block maincontent %}
 {{all_attributeClass | json_script:'all_attributeClass'}}
+{{user.username | json_script:'currentUserName'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="attribute_class_page card card-body system_overview border-gray">
@@ -104,6 +105,12 @@
                     <label class="col-md-4 col-form-label text-secondary">Comment:</label>
                     <div class="col-md-7">
                     <textarea class="form-control" placeholder="comment"  id="adding_attribute_class_comment"></textarea>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <label class="col-md-4 col-form-label text-secondary">reason:</label>
+                    <div class="col-md-7">
+                    <textarea class="form-control" placeholder="reason"  id="adding_attribute_class_reason"></textarea>
                     </div>
                 </div>
 

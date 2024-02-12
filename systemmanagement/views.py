@@ -2197,6 +2197,7 @@ def removeAttributeClassDetail(request):
         return HttpResponse(data)
 
 def updateConnectionTypeDetail(request):
+    message = ''
     if request.method == 'GET':
         id = request.GET['id']
         label = request.GET['label']
@@ -2211,35 +2212,45 @@ def updateConnectionTypeDetail(request):
         model =  request.GET['model']
         comment = request.GET['comment'] 
         is_approved = request.GET['isApproved'] 
+        reason = request.GET['reason'] 
+        modifiedBy = request.GET['modifiedBy'] 
 
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-
-        raw_query = "SELECT  fn_update_connection_type({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', {} , '{}')".format(
-            id, parentPath, label, model, modifier,manufacturer , description , comment, is_approved, modified_at
-        ) 
+       
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
+                cursor.execute("CALL proc_modify_connection_type('{}','{}', '{}', '{}' , {}, '{}', '{}', '{}', '{}', '{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        label,
+                        description,
+                        id,
+                        parentPath,
+                        modifier,
+                        model,
+                        manufacturer,
+                        comment,
+                        is_approved,
+                    )) 
 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_connection_types = list(ConnectionType.objects.order_by('path').values())
         data = json.dumps(
             {
                 'result': result,
                 'all_connection_types': all_connection_types,
+                'message': message,
             }, 
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
 def addConnectionType(request):
-     if request.method == 'GET':
+    message = ''
+    if request.method == 'GET':
         label = request.GET['label']
         parentPath = request.GET['parentPath']
         description =  request.GET['description']
@@ -2248,9 +2259,8 @@ def addConnectionType(request):
         model =  request.GET['model']
         comment = request.GET['comment'] 
         is_approved = request.GET['isApproved'] 
-
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+        reason = request.GET['reason'] 
+        modifiedBy = request.GET['modifiedBy'] 
 
         raw_query  = 'SELECT max(id) FROM all_connection_type'
         try:
@@ -2264,46 +2274,61 @@ def addConnectionType(request):
                     new_type_path = parentPath + '.' + str(new_connection_type_id)
                 else:
                     new_type_path = str(new_connection_type_id)
-                raw_query = "SELECT  fn_add_connection_type({}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', {} , '{}')".format(
-                    new_connection_type_id, new_type_path, label, model, modifier, manufacturer , description , comment, is_approved, modified_at
-                ) 
                 
-                with connection.cursor() as cursor:
-                    cursor.execute(raw_query)
-                    results = cursor.fetchall()
-
+                cursor.execute("CALL proc_modify_connection_type('{}','{}', '{}', '{}' , null, '{}', '{}', '{}', '{}', '{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        label,
+                        description,
+                        new_type_path,
+                        modifier,
+                        model,
+                        manufacturer,
+                        comment,
+                        is_approved,
+                    )) 
                 result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_connection_types = list(ConnectionType.objects.order_by('path').values())
         data = json.dumps(
             {
                 'result': result,
                 'all_connection_types': all_connection_types,
+                'message': message,
             }, 
             cls=DateTimeEncoder
         )
         return HttpResponse(data)
 
 def removeConnectionTypeDetail(request):
-     if request.method == 'GET':
+    message = '' 
+    if request.method == 'GET':
         id = request.GET['id']
-        raw_query = "SELECT  fn_remove_connection_type({})".format(id)
+        reason = request.GET['reason']
+        option = request.GET['option']
+        modifiedBy = request.GET['modifiedBy']
+        
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchall()
+                cursor.execute("CALL proc_remove_connection_type('{}','{}', {},'{}' )".format(
+                        modifiedBy,
+                        reason,
+                        id,
+                        option,
+                    )) 
                 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
         all_connection_types = list(ConnectionType.objects.order_by('path').values())
         data = json.dumps(
             {
                 'result': result,
                 'all_connection_types': all_connection_types,
+                'message': message,
             }, 
             cls=DateTimeEncoder
         )

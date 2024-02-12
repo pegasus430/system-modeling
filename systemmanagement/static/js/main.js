@@ -5656,8 +5656,10 @@ $(document).ready(function() {
       let model = $('#connection_type_model').val()
       let comment = $('#connection_type_comment').val()
       let isApproved = $('#connection_type_is_approved').prop('checked')
+      let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
       if(label && description){
-        if(confirm('Are you sure to update this connection type?')){
+        let reason = prompt('Please write the reason why you update this connection type.', '')
+        if(reason != ''){
           $.ajax({
             type: "GET",
             url: 'updateConnectionTypeDetail',
@@ -5671,6 +5673,8 @@ $(document).ready(function() {
               model: model,
               comment: comment,
               isApproved: isApproved,
+              modifiedBy: modifiedBy,
+              reason: reason,
             },
             success: function (data)
             {
@@ -5687,7 +5691,7 @@ $(document).ready(function() {
   
               }
               else{
-               showErrorNotification('The error happend while updating the connection type!')
+               showErrorNotification(data['message'])
              }
             },
             error: function(){
@@ -5730,7 +5734,9 @@ $(document).ready(function() {
     let manufacturer = $('#adding_connection_type_manufacturer').val()
     let model = $('#adding_connection_type_model').val()
     let comment = $('#adding_connection_type_comment').val()
+    let reason = $('#adding_connection_type_reason').val()
     let isApproved = $('#adding_connection_type_approved').prop('checked')
+    let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
     if(label && description){
       $.ajax({
         type: "GET",
@@ -5744,6 +5750,8 @@ $(document).ready(function() {
           model: model,
           comment: comment,
           isApproved: isApproved,
+          modifiedBy: modifiedBy,
+          reason: reason,
         },
         success: function (data)
         {
@@ -5751,7 +5759,15 @@ $(document).ready(function() {
           var result = data['result']
           var allConnectionTypes = data['all_connection_types']
           if(result){
-            showSuccessNotification('The equipment type has been updated successfully!')
+            showSuccessNotification('The connection type has been added successfully!')
+            $('#adding_connection_type_label').val('')
+            $('#adding_connection_type_modifier').val('')
+            $('#adding_connection_type_description').val('')
+            $('#adding_connection_type_manufacturer').val('')
+            $('#adding_connection_type_model').val('')
+            $('#adding_connection_type_comment').val('')
+            $('#adding_connection_type_approved').prop('checked', false)
+            $('#adding_connection_type_reason').val('')
             $('#connectionTypeModal').modal('hide')
             // update the connection type tree
             document.getElementById('all_connection_types').textContent = JSON.stringify(allConnectionTypes)
@@ -5761,7 +5777,7 @@ $(document).ready(function() {
 
           }
           else{
-           showErrorNotification('The error happend while adding the connection type!')
+           showErrorNotification(data['message'])
          }
         },
         error: function(){
@@ -5775,52 +5791,66 @@ $(document).ready(function() {
 
   })
   
-  // remove connecion type
+  // click delete btn for remove connecion type
   $('#btn_remove_connection_type').on('click', function(){
       let id = $('#connection_type_id').val()
       if(id){
-        if(confirm('Are you sure to remove this connection type?')){
-          $.ajax({
-            type: "GET",
-            url: 'removeConnectionTypeDetail',
-            data: {
-              id: id,
-            },
-            success: function (data)
-            {
-              data = JSON.parse(data)
-              var result = data['result']
-              var allConnectionTypes = data['all_connection_types']
-              if(result){
-                showSuccessNotification('The equipment type has been updated successfully!')
-                // update the connection type tree
-                document.getElementById('all_connection_types').textContent = JSON.stringify(allConnectionTypes)
-                const html = createConnectionTypeTree(allConnectionTypes)
-                document.getElementById('connection_type_tree').innerHTML = html
-                $('.treeview-animated').mdbTreeview();
-
-                $('#connection_type_label').val('')
-                $('#connection_type_modifier').val('')
-                $('#connection_type_parent_path').find('option').remove()
-                $('#connection_type_description').val('')
-                $('#connection_type_manufacturer').val('')
-                $('#connection_type_model').val('')
-                $('#connection_type_comment').val('')
-                $('#connection_type_is_approved').prop('checked', false)
-              }
-              else{
-               showErrorNotification('The error happend while removing the connection type!')
-             }
-            },
-            error: function(){
-              showErrorNotification('The error happend while requesting the server.')
-            }
-          })
-        }
+        return
       }else{
         showErrorNotification('You should select the connection type to be removed')
       }
     
+  })
+  // remove the connection type from the modal
+  $('#connectionTypeRemoveModal .btn-primary').on('click', function(){
+    let id = $('#connection_type_id').val()
+    if(confirm('Are you sure to remove this connection type?')){
+      let reason = $('#remove_connection_type_reason').val()
+      let option = $('#remove_connection_type_option').val()
+      let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
+      $.ajax({
+        type: "GET",
+        url: 'removeConnectionTypeDetail',
+        data: {
+          id: id,
+          reason: reason,
+          option: option,
+          modifiedBy: modifiedBy,
+        },
+        success: function (data)
+        {
+          data = JSON.parse(data)
+          var result = data['result']
+          var allConnectionTypes = data['all_connection_types']
+          if(result){
+            showSuccessNotification('The equipment type has been updated successfully!')
+            // update the connection type tree
+            document.getElementById('all_connection_types').textContent = JSON.stringify(allConnectionTypes)
+            const html = createConnectionTypeTree(allConnectionTypes)
+            document.getElementById('connection_type_tree').innerHTML = html
+            $('.treeview-animated').mdbTreeview();
+
+            $('#connection_type_label').val('')
+            $('#connection_type_modifier').val('')
+            $('#connection_type_parent_path').find('option').remove()
+            $('#connection_type_description').val('')
+            $('#connection_type_manufacturer').val('')
+            $('#connection_type_model').val('')
+            $('#connection_type_comment').val('')
+            $('#connection_type_is_approved').prop('checked', false)
+            $('#remove_connection_type_reason').val('')
+            $('#remove_connection_type_option').val('')
+            $('#connectionTypeRemoveModal').modal('hide')
+          }
+          else{
+           showErrorNotification(data['message'])
+         }
+        },
+        error: function(){
+          showErrorNotification('The error happend while requesting the server.')
+        }
+      })
+    }
   })
 
   $('#target_systems_table').on('click', 'td', function(){    

@@ -3,6 +3,8 @@
 
 {% block maincontent %}
 {{all_connection_types | json_script:'all_connection_types'}}
+{{user.username | json_script:'currentUserName'}}
+
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="connection_type_page card card-body system_overview border-gray">
@@ -101,7 +103,7 @@
                         </button>
                         </div>
                         <div class="col-md-2">
-                        <button type="button" id="btn_remove_connection_type" class="btn btn-danger">
+                        <button type="button" id="btn_remove_connection_type" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#connectionTypeRemoveModal" >
                             Delete
                         </button>
                         </div>
@@ -175,6 +177,12 @@
                     <input class="form-check-input form-control" type="checkbox" id="adding_connection_type_approved">
                   </div>
               </div>
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="reason" style="height: 60px;" id="adding_connection_type_reason"></textarea>
+                </div>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -182,7 +190,41 @@
             </div>
           </div>
         </div>
+    </div>
+    <div class="modal fade" id="connectionTypeRemoveModal" tabindex="-1" aria-labelledby="connectionTypeRemoveModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="connectionTypeRemoveModalLabel">Remove Conecction Type</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Remove Reason" value="" id="remove_connection_type_reason" name="remove_connection_type_reason" required ></textarea>
+                </div>
+              </div>
+             
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Option:</label>
+                <div class="col-md-7">
+                  <select class="form-select" id="remove_connection_type_option">
+                    <option value="orphan">Orphan</option>
+                    <option value="delete">Delete</option>
+                  </select>
+                </div>
+              </div>
+             
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button  class="btn btn-primary" type="button" >remove</button>
+          </div>
+        
+        </div>
       </div>
+    </div>
     <script type="text/javascript">
         
         all_connection_types = JSON.parse(document.getElementById('all_connection_types').textContent)

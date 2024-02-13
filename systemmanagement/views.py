@@ -2443,8 +2443,11 @@ def removeTargetSystemDetail(request):
         return HttpResponse(data) 
 
 def updateDataTypeDetail(request):
-     if request.method == 'GET':
+    message = '' 
+    if request.method == 'GET':
         id = request.GET['id']
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
         label = request.GET['label']
         control_1 = request.GET['control_1']
         control_2 = request.GET['control_2']
@@ -2458,19 +2461,29 @@ def updateDataTypeDetail(request):
         scada_5 = request.GET['scada_5']
         description = request.GET['description']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_update_datatype({},  '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}' , '{}', '{}', '{}')".format(
-           id, label, scada_1, scada_2, scada_3, scada_4, scada_5, control_1, control_2, control_3, control_4, control_5, comment, modified_at, description
-        )  
-        
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_datatype('{}','{}', '{}', {}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+                        modifiedBy,
+                        reason,
+                        label, 
+                        id,
+                        comment, 
+                        scada_1,
+                        scada_2,
+                        scada_3,
+                        scada_4,
+                        scada_5,
+                        control_1,
+                        control_2,
+                        control_3,
+                        control_4,
+                        control_5,
+                    )) 
+              
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_datatype = list(DataType.objects.values())
@@ -2478,14 +2491,18 @@ def updateDataTypeDetail(request):
             {
                 'result': result,  
                 'all_datatype': all_datatype ,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def addDataType(request):
+    message = ''
     if request.method == 'GET':
         label = request.GET['label']
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
         control_1 = request.GET['control_1']
         control_2 = request.GET['control_2']
         control_3 = request.GET['control_3']
@@ -2498,19 +2515,30 @@ def addDataType(request):
         scada_5 = request.GET['scada_5']
         description = request.GET['description']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_add_datatype('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}' , '{}', '{}', '{}')".format(
-           label, scada_1, scada_2, scada_3, scada_4, scada_5, control_1, control_2, control_3, control_4, control_5, comment, modified_at, description
-        )  
+       
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_datatype('{}','{}', '{}', null, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
+                        modifiedBy,
+                        reason,
+                        label, 
+                        comment, 
+                        scada_1,
+                        scada_2,
+                        scada_3,
+                        scada_4,
+                        scada_5,
+                        control_1,
+                        control_2,
+                        control_3,
+                        control_4,
+                        control_5,
+                    )) 
+              
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_datatype = list(DataType.objects.values())
@@ -2518,23 +2546,29 @@ def addDataType(request):
             {
                 'result': result,  
                 'all_datatype': all_datatype ,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def removeDataTypeDetail(request):
+    message = ''
     if request.method == 'GET':
         id = request.GET['id']
-        raw_query = "SELECT fn_remove_datatype({})".format( id )  
-        
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_remove_datatype('{}', '{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        id
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_datatype = list(DataType.objects.values())
@@ -2542,6 +2576,7 @@ def removeDataTypeDetail(request):
             {
                 'result': result,  
                 'all_datatype': all_datatype ,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )

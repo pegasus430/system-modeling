@@ -6069,13 +6069,17 @@ $(document).ready(function() {
 
   //remove the datatype
   $('#system_datatype_table').on('click', '.bi-trash', function(){
-    if(confirm('Are you sure to remove this datatype?')){
+    let reason = prompt('Please write the reason why you update this datatype.', '')
+    let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
+    if(reason != ''){
       let selectedId = this.getAttribute('data-id')
       $.ajax({
         type: "GET",
         url: 'removeDataTypeDetail',
         data: {       
           id: selectedId,
+          reason: reason,
+          modifiedBy: modifiedBy,
         },
         success: function (data){
           data = JSON.parse(data)
@@ -6089,7 +6093,7 @@ $(document).ready(function() {
             
           }
           else{
-            showErrorNotification('The error happend while removing the data type!')
+            showErrorNotification(data['message'])
           }
         },
         error: function(){
@@ -6190,10 +6194,11 @@ $(document).ready(function() {
   $('#datatypeModal .btn-primary').on('click', function(){
     let selectedId = $('#datatype_id').val()
     let label = $('#datatype_label').val()
+    let reason = $('#datatype_reason').val()
+    let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
     if(label){
       let description = $('#datatype_description').val()
       let comment = $('#datatype_comment').val()
-      
       let control_1 = select('#datatype_control_1')? $('#datatype_control_1').val(): ''
       let control_2 =  select('#datatype_control_2')? $('#datatype_control_2').val(): ''
       let control_3 =  select('#datatype_control_3')? $('#datatype_control_3').val(): ''
@@ -6224,6 +6229,8 @@ $(document).ready(function() {
             scada_3: scada_3,
             scada_4: scada_4,
             scada_5: scada_5,
+            reason: reason,
+            modifiedBy: modifiedBy,
           },
           success: function (data){
             data = JSON.parse(data)
@@ -6237,11 +6244,11 @@ $(document).ready(function() {
               $('#datatypeModal').modal('hide')
             }
             else{
-              showErrorNotification('The error happend while updating the data type!')
+              showErrorNotification(data['message'])
             }
           },
           error: function(){
-            showErrorNotification('The error happend while requesting the server')
+            showErrorNotification('The error happend while requesting the server.')
           }
          })
       }else{
@@ -6263,6 +6270,8 @@ $(document).ready(function() {
             scada_3: scada_3,
             scada_4: scada_4,
             scada_5: scada_5,
+            reason: reason,
+            modifiedBy: modifiedBy,
           },
           success: function (data){
             data = JSON.parse(data)
@@ -6276,11 +6285,11 @@ $(document).ready(function() {
               $('#datatypeModal').modal('hide')
             }
             else{
-              showErrorNotification('The error happend while updating the data type!')
+              showErrorNotification(data['message'])
             }
           },
           error: function(){
-            showErrorNotification('The error happend while requesting the server')
+            showErrorNotification('The error happend while requesting the server.')
           }
          })
       }

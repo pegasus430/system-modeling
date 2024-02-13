@@ -2335,28 +2335,31 @@ def removeConnectionTypeDetail(request):
         return HttpResponse(data)
 
 def updateTargetSystemDetail(request):
-     if request.method == 'GET':
+    message = ''
+    if request.method == 'GET':
         id = request.GET['id']
         label = request.GET['label']
         value = request.GET['value']
         comment = request.GET['comment']
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+
         if comment =='':
             comment = 'NULL'
-        else:
-            comment = "'" + comment + "'"
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_update_system_settings({},  '{}', '{}' , {}, '{}')".format(
-           id, label, value, comment, modified_at
-        )  
-        
+
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_system_settings('{}','{}', '{}', '{}', {}, '{}')".format(
+                        modifiedBy,
+                        reason,
+                        label, 
+                        value,
+                        id,
+                        comment
+                    ))
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         target_systems = list(TargetSystem.objects.order_by('label').values())
@@ -2364,33 +2367,38 @@ def updateTargetSystemDetail(request):
             {
                 'result': result,  
                 'target_systems': target_systems,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def addTargetSystemDetail(request):
+    message = ''
     if request.method == 'GET':
         label = request.GET['label']
         value = request.GET['value']
         comment = request.GET['comment']
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+
         if comment =='':
             comment = 'NULL'
-        else:
-            comment = "'" + comment + "'"
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_add_system_settings('{}', '{}' , {}, '{}')".format(
-            label, value, comment, modified_at
-        )  
-        
+              
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_system_settings('{}','{}', '{}', '{}', null, '{}')".format(
+                        modifiedBy,
+                        reason,
+                        label, 
+                        value,
+                        comment
+                    )) 
+             
             result = True
         except Exception as e:
             print(e)
+            message = str(e)
             result = False
 
         target_systems = list(TargetSystem.objects.order_by('label').values())
@@ -2398,22 +2406,29 @@ def addTargetSystemDetail(request):
             {
                 'result': result,  
                 'target_systems': target_systems,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def removeTargetSystemDetail(request):
+    message = ""
     if request.method == 'GET':
         id = request.GET['id']
-        raw_query = "SELECT fn_remove_system_settings( {})".format(id)          
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+              
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                 cursor.execute("CALL proc_remove_system_settings('{}','{}',{})".format(
+                        modifiedBy,
+                        reason,
+                        id
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         target_systems = list(TargetSystem.objects.order_by('label').values())
@@ -2421,6 +2436,7 @@ def removeTargetSystemDetail(request):
             {
                 'result': result,  
                 'target_systems': target_systems,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )

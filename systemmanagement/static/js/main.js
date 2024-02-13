@@ -1583,35 +1583,41 @@ $(document).ready(function() {
             label = cell.label
             value = cell.value
             comment = cell.comment
+            let modifiedBy = JSON.parse(document.getElementById('currentUserName').textContent)
             if(value){
-              $.ajax({
-                type: "GET",
-                url: 'updateTargetSystemDetail',
-                data: {
-                  id: id,
-                  label: label,
-                  value: value,
-                  comment: comment
-                },
-                success: function (data){
-                  data = JSON.parse(data)
-                  var result = data['result']
-                  if(result){
-                    target_systems = data['target_systems']
-                    document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
-                    showSuccessNotification('The target system has been updated successfully!')
-                    let all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
-                    showDataTypeTable(target_systems, all_datatype)
-                    $('#target_system_id').val('')
+              let reason = prompt('Please write the reason why you update this target system settings.', '')
+              if(reason !=''){
+                $.ajax({
+                  type: "GET",
+                  url: 'updateTargetSystemDetail',
+                  data: {
+                    id: id,
+                    label: label,
+                    value: value,
+                    comment: comment,
+                    reason: reason,
+                    modifiedBy: modifiedBy,
+                  },
+                  success: function (data){
+                    data = JSON.parse(data)
+                    var result = data['result']
+                    if(result){
+                      target_systems = data['target_systems']
+                      document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
+                      showSuccessNotification('The target system has been updated successfully!')
+                      let all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+                      showDataTypeTable(target_systems, all_datatype)
+                      $('#target_system_id').val('')
+                    }
+                    else{
+                      showErrorNotification(data['message'])
+                    }
+                  },
+                  error: function(){
+                    showErrorNotification('The error happend while requesting the server.')
                   }
-                  else{
-                    showErrorNotification('The error happend while updating the target system!')
-                  }
-                },
-                error: function(){
-                  showErrorNotification('The error happend while requesting the server')
-                }
-               })
+                })
+              }
             }else{
               showErrorNotification('The target system value should not be empty.')
             }
@@ -5867,8 +5873,10 @@ $(document).ready(function() {
     let label = $('#adding_system_settings_label').val()
     let value = $('#adding_system_settings_value').val()
     let comment = $('#adding_system_settings_comment').val()
+    let reason = $('#adding_system_settings_reason').val()
     let target_systems = JSON.parse(document.getElementById('target_systems').textContent)
     let filter = target_systems.filter(element => element.label == label)
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
 
     if(!filter.length){
       $.ajax({
@@ -5877,7 +5885,9 @@ $(document).ready(function() {
         data: {       
           label: label,
           value: value,
-          comment: comment
+          comment: comment,
+          reason: reason,
+          modifiedBy: currentUserName,
         },
         success: function (data){
           data = JSON.parse(data)
@@ -5947,103 +5957,111 @@ $(document).ready(function() {
             $('#targetSystemModal').modal('hide')
           }
           else{
-            showErrorNotification('The error happend while adding the target system!')
+            showErrorNotification(data['message'])
           }
         },
         error: function(){
-          showErrorNotification('The error happend while requesting the server')
+          showErrorNotification('The error happend while requesting the server.')
         }
        })
     }else{
       showErrorNotification('The Label: ' + label + ' is exsting on the DB. Please check other label to be added.')
     }
   })
+  
   // delete target systems
   $('#btn_delete_targetsystem').on('click', function(){
     let selectedId = $('#target_system_id').val()
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
     if(selectedId){
-      $.ajax({
-        type: "GET",
-        url: 'removeTargetSystemDetail',
-        data: {       
-          id: selectedId
-        },
-        success: function (data){
-          data = JSON.parse(data)
-          var result = data['result']
-          if(result){
-            target_systems = data['target_systems']
-            document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
-            showSuccessNotification('The target system has been removed successfully!')
-            $('#target_system_id').val('')
-            let tableData = []
-            target_systems.forEach(element => {
-                tableData.push({
-                  'id': element.system_settings_id,
-                  'label': element.label ,
-                  'value': element.value,
-                  'comment' : element.comment,
-                })
-            })
+      let reason = prompt('Please write the reason why you remove this target system settins.')
+      if(reason != ''){
+     
+        $.ajax({
+          type: "GET",
+          url: 'removeTargetSystemDetail',
+          data: {       
+            id: selectedId,
+            reason: reason,
+            modifiedBy: currentUserName,
+          },
+          success: function (data){
+            data = JSON.parse(data)
+            var result = data['result']
+            if(result){
+              target_systems = data['target_systems']
+              document.getElementById('target_systems').textContent = JSON.stringify(target_systems)
+              showSuccessNotification('The target system has been removed successfully!')
+              $('#target_system_id').val('')
+              let tableData = []
+              target_systems.forEach(element => {
+                  tableData.push({
+                    'id': element.system_settings_id,
+                    'label': element.label ,
+                    'value': element.value,
+                    'comment' : element.comment,
+                  })
+              })
 
-            var targetSystemEditor = new DataTable.Editor({
-              idSrc:  'id',
-              fields: [
-                {
-                  label: 'id',
-                  name: 'id'
-                },
-                {
-                  label: 'label',
-                  name: 'label'
-                },
-                {
-                  label: 'value',
-                  name: 'value'
-                },
-                {
-                  label: 'comment',
-                  name: 'comment'
-                },
-              ],
-              table: '#target_systems_table'
-            })
-      
-            $('#target_systems_table').DataTable({
-              data:  tableData ,
-              destroy: true,
-              autoWidth: false,
-              columns: [
-                { data: 'id'},
-                { data: 'label' },
-                { data: 'value' },
-                { data: 'comment' },
+              var targetSystemEditor = new DataTable.Editor({
+                idSrc:  'id',
+                fields: [
+                  {
+                    label: 'id',
+                    name: 'id'
+                  },
+                  {
+                    label: 'label',
+                    name: 'label'
+                  },
+                  {
+                    label: 'value',
+                    name: 'value'
+                  },
+                  {
+                    label: 'comment',
+                    name: 'comment'
+                  },
+                ],
+                table: '#target_systems_table'
+              })
+        
+              $('#target_systems_table').DataTable({
+                data:  tableData ,
+                destroy: true,
+                autoWidth: false,
+                columns: [
+                  { data: 'id'},
+                  { data: 'label' },
+                  { data: 'value' },
+                  { data: 'comment' },
+                
+                ],
+                order: [[1, 'asc']],
+                columnDefs: [
+                  {
+                    targets: [0],
+                    visible: false
+                  }
+                ]}
+              )
+
+              $('#target_systems_table').on('click', 'td:nth-child(n+2):nth-child(-n+4)', function(){
+                targetSystemEditor.inline(this)
+              })
+              all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
+              showDataTypeTable(target_systems, all_datatype)
               
-              ],
-              order: [[1, 'asc']],
-              columnDefs: [
-                {
-                  targets: [0],
-                  visible: false
-                }
-              ]}
-            )
-
-            $('#target_systems_table').on('click', 'td:nth-child(n+2):nth-child(-n+4)', function(){
-              targetSystemEditor.inline(this)
-            })
-            all_datatype = JSON.parse(document.getElementById('all_datatype').textContent)
-            showDataTypeTable(target_systems, all_datatype)
-            $('#targetSystemModal').modal('hide')
+            }
+            else{
+              showErrorNotification(data['message'])
+            }
+          },
+          error: function(){
+            showErrorNotification('The error happend while requesting the server')
           }
-          else{
-            showErrorNotification('The error happend while removing the target system!')
-          }
-        },
-        error: function(){
-          showErrorNotification('The error happend while requesting the server')
-        }
-       })
+        })
+      }
     }else{
       showErrorNotification('You should select the target system to be removed')
     }

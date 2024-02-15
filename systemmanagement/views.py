@@ -2583,24 +2583,28 @@ def removeDataTypeDetail(request):
         return HttpResponse(data) 
 
 def updateAuthorityDetail(request):
+     message = ''
      if request.method == 'GET':
         id = request.GET['id']
         label = request.GET['label']
         description = request.GET['description']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_update_authority({},  '{}', '{}', '{}', '{}')".format(
-           id, label, description, comment, modified_at
-        )  
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_authority('{}','{}', {}, '{}', '{}', '{}')".format(
+                        modifiedBy,
+                        reason,
+                        id,
+                        label, 
+                        description,
+                        comment,
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_authority = list(Authority.objects.order_by('authority_label').values())
@@ -2608,29 +2612,33 @@ def updateAuthorityDetail(request):
             {
                 'result': result,  
                 'all_authority': all_authority ,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def addAuthority(request):
+    message = ''
     if request.method == 'GET':
         label = request.GET['label']
         description = request.GET['description']
         comment = request.GET['comment']
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_add_authority('{}', '{}', '{}', '{}')".format(
-           label, description, comment, modified_at
-        )  
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_authority('{}','{}', null, '{}', '{}', '{}')".format(
+                        modifiedBy,
+                        reason,
+                        label, 
+                        description,
+                        comment,
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_authority = list(Authority.objects.order_by('authority_label').values())
@@ -2638,23 +2646,29 @@ def addAuthority(request):
             {
                 'result': result,  
                 'all_authority': all_authority ,
+                'message': message
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def removeAuthorityDetail(request):
+    message = ''
     if request.method == 'GET':
         id = request.GET['id']
-        raw_query = "SELECT fn_remove_authority({})".format(id)  
-        
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_remove_authority('{}', '{}', {})".format(
+                        modifiedBy,
+                        reason,
+                        id
+                    )) 
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_authority = list(Authority.objects.order_by('authority_label').values())
@@ -2662,13 +2676,15 @@ def removeAuthorityDetail(request):
             {
                 'result': result,  
                 'all_authority': all_authority ,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def updateStateDetail(request):
-     if request.method == 'GET':
+    message = ''
+    if request.method == 'GET':
         id = request.GET['id']
         label = request.GET['label']
         description = request.GET['description']
@@ -2676,20 +2692,27 @@ def updateStateDetail(request):
         equipmentState = request.GET['equipmentState']
         connectionState = request.GET['connectionState']
         authId = request.GET['authId']
-
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_update_possible_state({},  '{}', '{}', {}, {}, '{}', {}, '{}')".format(
-           id, label, description, connectionState,  equipmentState , comment, authId, modified_at
-        )  
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+       
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_possible_state('{}','{}', '{}', '{}', {}, '{}', {}, {}, {})".format(
+                        modifiedBy,
+                        reason,
+                        label, 
+                        description,
+                        id,
+                        comment,
+                        connectionState,
+                        equipmentState,
+                        authId
+                    )) 
+                
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_possible_state = list(PossibleState.objects.order_by('state_label').values())
@@ -2697,33 +2720,40 @@ def updateStateDetail(request):
             {
                 'result': result,  
                 'all_possible_state': all_possible_state ,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
 
 def addState(request):
-     if request.method == 'GET':            
+    message = '' 
+    if request.method == 'GET':            
         label = request.GET['label']
         description = request.GET['description']
         comment = request.GET['comment']
         equipmentState = request.GET['equipmentState']
         connectionState = request.GET['connectionState']
         authId = request.GET['authId']
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
 
-        current_time = datetime.datetime.now(pytz.utc)
-        modified_at = current_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        raw_query = "SELECT fn_add_possible_state('{}', '{}', {}, {}, '{}', {}, '{}')".format(
-           label, description, connectionState,  equipmentState , comment, authId, modified_at
-        )  
-        
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_modify_possible_state('{}','{}', '{}', '{}', null, '{}', {}, {}, {})".format(
+                        modifiedBy,
+                        reason,
+                        label, 
+                        description,
+                        comment,
+                        connectionState,
+                        equipmentState,
+                        authId
+                    )) 
+                
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_possible_state = list(PossibleState.objects.order_by('state_label').values())
@@ -2731,23 +2761,32 @@ def addState(request):
             {
                 'result': result,  
                 'all_possible_state': all_possible_state ,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )
         return HttpResponse(data) 
      
 def removeStateDetail(request):
+    message = ''
     if request.method == 'GET':            
         id = request.GET['id']
-        raw_query = "SELECT fn_remove_possible_state({})".format(id)  
+        reason = request.GET['reason']
+        modifiedBy = request.GET['modifiedBy']
+        option = request.GET['option']
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(raw_query)
-                results = cursor.fetchone()
+                cursor.execute("CALL proc_remove_possible_state('{}','{}', {}, '{}')".format(
+                        modifiedBy,
+                        reason,
+                        id,
+                        option
+                    )) 
+                
             result = True
         except Exception as e:
-            print(e)
+            message = str(e)
             result = False
 
         all_possible_state = list(PossibleState.objects.order_by('state_label').values())
@@ -2755,6 +2794,7 @@ def removeStateDetail(request):
             {
                 'result': result,  
                 'all_possible_state': all_possible_state ,
+                'message': message,
             } ,
             cls=DateTimeEncoder
         )

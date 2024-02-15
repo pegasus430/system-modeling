@@ -4,7 +4,7 @@
 {% block maincontent %}
 {{all_possible_state | json_script:'all_possible_state'}}
 {{all_authority | json_script:'all_authority'}}
-
+{{user.username | json_script:'currentUserName'}}
     <!-- Right Overview -->
     <div class="col-xxl-9 col-lg-9 col-md-8 p-0">
         <div class="possible_state card card-body system_overview border-gray">
@@ -43,7 +43,7 @@
                         </button>
                     </div>
                     <div class="col-md-2">
-                        <button type="button" id="btn_possible_state_delete" class="btn btn-danger">
+                        <button type="button" id="btn_possible_state_delete" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#stateRemoveModal">
                             Delete
                         </button>
                     </div>
@@ -140,7 +140,12 @@
                   </select>
                 </div>
               </div>
-             
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Reason" style="height: 60px;" id="state_reason"></textarea>
+                </div>
+              </div>
              
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -150,6 +155,42 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="stateRemoveModal" tabindex="-1" aria-labelledby="stateRemoveModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="stateRemoveModalLabel">Remove State</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-7">
+                  <textarea class="form-control" placeholder="Remove Reason" value="" id="remove_state_reason" name="remove_state_reason" required ></textarea>
+                </div>
+              </div>
+             
+              <div class="row mt-1">
+                <label class="col-md-4 col-form-label text-secondary">Option:</label>
+                <div class="col-md-7">
+                  <select class="form-select" id="remove_state_option">
+                    <option value="orphan">Orphan</option>
+                    <option value="delete">Delete</option>
+                  </select>
+                </div>
+              </div>
+             
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button  class="btn btn-primary" type="button" >remove</button>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+
     <div class="modal fade" id="authorityModal" tabindex="-1" aria-labelledby="authorityModalLabel" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered">
           <div class="modal-content">
@@ -176,6 +217,12 @@
                   <textarea class="form-control" placeholder="Comment" style="height: 60px;" id="adding_auth_comment"></textarea>
                 </div>
               </div>
+              <div class="row mt-3">
+                <label class="col-md-3 col-form-label text-secondary">Reason:</label>
+                <div class="col-md-8">
+                  <textarea class="form-control" placeholder="Reason" style="height: 60px;" id="adding_auth_reason"></textarea>
+                </div>
+              </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary">Save</button>
@@ -184,4 +231,5 @@
         </div>
       </div>
     </div>
+    
 {% endblock %}

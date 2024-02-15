@@ -1722,6 +1722,8 @@ $(document).ready(function() {
             description = cell.description
             comment = cell.comment
             if(label && description){
+              let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+              let reason = prompt('Please write the reason why you update this authority.', '')
               $.ajax({
                 type: "GET",
                 url: 'updateAuthorityDetail',
@@ -1729,7 +1731,9 @@ $(document).ready(function() {
                   id: id,
                   label: label,
                   description: description,
-                  comment: comment
+                  comment: comment,
+                  modifiedBy: currentUserName,
+                  reason: reason,
                 },
                 success: function (data){
                   data = JSON.parse(data)
@@ -1771,7 +1775,7 @@ $(document).ready(function() {
 
                   }
                   else{
-                    showErrorNotification('The error happend while updating the authority detail!')
+                    showErrorNotification(data['message'])
                   }
                 },
                 error: function(e){
@@ -1896,7 +1900,9 @@ $(document).ready(function() {
             authLabel = cell.authority_label
             selectedAuth = all_authority.find(element => element.authority_label == authLabel)
             authId = selectedAuth.authority_id
+            let currentUserName  = JSON.parse(document.getElementById('currentUserName').textContent)
             if(label && description){
+              let reason = prompt('Please write the reason why you update this state.', '')
               $.ajax({
                 type: "GET",
                 url: 'updateStateDetail',
@@ -1908,6 +1914,8 @@ $(document).ready(function() {
                   equipmentState: equipmentState,
                   connectionState: connectionState,
                   authId: authId,
+                  reason: reason,
+                  modifiedBy: currentUserName,
                 },
                 success: function (data){
                   data = JSON.parse(data)
@@ -1972,7 +1980,7 @@ $(document).ready(function() {
                     }
                   }
                   else{
-                    showErrorNotification('The error happend while updating the state detail!')
+                    showErrorNotification(data['message'])
                   }
                 },
                 error: function(e){
@@ -6304,6 +6312,8 @@ $(document).ready(function() {
     let label = $('#adding_auth_label').val()
     let description = $('#adding_auth_description').val()
     let comment = $('#adding_auth_comment').val()
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+    let reason = $('#adding_auth_reason').val()
     if(label && description){
       $.ajax({
         type: "GET",
@@ -6311,7 +6321,9 @@ $(document).ready(function() {
         data: {
           label: label,
           description: description,
-          comment: comment
+          comment: comment,
+          modifiedBy: currentUserName,
+          reason: reason,
         },
         success: function (data){
           data = JSON.parse(data)
@@ -6352,7 +6364,7 @@ $(document).ready(function() {
             }
           }
           else{
-            showErrorNotification('The error happend while adding the authority detail!')
+            showErrorNotification(data['message'])
           }
         },
         error: function(e){
@@ -6367,12 +6379,17 @@ $(document).ready(function() {
   //remove authority
   $('#btn_authority_delete').on('click', function(){
     let id = $('#authority_id').val()
+    
     if(id){
+      let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+      let reason = prompt('Please write the reason why you remove this authority.', '')
       $.ajax({
         type: "GET",
         url: 'removeAuthorityDetail',
         data: {
-          id: id
+          id: id,
+          modifiedBy: currentUserName,
+          reason: reason,
         },
         success: function (data){
           data = JSON.parse(data)
@@ -6414,7 +6431,7 @@ $(document).ready(function() {
             }
           }
           else{
-            showErrorNotification('The error happend while removing the authority detail!')
+            showErrorNotification(data['message'])
           }
         },
         error: function(e){
@@ -6438,7 +6455,8 @@ $(document).ready(function() {
     let equipment_state =  selectedState.valid_for_equipment
     let connection_state =  selectedState.valid_for_connection
     let comment =  selectedState.state_comment
-
+    let reason = prompt('Please write the reason why you update this state.', '')
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
     $.ajax({
       type: "GET",
       url: 'updateStateDetail',
@@ -6450,6 +6468,8 @@ $(document).ready(function() {
         equipmentState: equipment_state,
         connectionState: connection_state,
         authId: authId,
+        reason: reason,
+        modifiedBy: currentUserName,
       },
       success: function (data){
         data = JSON.parse(data)
@@ -6514,7 +6534,7 @@ $(document).ready(function() {
           }
         }
         else{
-          showErrorNotification('The error happend while updating the state detail!')
+          showErrorNotification(data['message'])
         }
       },
       error: function(e){
@@ -6544,6 +6564,8 @@ $(document).ready(function() {
     let connectionState = $('#state_connection_state').prop('checked')
     let comment = $('#state_comment').val()
     let authId = $('#state_auth_label').val()
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+    let reason = $('#state_reason').val()
     if(label && description){
       $.ajax({
         type: "GET",
@@ -6555,6 +6577,8 @@ $(document).ready(function() {
           equipmentState: equipmentState,
           connectionState: connectionState,
           authId: authId,
+          modifiedBy: currentUserName,
+          reason: reason,
         },
         success: function (data){
           data = JSON.parse(data)
@@ -6618,7 +6642,7 @@ $(document).ready(function() {
             }
           }
           else{
-            showErrorNotification('The error happend while adding the state detail!')
+            showErrorNotification(data['message'])
           }
         },
         error: function(e){
@@ -6630,88 +6654,104 @@ $(document).ready(function() {
       showErrorNotification('The label and description should not be empty string.')
     }
   })
- //remove state 
+ 
+  //click the btn for remove state 
   $('#btn_possible_state_delete').on('click', function(){
     let selectedStateId = $('#state_id').val()
     if(selectedStateId){
-      $.ajax({
-        type: "GET",
-        url: 'removeStateDetail',
-        data: {
-          id: selectedStateId
-        },
-        success: function (data){
-          data = JSON.parse(data)
-          var result = data['result']
-          
-          if(result){
-            showSuccessNotification('The state has been removed successfully!')
-            $('#state_id').val('')
-            let all_possible_state = data['all_possible_state']
-            let all_authority = JSON.parse(document.getElementById('all_authority').textContent )
-            document.getElementById('all_possible_state').textContent = JSON.stringify(all_possible_state)
-            if(all_possible_state.length){
-              let tableData = []
-              all_possible_state.forEach(element => {
-                tableData.push({
-                 'id': element.state_id,
-                 'label': element.state_label ,
-                 'description': element.state_description,              
-                 'equipment_state': element.valid_for_equipment,
-                 'connection_state': element.valid_for_connection,
-                 'comment': element.state_comment,
-                 'authority_label': element.authority_label
-                })
-             })
-  
-             $('#possible_state_table').DataTable({
-               data:  tableData ,
-               destroy: true,
-               columns: [
-                 { data: 'id' },
-                 { data: 'label' },
-                 { data: 'description' },
-                 { data: 'equipment_state'},
-                 { data: 'connection_state'},
-                 { data: 'comment'},
-                 { 
-                   data: 'authority_label' ,
-                   render: function (data, type, rowData){
-                     var selectOptions = all_authority.map(option => {
-                       if(option.authority_label === data){
-                           return  `<option value="${option.authority_id}" selected>${option.authority_label}</option>`
-                       }
-                       else{
-                           return  `<option value="${option.authority_id}">${option.authority_label}</option>`
-                       }
-                     }
-                     ).join('');
-                     return `<select data-id="`+ rowData.id +`"style="width: 100%">${selectOptions}</select>`;
-                   }
-                 },                 
-               ],
-               columnDefs: [
-                 {
-                   targets: [0], 
-                   visible: false 
-                 }
-               ]
-             }
-             )
-  
-            }
-          }
-          else{
-            showErrorNotification('The error happend while removing the state detail!')
-          }
-        },
-        error: function(e){
-          showErrorNotification('The error happend while requesting the server')
-        }
-      })
+      return
     }else{
       showErrorNotification('You should select the state to be removed')
     }
+  })
+
+  // remove the state
+  $('#stateRemoveModal .btn-primary').on('click', function(){
+    let selectedStateId = $('#state_id').val()
+    let reason = $('#remove_state_reason').val()
+    let option = $('#remove_state_option').val()
+    let currentUserName = JSON.parse(document.getElementById('currentUserName').textContent)
+    $.ajax({
+      type: "GET",
+      url: 'removeStateDetail',
+      data: {
+        id: selectedStateId,
+        reason: reason,
+        option: option,
+        modifiedBy: currentUserName,
+      },
+      success: function (data){
+        data = JSON.parse(data)
+        var result = data['result']
+        
+        if(result){
+          showSuccessNotification('The state has been removed successfully!')
+          $('#state_id').val('')
+          $('#remove_state_option').val('')
+          $('#remove_state_reason').val('')
+          $('#stateRemoveModal').modal('hide')
+          let all_possible_state = data['all_possible_state']
+          let all_authority = JSON.parse(document.getElementById('all_authority').textContent )
+          document.getElementById('all_possible_state').textContent = JSON.stringify(all_possible_state)
+          if(all_possible_state.length){
+            let tableData = []
+            all_possible_state.forEach(element => {
+              tableData.push({
+               'id': element.state_id,
+               'label': element.state_label ,
+               'description': element.state_description,              
+               'equipment_state': element.valid_for_equipment,
+               'connection_state': element.valid_for_connection,
+               'comment': element.state_comment,
+               'authority_label': element.authority_label
+              })
+           })
+
+           $('#possible_state_table').DataTable({
+             data:  tableData ,
+             destroy: true,
+             columns: [
+               { data: 'id' },
+               { data: 'label' },
+               { data: 'description' },
+               { data: 'equipment_state'},
+               { data: 'connection_state'},
+               { data: 'comment'},
+               { 
+                 data: 'authority_label' ,
+                 render: function (data, type, rowData){
+                   var selectOptions = all_authority.map(option => {
+                     if(option.authority_label === data){
+                         return  `<option value="${option.authority_id}" selected>${option.authority_label}</option>`
+                     }
+                     else{
+                         return  `<option value="${option.authority_id}">${option.authority_label}</option>`
+                     }
+                   }
+                   ).join('');
+                   return `<select data-id="`+ rowData.id +`"style="width: 100%">${selectOptions}</select>`;
+                 }
+               },                 
+             ],
+             columnDefs: [
+               {
+                 targets: [0], 
+                 visible: false 
+               }
+             ]
+           }
+           )
+
+          }
+        }
+        else{
+          showErrorNotification(data['message'])
+        }
+      },
+      error: function(e){
+        showErrorNotification('The error happend while requesting the server')
+      }
+    })
   })
 } )
 ();
